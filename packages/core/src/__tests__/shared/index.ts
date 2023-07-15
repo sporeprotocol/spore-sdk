@@ -1,9 +1,9 @@
 import { Hash, Script } from '@ckb-lumos/base';
 import { RPC, Indexer, hd, HexString, helpers } from '@ckb-lumos/lumos';
 import { defaultEmptyWitnessArgs, updateWitnessArgs } from '../../helpers';
-import { predefinedCNftConfigs } from '../../config';
+import { predefinedSporeConfigs } from '../../config';
 
-const config = predefinedCNftConfigs.Aggron4;
+const config = predefinedSporeConfigs.Aggron4;
 
 export const TESTNET_ENV = {
   config,

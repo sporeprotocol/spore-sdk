@@ -2,18 +2,18 @@ import { describe, it } from 'vitest';
 import { helpers } from '@ckb-lumos/lumos';
 import { common } from '@ckb-lumos/common-scripts';
 import { TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
-import { createGroup } from '../api';
+import { createCluster } from '../api';
 
-describe('Group', function () {
-  it('Create single group cell', async function () {
+describe('Cluster', function () {
+  it('Create single cluster cell', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE } = TESTNET_ACCOUNTS;
 
-    // Create group cell, collect inputs and pay fee
-    let { txSkeleton } = await createGroup({
-      groupData: {
-        name: 'Testnet cNFT 001',
-        description: 'This is a cNFT group on testnet, just for testing.',
+    // Create cluster cell, collect inputs and pay fee
+    let { txSkeleton } = await createCluster({
+      clusterData: {
+        name: 'Testnet Spore 001',
+        description: 'This is a cNFT cluster on testnet, just for testing.',
       },
       fromInfos: [CHARLIE.address],
       toLock: CHARLIE.lock,

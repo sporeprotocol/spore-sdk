@@ -1,2 +1,2 @@
 // Group apis
-export * from './group/createGroup';
+export * from './cluster/createCluster';

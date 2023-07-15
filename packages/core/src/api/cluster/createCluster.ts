@@ -5,19 +5,31 @@ import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { BI, Cell, helpers, Indexer, RPC } from '@ckb-lumos/lumos';
 import { injectNeededCapacity, isScriptIdEquals } from '../../helpers';
 import { correctCellMinimalCapacity, generateTypeId, getMinFeeRate } from '../../helpers';
-import { CNftConfig, getCNftConfigScript } from '../../config';
-import { GroupData } from '../../codec';
+import { SporeConfig, getSporeConfigScript } from '../../config';
+import { ClusterData } from '../../codec';
 
-export interface GroupDataProps {
+export interface ClusterDataProps {
+  /**
+   * Name of the cluster.
+   *
+   * Spores in a cluster (sharing the same cluster ID)
+   * will be represented with the same name and description.
+   */
   name: string;
   description: string;
 }
 
-export async function createGroup(props: {
-  groupData: GroupDataProps;
+export async function createCluster(props: {
+  /**
+   * Data of the cluster.
+   *
+   * Spores in a cluster (sharing the same cluster ID)
+   * will be represented with the same name and description.
+   */
+  clusterData: ClusterDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: CNftConfig;
+  config: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -32,12 +44,12 @@ export async function createGroup(props: {
     cellProvider: indexer,
   });
 
-  // Generate and inject Group cell
-  const injectNewGroupResult = injectNewGroup({
+  // Generate and inject cluster cell
+  const injectNewClusterResult = injectNewCluster({
     txSkeleton,
     ...props,
   });
-  txSkeleton = injectNewGroupResult.txSkeleton;
+  txSkeleton = injectNewClusterResult.txSkeleton;
 
   // Inject capacity
   const injectCapacityResult = await injectNeededCapacity({
@@ -48,9 +60,9 @@ export async function createGroup(props: {
   });
   txSkeleton = injectCapacityResult.txSkeleton;
 
-  // Generate and inject Group ID
-  txSkeleton = injectGroupIds({
-    groupOutputIndices: [injectNewGroupResult.outputIndex],
+  // Generate and inject Cluster ID
+  txSkeleton = injectClusterIds({
+    clusterOutputIndices: [injectNewClusterResult.outputIndex],
     txSkeleton,
     config,
   });
@@ -63,48 +75,48 @@ export async function createGroup(props: {
 
   return {
     txSkeleton,
-    outputIndex: injectNewGroupResult.outputIndex,
+    outputIndex: injectNewClusterResult.outputIndex,
   };
 }
 
-export function injectNewGroup(props: {
+export function injectNewCluster(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  groupData: GroupDataProps;
+  clusterData: ClusterDataProps;
   toLock: Script;
-  config: CNftConfig;
+  config: SporeConfig;
 }) {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Create GroupCell
-  const group = getCNftConfigScript(props.config, 'Group');
-  const groupCell: Cell = {
+  // Create cluster cell
+  const cluster = getSporeConfigScript(props.config, 'Cluster');
+  const clusterCell: Cell = {
     cellOutput: {
       capacity: '0x0',
       lock: props.toLock,
       type: {
-        ...group.script,
+        ...cluster.script,
         args: '0x' + '0'.repeat(64), // Fill 32-byte placeholder
       },
     },
     data: bytes.hexify(
-      GroupData.pack({
-        name: bytes.bytifyRawString(props.groupData.name),
-        description: bytes.bytifyRawString(props.groupData.name),
+      ClusterData.pack({
+        name: bytes.bytifyRawString(props.clusterData.name),
+        description: bytes.bytifyRawString(props.clusterData.description),
       }),
     ),
   };
 
-  // Generate Group TypeId (if possible)
+  // Generate cluster cell TypeId (if possible)
   const firstInput = txSkeleton.get('inputs').first();
   const outputIndex = txSkeleton.get('outputs').size;
   if (firstInput !== void 0) {
-    groupCell.cellOutput.type!.args = generateTypeId(firstInput, outputIndex);
+    clusterCell.cellOutput.type!.args = generateTypeId(firstInput, outputIndex);
   }
 
   // Add to output
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
-    return outputs.push(correctCellMinimalCapacity(groupCell));
+    return outputs.push(correctCellMinimalCapacity(clusterCell));
   });
 
   // Fix output's index to prevent it to be deducted
@@ -115,8 +127,8 @@ export function injectNewGroup(props: {
     });
   });
 
-  // Add Group dependencies
-  txSkeleton = addCellDep(txSkeleton, group.cellDep);
+  // Add cluster required dependencies
+  txSkeleton = addCellDep(txSkeleton, cluster.cellDep);
 
   return {
     txSkeleton,
@@ -124,28 +136,28 @@ export function injectNewGroup(props: {
   };
 }
 
-export function injectGroupIds(props: {
+export function injectClusterIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  groupOutputIndices?: number[];
-  config: CNftConfig;
+  clusterOutputIndices?: number[];
+  config: SporeConfig;
 }) {
   let txSkeleton = props.txSkeleton;
   const inputs = txSkeleton.get('inputs');
   const firstInput = inputs.get(0);
   if (!firstInput) {
-    throw new Error('Cannot generate Group Id because Transaction.inputs[0] does not exist');
+    throw new Error('Cannot generate Cluster Id because Transaction.inputs[0] does not exist');
   }
 
-  const group = getCNftConfigScript(props.config, 'Group');
+  const cluster = getSporeConfigScript(props.config, 'Cluster');
   let outputs = txSkeleton.get('outputs');
 
   const targetIndices: number[] = [];
-  if (props.groupOutputIndices) {
-    targetIndices.push(...props.groupOutputIndices);
+  if (props.clusterOutputIndices) {
+    targetIndices.push(...props.clusterOutputIndices);
   } else {
     outputs.forEach((output, index) => {
       const outputType = output.cellOutput.type;
-      if (outputType && isScriptIdEquals(outputType, group.script)) {
+      if (outputType && isScriptIdEquals(outputType, cluster.script)) {
         targetIndices.push(index);
       }
     });
@@ -154,12 +166,12 @@ export function injectGroupIds(props: {
   for (const index of targetIndices) {
     const output = outputs.get(index);
     if (!output) {
-      throw new Error(`Cannot generate Group Id because Transaction.outputs[${index}] does not exist`);
+      throw new Error(`Cannot generate Cluster Id because Transaction.outputs[${index}] does not exist`);
     }
 
     const outputType = output.cellOutput.type;
-    if (!outputType || !isScriptIdEquals(outputType, group.script)) {
-      throw new Error(`Cannot generate Group Id because Transaction.outputs[${index}] is not a Group cell`);
+    if (!outputType || !isScriptIdEquals(outputType, cluster.script)) {
+      throw new Error(`Cannot generate Cluster Id because Transaction.outputs[${index}] is not a Cluster cell`);
     }
 
     output.cellOutput.type!.args = generateTypeId(firstInput, index);

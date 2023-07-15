@@ -1,14 +1,14 @@
 import { predefined } from '@ckb-lumos/config-manager';
-import { CNftConfig } from './types';
+import { SporeConfig } from './types';
 
-export type PredefinedCNftConfigScriptName = 'CNft' | 'Group';
+export type PredefinedSporeConfigScriptName = 'Spore' | 'Cluster';
 
-const TestnetCNftConfig: CNftConfig<PredefinedCNftConfigScriptName> = {
+const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   scripts: {
-    CNft: {
+    Spore: {
       script: {
         codeHash: '0x' + '0'.repeat(62) + '01',
-        hashType: 'type',
+        hashType: 'data1',
       },
       cellDep: {
         outPoint: {
@@ -18,10 +18,10 @@ const TestnetCNftConfig: CNftConfig<PredefinedCNftConfigScriptName> = {
         depType: 'code',
       },
     },
-    Group: {
+    Cluster: {
       script: {
         codeHash: '0x' + '0'.repeat(62) + '02',
-        hashType: 'type',
+        hashType: 'data1',
       },
       cellDep: {
         outPoint: {
@@ -35,8 +35,9 @@ const TestnetCNftConfig: CNftConfig<PredefinedCNftConfigScriptName> = {
   lumos: predefined.AGGRON4,
   ckbNodeUrl: 'https://testnet.ckb.dev/rpc',
   ckbIndexerUrl: 'https://testnet.ckb.dev/indexer',
+  extensions: [],
 };
 
-export const predefinedCNftConfigs = {
-  Aggron4: TestnetCNftConfig,
+export const predefinedSporeConfigs = {
+  Aggron4: TESTNET_SPORE_CONFIG,
 };

@@ -1,14 +1,15 @@
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { OutPoint, Script } from '@ckb-lumos/base';
 import { helpers } from '@ckb-lumos/lumos';
-import { CNftConfig } from '../../config';
+import { SporeConfig } from '../../config';
 
-declare function destroyNft(props: {
+declare function transferSpore(props: {
   nftOutPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: CNftConfig;
+  config: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
+  outputIndex: number;
 }>;

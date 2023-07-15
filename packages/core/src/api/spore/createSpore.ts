@@ -2,30 +2,35 @@ import { helpers, HexString } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BytesLike } from '@ckb-lumos/codec';
 import { Script } from '@ckb-lumos/base';
-import { CNftConfig } from '../../config';
+import { SporeConfig } from '../../config';
+import { EncodableContentType } from '../../helpers/contentType';
 
-export interface CNftDataProps {
+export interface SporeDataProps {
   /**
    * Specify the MIME type of the content.
-   * Its format is like this: type/subtype;param1=value1;param2=value2
+   * An example: type/subtype;param1=value1;param2=value2
    */
   contentType: string;
+  /**
+   * Additional parameters, adding to the contentType variable.
+   */
+  contentTypeParameters: EncodableContentType['parameters'];
   /**
    * The content of the NFT as bytes.
    */
   content: BytesLike;
   /**
-   * Optional group id of the NFT.
+   * Cluster Id of the spore, optional.
    * It should be a 32-byte hash.
    */
-  group?: HexString;
+  spore?: HexString;
 }
 
-declare function createNft(props: {
-  nftData: CNftDataProps;
+declare function createSpore(props: {
+  sporeData: SporeDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: CNftConfig;
+  config: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;

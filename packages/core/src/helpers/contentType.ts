@@ -60,7 +60,16 @@ export function encodeContentType(contentType: EncodableContentType): string {
   }
 }
 
-export function mergeContentTypeParameters(contentType: string, parameters: Record<string, any>) {
+/**
+ * Update the parameters of a content type string.
+ * Note the function may change the order the provided content type.
+ *
+ * An example:
+ * ```typescript
+ * setContentTypeParameters('image/jpeg;a=1;b=2', { a: '3' }); // image/jpeg;a=3;b=2
+ * ```
+ */
+export function setContentTypeParameters(contentType: string, parameters: Record<string, any>) {
   const decoded = decodeContentType(contentType);
   for (const [key, value] of Object.entries(parameters)) {
     decoded.parameters[key] = value;
