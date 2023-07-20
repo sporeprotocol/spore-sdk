@@ -7,12 +7,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   scripts: {
     Spore: {
       script: {
-        codeHash: '0x' + '0'.repeat(62) + '01',
+        codeHash: '0x9a788c1d3c2132538547c67dc638c7bacb39d131800a3a665dbc3a594c39433b',
         hashType: 'data1',
       },
       cellDep: {
         outPoint: {
-          txHash: '0x' + '0'.repeat(62) + '11',
+          txHash: '0xaeab4bf61cae63e4c75de7c5b62c4b9e42d96b1cd4f1ff3e143390c7c0b391c1',
           index: '0x0',
         },
         depType: 'code',
@@ -20,13 +20,13 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     },
     Cluster: {
       script: {
-        codeHash: '0x' + '0'.repeat(62) + '02',
+        codeHash: '0xb0a53ec84dfc7667303c8a3bb0fe3532a65c7f066200ae9ceb1adb051c73595e',
         hashType: 'data1',
       },
       cellDep: {
         outPoint: {
-          txHash: '0x' + '0'.repeat(62) + '22',
-          index: '0x0',
+          txHash: '0xaeab4bf61cae63e4c75de7c5b62c4b9e42d96b1cd4f1ff3e143390c7c0b391c1',
+          index: '0x1',
         },
         depType: 'code',
       },

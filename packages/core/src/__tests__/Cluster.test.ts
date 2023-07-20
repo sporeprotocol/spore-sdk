@@ -1,35 +1,58 @@
 import { describe, it } from 'vitest';
-import { helpers } from '@ckb-lumos/lumos';
-import { common } from '@ckb-lumos/common-scripts';
-import { TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
-import { createCluster } from '../api';
+import { OutPoint } from '@ckb-lumos/base';
+import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
+import { createCluster, transferCluster } from '../api';
 
 describe('Cluster', function () {
-  it('Create single cluster cell', async function () {
+  it('Create a cluster', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE } = TESTNET_ACCOUNTS;
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createCluster({
       clusterData: {
-        name: 'Testnet Spore 001',
-        description: 'This is a cNFT cluster on testnet, just for testing.',
+        name: 'Testnet Spore 002',
+        description: 'This is a cluster, just for testing.',
       },
       fromInfos: [CHARLIE.address],
       toLock: CHARLIE.lock,
       config,
     });
 
-    // Sign transaction
-    txSkeleton = common.prepareSigningEntries(txSkeleton, { config: config.lumos });
-    txSkeleton = CHARLIE.signTransaction(txSkeleton);
+    // Sign and send transaction
+    await signAndSendTransaction({
+      account: CHARLIE,
+      txSkeleton,
+      config,
+      rpc,
+      send: true,
+    });
+  }, 30000);
 
-    // Convert to Transaction
-    const tx = helpers.createTransactionFromSkeleton(txSkeleton);
-    console.log(JSON.stringify(tx, null, 2));
+  it('Transfer a cluster', async function () {
+    const { rpc, config } = TESTNET_ENV;
+    const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
-    // Send transaction
-    // const hash = await rpc.sendTransaction(tx, 'passthrough');
-    // console.log(hash);
-  });
+    const outPoint: OutPoint = {
+      txHash: '0xb1f94d7d8e8441bfdf1fc76639d12f4c3c391b8c8a18ed558e299674095290c3',
+      index: '0x0',
+    };
+
+    // Create cluster cell, collect inputs and pay fee
+    let { txSkeleton } = await transferCluster({
+      clusterOutPoint: outPoint,
+      fromInfos: [CHARLIE.address],
+      toLock: ALICE.lock,
+      config,
+    });
+
+    // Sign and send transaction
+    await signAndSendTransaction({
+      account: CHARLIE,
+      txSkeleton,
+      config,
+      rpc,
+      send: true,
+    });
+  }, 30000);
 });

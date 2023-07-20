@@ -48,21 +48,4 @@ describe('ContentType', function () {
 
     expect(t).toEqual('image/svg+xml;q=0.9');
   });
-  /*it('Encode invalid parameters', function() {
-    const errorEncodables: EncodableContentType[] = [
-      {
-        type: 'image',
-        subtype: 'svg+xml',
-        parameters: {
-          q: ';',
-        },
-      }
-    ];
-
-    for (const encodable of errorEncodables) {
-      console.log(encodeContentType(encodable));
-      // const t = () => encodeContentType(encodable);
-      // expect(t).toThrow('Cannot encode ContentType');
-    }
-  });*/
 });

@@ -5,7 +5,7 @@ export const SporeData = molecule.table(
   {
     contentType: blockchain.Bytes,
     content: blockchain.Bytes,
-    group: blockchain.BytesOpt,
+    cluster: blockchain.BytesOpt,
   },
-  ['contentType', 'content', 'group'],
+  ['contentType', 'content', 'cluster'],
 );

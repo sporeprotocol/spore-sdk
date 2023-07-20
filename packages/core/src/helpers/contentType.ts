@@ -34,6 +34,24 @@ export function isContentTypeValid(contentType: string): boolean {
   }
 }
 
+/**
+ * Convert ContentType object to string.
+ */
+export function encodeContentType(contentType: EncodableContentType): string {
+  try {
+    return serializeMime({
+      type: contentType.type,
+      subtype: contentType.subtype,
+      parameters: Object.entries(contentType.parameters),
+    });
+  } catch {
+    throw new Error('Cannot encode ContentType');
+  }
+}
+
+/**
+ * Convert ContentType string to object.
+ */
 export function decodeContentType(contentType: string): DecodedContentType {
   try {
     const decoded = parseMime(contentType);
@@ -45,18 +63,6 @@ export function decodeContentType(contentType: string): DecodedContentType {
     };
   } catch {
     throw new Error(`Cannot decode ContentType "${contentType}"`);
-  }
-}
-
-export function encodeContentType(contentType: EncodableContentType): string {
-  try {
-    return serializeMime({
-      type: contentType.type,
-      subtype: contentType.subtype,
-      parameters: Object.entries(contentType.parameters),
-    });
-  } catch {
-    throw new Error('Cannot encode ContentType');
   }
 }
 

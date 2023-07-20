@@ -3,10 +3,10 @@ import { SporeExtension } from '../types';
 import { SporeData } from '../../codec';
 
 /**
- * An extension of Spore NFT, to allow a spore cell to be immortal on-chain.
+ * A core extension of Spore NFT, to allow a spore cell to be indestructible on-chain.
  *
- * When setting a spore cell to be "immortal", the spore cell will be unable to destroyed,
- * therefore the cell can be lived on the blockchain forever.
+ * When setting a spore cell to be "immortal", the spore cell will be indestructible,
+ * it cannot be destroyed, therefore the cell can be lived on the blockchain forever.
  */
 export function useImmortal(): SporeExtension {
   return {
@@ -51,3 +51,5 @@ export function useImmortal(): SporeExtension {
 export function isImmortalParameterValid(immortal: unknown) {
   return typeof immortal === 'string' && (immortal === 'true' || immortal === 'false');
 }
+
+export function getImmortalParameter() {}

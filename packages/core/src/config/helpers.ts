@@ -1,6 +1,5 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { SporeConfig, SporeConfigScripts } from './types';
-import { Merge } from 'type-fest';
 
 /**
  * Get a specific Script from CNftConfig,
@@ -46,7 +45,3 @@ export function forkSporeConfig<T1 extends string, T2 extends string>(
     extensions,
   };
 }
-
-type Type1 = 'A' | 'B';
-type Type2 = 'C';
-type Type3 = Type1 | Type2;
