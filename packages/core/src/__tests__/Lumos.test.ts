@@ -1,6 +1,5 @@
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
-import { generateTypeId } from '../helpers';
 import { utils } from '@ckb-lumos/lumos';
 
 describe('Lumos', function () {

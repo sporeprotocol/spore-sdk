@@ -1,4 +1,4 @@
-import { decodeContentType } from '../../helpers/contentType';
+import { decodeContentType } from '../../helpers';
 import { SporeExtension } from '../types';
 import { SporeData } from '../../codec';
 

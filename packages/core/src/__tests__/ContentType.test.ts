@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { encodeContentType, decodeContentType, DecodedContentType } from '../helpers/contentType';
+import { encodeContentType, decodeContentType, DecodedContentType } from '../helpers';
 
 describe('ContentType', function () {
   it('Decode normal MIME', function () {
