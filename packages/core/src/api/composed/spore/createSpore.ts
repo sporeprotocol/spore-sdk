@@ -1,8 +1,8 @@
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Script } from '@ckb-lumos/base';
+import { Address, Script } from '@ckb-lumos/base';
 import { SporeConfig } from '../../../config';
-import { injectNeededCapacity, payFee } from '../../../helpers';
+import { injectCapacityAndPayFee, injectNeededCapacity, payFee } from '../../../helpers';
 import { injectNewSporeOutput, injectSporeIds, SporeDataProps } from '../../joints/spore';
 
 export async function createSpore(props: {
@@ -10,6 +10,7 @@ export async function createSpore(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -36,25 +37,19 @@ export async function createSpore(props: {
   });
   txSkeleton = injectNewSporeResult.txSkeleton;
 
-  // Inject capacity
-  const injectCapacityResult = await injectNeededCapacity({
+  // Inject needed capacity and pay fee
+  const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
     txSkeleton,
+    changeAddress: props.changeAddress,
     fromInfos: props.fromInfos,
     fee: BI.from(0),
-    config: config.lumos,
+    config,
   });
-  txSkeleton = injectCapacityResult.txSkeleton;
+  txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
   // Generate and inject spore id
   txSkeleton = injectSporeIds({
     sporeOutputIndices: [injectNewSporeResult.outputIndex],
-    txSkeleton,
-    config,
-  });
-
-  // Pay fee
-  txSkeleton = await payFee({
-    fromInfos: props.fromInfos,
     txSkeleton,
     config,
   });

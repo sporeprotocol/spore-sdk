@@ -1,8 +1,8 @@
-import { OutPoint, Script } from '@ckb-lumos/base';
+import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { SporeConfig } from '../../../config';
-import { injectNeededCapacity, payFee } from '../../../helpers';
+import { injectCapacityAndPayFee } from '../../../helpers';
 import { getClusterCellByOutPoint, injectLiveClusterCell } from '../../joints/cluster';
 
 export async function transferCluster(props: {
@@ -10,6 +10,7 @@ export async function transferCluster(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -40,22 +41,15 @@ export async function transferCluster(props: {
   });
   txSkeleton = injectInputResult.txSkeleton;
 
-  // Inject capacity
-  const injectCapacityResult = await injectNeededCapacity({
+  // Inject needed capacity and pay fee
+  const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
     txSkeleton,
+    changeAddress: props.changeAddress,
     fromInfos: props.fromInfos,
     fee: BI.from(0),
-    config: config.lumos,
-    enableDeductCapacity: false,
-  });
-  txSkeleton = injectCapacityResult.txSkeleton;
-
-  // Pay fee
-  txSkeleton = await payFee({
-    fromInfos: props.fromInfos,
-    txSkeleton,
     config,
   });
+  txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
   return {
     txSkeleton,

@@ -1,196 +1,42 @@
 # @spore-sdk/core
 
-This is the Core SDK of Spore Protocol, providing:
+The Core SDK of Spore Protocol, based on [Lumos](https://github.com/ckb-js/lumos), provides the following features:
 
-- Encoding/Decoding data methods of spores/clusters
-- APIs to construct transactions around spores and clusters
-- Simple helper methods for better transaction construction experience
-
-The SDK is implemented based on [Lumos](https://github.com/ckb-js/lumos).
+- Functions to encode/decode data of spores/clusters
+- Functions to construct transactions around spores and clusters
+- Simple helper functions for better transaction construction experience
 
 ## Install
 
-Install via NPM:
+Install via npm:
 
 ```shell
 npm i @spore-sdk/core
 ```
 
-Install via PNPM:
+Install via pnpm:
 
 ```shell
 pnpm add @spore-sdk/core
 ```
 
-Install via Yarn:
+Install via yarn:
 
 ```shell
 yarn add @spore-sdk/core
 ```
 
-## Usages
+## Docs
 
-### Constructing transaction
+- [Construct transactions with spore-sdk](../../docs/core/construct-transaction.md)
 
-APIs from the `@spore-sdk/core` are strictly limited to performing a single task, which is constructing transactions without signing them. Let's take an example, if you want to create a spore on-chain, you can use the `createSpore` API:
+- [Create an immortal spore](../../docs/core/create-immortal-spore.md)
 
-```typescript
-import { createSpore, SporeConfig } from '@spore-sdk/core';
-import { helpers, RPC } from '@ckb-lumos/lumos';
+- [Handle spore/cluster data](../../docs/core/handle-cell-data.md)
 
-// Assuming there has a Wallet type to handle signing businesses
-import { Wallet } from './app';
+## Examples
 
-async function createSampleSporeWithWallet(wallet: Wallet, config: SporeConfig) {
-  // The function does the following things:
-  // 1. Generate a new spore in Transaction.outputs
-  // 2. Collect needed capacity in Transaction.inputs
-  // 3. Generate an ID for the new spore
-  // 4. Pay fee in Transaction.outputs
-  let { txSkeleton } = await createSpore({
-    sporeData: {
-      contentType: 'image/jpeg',
-      content: JPEG_AS_BYTES,
-    },
-    fromInfos: [wallet.address],
-    toLock: wallet.lockScript,
-    config,
-  });
-
-  // The signing process should do:
-  // 1. Sign the transaction
-  // 2. Update signatures to Transaction.witnesses
-  // 3. Convert TransactionSkeleton to Transaction
-  const tx = await wallet.signTransaction(txSkeleton);
-
-  // Send transaction
-  const rpc = new RPC(config.ckbNodeUrl);
-  return rpc.sendTransaction(tx, 'passthrough');
-}
-```
-
-From the above code example, you can see that after the `createSpore` API is processed, the returned transaction is not yet completed. The developer still needs to sign the transaction and fill the Transaction's witnesses.
-
-This rule also applies to other APIs in `@spore-sdk/core`, the reasoning behind this is that both `Spore` and `Cluster` are type scripts on Nervos CKB, therefore ownership verifying is not their responsibility by design.
-
-### Making spore immortal
-
-Immortal is a core extension of `Spore`. By enabling the immortal extension on a new spore, the spore will live on-chain forever and cannot be destroyed.
-
-If you want to create a spore with immortal extension enabled, you can pass an `immortal` parameter to the props of the `createSpore` API when creating one:
-
-```typescript
-import { createSpore, predefinedSporeConfigs } from '@spore-sdk/core';
-
-let { txSkeleton } = await createSpore({
-  sporeData: {
-    content: JPEG_AS_BYTES,
-    contentType: 'image/jpeg',
-    contentTypeParameters: {
-      immortal: true, // enabling the immortal extension
-    },
-  },
-  fromInfos: [OWNER_ADDRESS],
-  toLock: OWNER_LOCK_SCRIPT,
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
-
-Like so, the new spore will be immortal on-chain. Then, if the owner tries to destroy the spore, the transaction will fail when verified by the `Spore` type script.
-
-### Encoding/Decoding data of spore/cluster
-
-On-chain data of spores and clusters are encoded by their own codec: SporeData and ClusterData. To encode or decode them, you can use codec methods provided by the SDK.
-
-**SporeData**
-
-```typescript
-import { SporeData } from '@spore-sdk/core';
-
-// Encoding
-const sporeData = {
-  contentType: 'image/jpeg',
-  content: JPEG_AS_BYTES,
-};
-console.log(SporeData.pack(sporeData));
-// 0x...
-
-// Decoding
-const sporeDataHex = '0x....';
-console.log(SporeData.unpack('0x....'));
-// {
-//   contentType: '0x...',
-//   content: '0x....',
-//   cluster: undefined
-// }
-```
-
-**ClusterData**
-
-```typescript
-import { ClusterData } from '@spore-sdk/core';
-
-// Encoding
-const clusterData = {
-  name: 'cluster name',
-  description: 'description of the cluster',
-};
-console.log(ClusterData.pack(sporeData));
-// 0x...
-
-// Decoding
-const sporeDataHex = '0x....';
-console.log(ClusterData.unpack('0x....'));
-// {
-//   name: '0x...',
-//   desccription: '0x...',
-// }
-```
-
-### Encoding/Decoding SporeData.contentType
-
-SporeData.contentType is by default, the [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) of SporeData.content. A typical SporeData.contentType look like this: `image/jpeg;a=1;b=2`, and it can be decoded into the following parts:
-
-- Type: image
-- Subtype: jpeg
-- MetaType: image/jpeg
-- Parameters: { a: '1', b: '2' }
-
-Encode/decode SporeData.contentType with `@spore-sdk/core`:
-
-```typescript
-import { encodeContentType, decodeContentType } from '@spore-sdk/core';
-
-const encoded = encodeContentType({
-  type: 'image',
-  subtype: 'jpeg',
-  parameters: {
-    a: 1,
-  },
-});
-console.log(encoded); // image/jpeg;a=1
-
-const decoded = decodeContentType('image/jpeg;a=1;a=2');
-console.log(decoded);
-// {
-//   type: 'image',
-//   subtype: 'jpeg',
-//   mediaType: 'image/jpeg',
-//   parameters: {
-//     a: 1,
-//   },
-// }
-```
-
-Modify the parameters of SporeData.contentType:
-
-```typescript
-import { setContentTypeParameters } from '@spore-sdk/core';
-
-const contentType = 'image/jpeg;a=1;b=3';
-const modified = setContentTypeParameters(contentType, { a: 2 });
-console.log(modified); // image/jpeg;a=2;b=3
-```
+- [@spore-examples/secp256k1](../../examples/secp256k1)
 
 ## Composed API
 
@@ -202,6 +48,7 @@ declare function createSpore(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -225,6 +72,7 @@ interface SporeDataProps {
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the owner of the new spore.
 - `config`: Specifies the config of the SDK.
+- `changeAddress`: Specifies the change cell's ownership.
 
 **SporeDataProps**
 
@@ -261,6 +109,7 @@ declare function transferSpore(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -274,6 +123,7 @@ declare function transferSpore(props: {
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the new owner of the spore.
 - `config`: Specifies the config of the SDK.
+- `changeAddress`: Specifies the change cell's ownership.
 
 **Example**
 
@@ -294,7 +144,12 @@ const result = await transferSpore({
 ### destroySpore
 
 ```typescript
-declare function destroySpore(props: { sporeOutPoint: OutPoint; fromInfos: FromInfo[]; config: SporeConfig }): Promise<{
+declare function destroySpore(props: {
+  sporeOutPoint: OutPoint;
+  fromInfos: FromInfo[];
+  config: SporeConfig;
+  changeAddress?: Address;
+}): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
 }>;
@@ -305,6 +160,7 @@ declare function destroySpore(props: { sporeOutPoint: OutPoint; fromInfos: FromI
 - `sporeOutPoint`: Specifies a target spore to destroy.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
+- `changeAddress`: Specifies the change cell's ownership.
 
 **Example**
 
@@ -329,6 +185,7 @@ declare function createCluster(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -346,6 +203,7 @@ interface ClusterDataProps {
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the owner of the new cluster.
 - `config`: Specifies the config of the SDK.
+- `changeAddress`: Specifies the change cell's ownership.
 
 **ClusterDataProps**
 
@@ -376,6 +234,7 @@ declare function transferCluster(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -388,6 +247,7 @@ declare function transferCluster(props: {
 - `clusterOutPoint`: Specifies a target cluster to destroy.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
+- `changeAddress`: Specifies the change cell's ownership.
 
 **Example**
 

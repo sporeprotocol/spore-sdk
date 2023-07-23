@@ -1,8 +1,8 @@
-import { Script } from '@ckb-lumos/base';
+import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { SporeConfig } from '../../../config';
-import { injectNeededCapacity, payFee } from '../../../helpers';
+import { injectCapacityAndPayFee } from '../../../helpers';
 import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
 
 export async function createCluster(props: {
@@ -10,6 +10,7 @@ export async function createCluster(props: {
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
+  changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -30,25 +31,19 @@ export async function createCluster(props: {
   });
   txSkeleton = injectNewClusterResult.txSkeleton;
 
-  // Inject capacity
-  const injectCapacityResult = await injectNeededCapacity({
+  // Inject needed capacity and pay fee
+  const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
     txSkeleton,
+    changeAddress: props.changeAddress,
     fromInfos: props.fromInfos,
     fee: BI.from(0),
-    config: config.lumos,
+    config,
   });
-  txSkeleton = injectCapacityResult.txSkeleton;
+  txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
   // Generate and inject cluster ID
   txSkeleton = injectClusterIds({
     clusterOutputIndices: [injectNewClusterResult.outputIndex],
-    txSkeleton,
-    config,
-  });
-
-  // Pay fee
-  txSkeleton = await payFee({
-    fromInfos: props.fromInfos,
     txSkeleton,
     config,
   });

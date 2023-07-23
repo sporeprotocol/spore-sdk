@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest';
 import { OutPoint } from '@ckb-lumos/base';
-import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 import { createCluster, transferCluster } from '../api';
+import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 describe('Cluster', function () {
   it('Create a cluster', async function () {

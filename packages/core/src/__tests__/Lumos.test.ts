@@ -1,6 +1,7 @@
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { utils } from '@ckb-lumos/lumos';
+import { TESTNET_ENV } from './shared';
 
 describe('Lumos', function () {
   it('Encode buffer', function () {
@@ -14,15 +15,30 @@ describe('Lumos', function () {
   it('Calculating TypeID', function () {
     const typeId = utils.generateTypeIdScript(
       {
-        previousOutput: {
-          txHash: '0xaeab4bf61cae63e4c75de7c5b62c4b9e42d96b1cd4f1ff3e143390c7c0b391c1',
-          index: '0x2',
-        },
         since: '0x0',
+        previousOutput: {
+          index: '0x0',
+          txHash: '0x174d49d39754b2147bed7b09375b4c746436ee66261de012ecb34ca88a8841a3',
+        },
       },
       '0x1',
     );
 
     console.log(typeId.args);
+  });
+  it('Get code hash by OutPoint', async function () {
+    const rpc = TESTNET_ENV.rpc;
+
+    const cell = await rpc.getLiveCell(
+      {
+        txHash: '0x6d3c79d3e6d0ea6b1d779b98c6572ac594205fb308d5d021b58d8d51a131b7f0',
+        index: '0x0',
+      },
+      true,
+    );
+
+    if (cell) {
+      console.log(cell.cell.data.hash);
+    }
   });
 });

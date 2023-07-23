@@ -14,6 +14,9 @@ export function getSporeConfigScript(config: SporeConfig, scriptName: string) {
   return script;
 }
 
+/**
+ * Clone and create a new SporeConfig.
+ */
 export function forkSporeConfig<T1 extends string, T2 extends string>(
   origin: SporeConfig<T1>,
   change: Partial<SporeConfig<T2>>,

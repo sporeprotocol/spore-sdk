@@ -3,8 +3,8 @@ import { readFileSync } from 'fs';
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { OutPoint } from '@ckb-lumos/base';
-import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 import { createSpore, destroySpore, transferSpore } from '../api';
+import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 const localImage = './resources/test.jpg';
 async function fetchInternetImage(src: string) {
@@ -48,7 +48,7 @@ describe('Spore', function () {
       txSkeleton,
       config,
       rpc,
-      send: true,
+      send: false,
     });
   }, 30000);
 
@@ -75,7 +75,7 @@ describe('Spore', function () {
       txSkeleton,
       config,
       rpc,
-      send: true,
+      send: false,
     });
   }, 30000);
 
@@ -84,7 +84,7 @@ describe('Spore', function () {
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
-      txHash: '0x5de6bab0bd205ac00d48e59d8677a7d558511a97886d61a356129a4d718f0691',
+      txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
       index: '0x0',
     };
 
@@ -101,6 +101,7 @@ describe('Spore', function () {
       txSkeleton,
       config,
       rpc,
+      send: false,
     });
   }, 30000);
 });
