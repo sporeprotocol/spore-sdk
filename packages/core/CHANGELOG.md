@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.1
+
+### Patch Changes
+
+- Fix sdk to build esm and cjs together
+
 ## 0.1.0-beta.0
 
 ### Minor Changes

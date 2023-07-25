@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "cjs",
+    "module": "CommonJS"
+  },
+  "exclude": ["src/__tests__"]
+}

@@ -5,6 +5,7 @@
     "@spore-sdk/core": "0.0.0"
   },
   "changesets": [
+    "honest-masks-join",
     "yellow-flies-play"
   ]
 }
