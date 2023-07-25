@@ -17,7 +17,8 @@
     "clean:apps": "turbo run clean --filter=./apps/*",
     "clean:packages": "turbo run clean --filter=./packags/*",
     "clean:dependencies": "pnpm clean:sub-dependencies && rimraf node_modules",
-    "clean:sub-dependencies": "rimraf packages/**/node_modules apps/**/node_modules"
+    "clean:sub-dependencies": "rimraf packages/**/node_modules apps/**/node_modules",
+    "release:packages": "pnpm run build:packages && changeset publish"
   },
   "dependencies": {
     "rimraf": "^5.0.0"
