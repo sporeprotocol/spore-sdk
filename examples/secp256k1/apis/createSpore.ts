@@ -16,7 +16,7 @@ export async function fetchLocalImage(src: string) {
   // note that setting cluster for a spore is totally optional
   const cluster = await getClusterCellByOutPoint(
     {
-      txHash: '0x174d49d39754b2147bed7b09375b4c746436ee66261de012ecb34ca88a8841a3',
+      txHash: '0xd7637d80d48afd6b0fe7aae455fbc9259c41a50c7c98fb570d0e86acd2685c54',
       index: '0x0',
     },
     config
@@ -26,6 +26,10 @@ export async function fetchLocalImage(src: string) {
     sporeData: {
       // Specify the content's MIME type
       contentType: 'image/jpeg',
+      // Extra parameters of contentType
+      contentTypeParameters: {
+        immortal: true,
+      },
       // Fill in the spore's content as bytes,
       // by default it creates a spore with `test.jpg` (an image) as the content
       content: await fetchLocalImage('../utils/test.jpg'),

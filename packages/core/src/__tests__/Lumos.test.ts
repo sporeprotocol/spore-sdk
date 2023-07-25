@@ -18,10 +18,10 @@ describe('Lumos', function () {
         since: '0x0',
         previousOutput: {
           index: '0x0',
-          txHash: '0x174d49d39754b2147bed7b09375b4c746436ee66261de012ecb34ca88a8841a3',
+          txHash: '0xb5deeae5f8b159bc9bb1705ee84a3b16ec130e638a4b7b0d7d92c586631f40c6',
         },
       },
-      '0x1',
+      '0x0',
     );
 
     console.log(typeId.args);

@@ -1,7 +1,9 @@
 import { Config } from '@ckb-lumos/config-manager';
 import { common, FromInfo } from '@ckb-lumos/common-scripts';
-import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
+import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
+import { ScriptId } from '../codec';
+import { bytes } from '@ckb-lumos/codec';
 
 /**
  * Find and return the first cell of target type script from CKB Indexer.
@@ -95,4 +97,24 @@ export async function setupCell(props: {
     inputIndex,
     outputIndex,
   };
+}
+
+/**
+ * Group cells by TypeScriptID.
+ */
+export function groupCells(cells: Cell[]): Record<Hash | 'null', { index: number; cell: Cell }[]> {
+  const groups: Record<Hash | 'null', { index: number; cell: Cell }[]> = {};
+  for (let i = 0; i < cells.length; i++) {
+    const cell = cells[i];
+    const scriptIdHash = cell.cellOutput.type ? bytes.hexify(ScriptId.pack(cell.cellOutput.type)) : 'null';
+    if (groups[scriptIdHash] === void 0) {
+      groups[scriptIdHash] = [];
+    }
+    groups[scriptIdHash].push({
+      index: i,
+      cell,
+    });
+  }
+
+  return groups;
 }

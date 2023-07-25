@@ -2,7 +2,7 @@ import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, Script } from '@ckb-lumos/base';
 import { SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, injectNeededCapacity, payFee } from '../../../helpers';
+import { injectCapacityAndPayFee } from '../../../helpers';
 import { injectNewSporeOutput, injectSporeIds, SporeDataProps } from '../../joints/spore';
 
 export async function createSpore(props: {

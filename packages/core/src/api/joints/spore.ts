@@ -3,7 +3,7 @@ import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { getSporeConfigScript, SporeConfig } from '../../config';
-import { EncodableContentType, setContentTypeParameters, generateTypeId, setupCell } from '../../helpers';
+import { EncodableContentType, setContentTypeParameters, setupCell, generateTypeIdGroup } from '../../helpers';
 import {
   correctCellMinimalCapacity,
   getCellWithStatusByOutPoint,
@@ -70,9 +70,11 @@ export async function injectNewSporeOutput(props: {
 
   // If the creating spore requires a cluster, collect it to inputs/outputs
   let injectClusterCellResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
+  let injectClusterInfo: { inputIndex: number; outputIndex: number } | undefined;
+  let clusterCell: Cell | undefined;
   if (sporeData.cluster) {
     const cluster = getSporeConfigScript(config, 'Cluster');
-    const clusterCell = await getClusterCellByType(
+    clusterCell = await getClusterCellByType(
       {
         ...cluster.script,
         args: sporeData.cluster,
@@ -89,6 +91,12 @@ export async function injectNewSporeOutput(props: {
       addOutput: true,
     });
     txSkeleton = injectClusterCellResult.txSkeleton;
+
+    // Record cluster's index info
+    injectClusterInfo = {
+      inputIndex: injectClusterCellResult.inputIndex,
+      outputIndex: injectClusterCellResult.outputIndex,
+    };
   }
 
   // Create spore cell
@@ -113,14 +121,8 @@ export async function injectNewSporeOutput(props: {
     ),
   });
 
-  // Generate TypeId (if possible)
-  const firstInput = txSkeleton.get('inputs').first();
-  const outputIndex = txSkeleton.get('outputs').size;
-  if (firstInput !== void 0) {
-    sporeCell.cellOutput.type!.args = generateTypeId(firstInput, outputIndex);
-  }
-
   // Add to Transaction.outputs
+  const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     return outputs.push(sporeCell);
   });
@@ -144,20 +146,31 @@ export async function injectNewSporeOutput(props: {
     return fixedEntries;
   });
 
-  // Add cellDeps
+  // Generate Spore Id if possible
+  const firstInput = txSkeleton.get('inputs').first();
+  if (firstInput !== void 0) {
+    txSkeleton = injectSporeIds({
+      sporeOutputIndices: [outputIndex],
+      txSkeleton,
+      config,
+    });
+  }
+
+  // Add Spore cellDeps
   txSkeleton = addCellDep(txSkeleton, spore.cellDep);
+  // Add Cluster cellDeps if exists
+  if (clusterCell?.outPoint) {
+    txSkeleton = addCellDep(txSkeleton, {
+      outPoint: clusterCell.outPoint,
+      depType: 'code',
+    });
+  }
 
   return {
     txSkeleton,
     outputIndex,
-    hasId: !!firstInput,
-    cluster:
-      sporeData.cluster && !!injectClusterCellResult
-        ? {
-            inputIndex: injectClusterCellResult!.inputIndex,
-            outputIndex: injectClusterCellResult!.outputIndex,
-          }
-        : void 0,
+    hasId: firstInput !== void 0,
+    cluster: injectClusterInfo ?? void 0,
   };
 }
 
@@ -167,39 +180,41 @@ export function injectSporeIds(props: {
   config: SporeConfig;
 }): helpers.TransactionSkeletonType {
   let txSkeleton = props.txSkeleton;
+
+  // Get the first input
   const inputs = txSkeleton.get('inputs');
   const firstInput = inputs.get(0);
   if (!firstInput) {
     throw new Error('Cannot generate Spore Id because Transaction.inputs[0] does not exist');
   }
 
+  // Get SporeType script
   const spore = getSporeConfigScript(props.config, 'Spore');
-  let outputs = txSkeleton.get('outputs');
 
-  const targetIndices: number[] = [];
+  // Calculates type id by group
+  let outputs = txSkeleton.get('outputs');
+  let typeIdGroup = generateTypeIdGroup(firstInput, outputs.toArray(), (cell) => {
+    return !!cell.cellOutput.type && isScriptIdEquals(cell.cellOutput.type, spore.script);
+  });
+
+  // If `sporeOutputIndices` is provided, filter the result
   if (props.sporeOutputIndices) {
-    targetIndices.push(...props.sporeOutputIndices);
-  } else {
-    outputs.forEach((output, index) => {
-      const outputType = output.cellOutput.type;
-      if (outputType && isScriptIdEquals(outputType, spore.script)) {
-        targetIndices.push(index);
-      }
+    typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
+      const index = props.sporeOutputIndices!.findIndex((index) => index === typeIdIndex);
+      return index >= 0;
     });
+    if (typeIdGroup.length !== props.sporeOutputIndices.length) {
+      throw new Error('Cannot generate Spore Id because sporeOutputIndices cannot be fully handled');
+    }
   }
 
-  for (const index of targetIndices) {
+  for (const [index, typeId] of typeIdGroup) {
     const output = outputs.get(index);
     if (!output) {
       throw new Error(`Cannot generate Spore Id because Transaction.outputs[${index}] does not exist`);
     }
 
-    const outputType = output.cellOutput.type;
-    if (!outputType || !isScriptIdEquals(outputType, spore.script)) {
-      throw new Error(`Cannot generate Spore Id because Transaction.outputs[${index}] is not a Spore cell`);
-    }
-
-    output.cellOutput.type!.args = generateTypeId(firstInput, index);
+    output.cellOutput.type!.args = typeId;
     outputs = outputs.set(index, output);
   }
 

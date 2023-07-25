@@ -39,5 +39,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShookLyngs/spore-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShookLyngs/spore-sdk/issues"
   }
 }

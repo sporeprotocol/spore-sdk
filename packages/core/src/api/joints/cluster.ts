@@ -2,9 +2,15 @@ import { bytes } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { correctCellMinimalCapacity, getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
+import {
+  correctCellMinimalCapacity,
+  getCellWithStatusByOutPoint,
+  getCellByType,
+  setupCell,
+  generateTypeIdGroup,
+} from '../../helpers';
 import { getSporeConfigScript, SporeConfig } from '../../config';
-import { generateTypeId, isScriptIdEquals } from '../../helpers';
+import { isScriptIdEquals } from '../../helpers';
 import { ClusterData } from '../../codec';
 
 export interface ClusterDataProps {
@@ -47,14 +53,8 @@ export function injectNewClusterOutput(props: {
     ),
   });
 
-  // Generate TypeId (if possible)
-  const firstInput = txSkeleton.get('inputs').first();
-  const outputIndex = txSkeleton.get('outputs').size;
-  if (firstInput !== void 0) {
-    clusterCell.cellOutput.type!.args = generateTypeId(firstInput, outputIndex);
-  }
-
   // Add to Transaction.outputs
+  const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     return outputs.push(clusterCell);
   });
@@ -66,6 +66,16 @@ export function injectNewClusterOutput(props: {
       index: outputIndex,
     });
   });
+
+  // Generate Cluster Id if possible
+  const firstInput = txSkeleton.get('inputs').first();
+  if (firstInput) {
+    txSkeleton = injectClusterIds({
+      clusterOutputIndices: [outputIndex],
+      txSkeleton,
+      config,
+    });
+  }
 
   // Add cluster required dependencies
   txSkeleton = addCellDep(txSkeleton, cluster.cellDep);
@@ -83,39 +93,42 @@ export function injectClusterIds(props: {
   config: SporeConfig;
 }): helpers.TransactionSkeletonType {
   let txSkeleton = props.txSkeleton;
+
+  // Get the first input
   const inputs = txSkeleton.get('inputs');
   const firstInput = inputs.get(0);
   if (!firstInput) {
     throw new Error('Cannot generate Cluster Id because Transaction.inputs[0] does not exist');
   }
 
+  // Get ClusterType script
   const cluster = getSporeConfigScript(props.config, 'Cluster');
-  let outputs = txSkeleton.get('outputs');
 
-  const targetIndices: number[] = [];
+  // Calculates type id by group
+  let outputs = txSkeleton.get('outputs');
+  let typeIdGroup = generateTypeIdGroup(firstInput, outputs.toArray(), (cell) => {
+    return !!cell.cellOutput.type && isScriptIdEquals(cell.cellOutput.type, cluster.script);
+  });
+
+  // If `clusterOutputIndices` is provided, filter the result
   if (props.clusterOutputIndices) {
-    targetIndices.push(...props.clusterOutputIndices);
-  } else {
-    outputs.forEach((output, index) => {
-      const outputType = output.cellOutput.type;
-      if (outputType && isScriptIdEquals(outputType, cluster.script)) {
-        targetIndices.push(index);
-      }
+    typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
+      const index = props.clusterOutputIndices!.findIndex((index) => index === typeIdIndex);
+      return index >= 0;
     });
+    if (typeIdGroup.length !== props.clusterOutputIndices.length) {
+      throw new Error('Cannot generate Cluster Id because clusterOutputIndices cannot be fully handled');
+    }
   }
 
-  for (const index of targetIndices) {
+  // Update results
+  for (const [index, typeId] of typeIdGroup) {
     const output = outputs.get(index);
     if (!output) {
       throw new Error(`Cannot generate Cluster Id because Transaction.outputs[${index}] does not exist`);
     }
 
-    const outputType = output.cellOutput.type;
-    if (!outputType || !isScriptIdEquals(outputType, cluster.script)) {
-      throw new Error(`Cannot generate Cluster Id because Transaction.outputs[${index}] is not a Cluster cell`);
-    }
-
-    output.cellOutput.type!.args = generateTypeId(firstInput, index);
+    output.cellOutput.type!.args = typeId;
     outputs = outputs.set(index, output);
   }
 

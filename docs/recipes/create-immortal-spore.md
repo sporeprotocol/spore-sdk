@@ -1,4 +1,4 @@
-# Create an immortal spore
+# Create immortal spores on-chain
 
 Immortal is a Spore Extension that provides the following features:
 - An immortal spore will live on-chain forever and cannot be destroyed 

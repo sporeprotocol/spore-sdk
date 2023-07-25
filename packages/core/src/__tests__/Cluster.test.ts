@@ -25,7 +25,7 @@ describe('Cluster', function () {
       txSkeleton,
       config,
       rpc,
-      send: true,
+      send: false,
     });
   }, 30000);
 
@@ -52,7 +52,7 @@ describe('Cluster', function () {
       txSkeleton,
       config,
       rpc,
-      send: true,
+      send: false,
     });
   }, 30000);
 });

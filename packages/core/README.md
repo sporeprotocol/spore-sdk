@@ -6,7 +6,7 @@ The Core SDK of Spore Protocol, based on [Lumos](https://github.com/ckb-js/lumos
 - Functions to construct transactions around spores and clusters
 - Simple helper functions for better transaction construction experience
 
-## Install
+## Installation
 
 Install via npm:
 
@@ -26,17 +26,19 @@ Install via yarn:
 yarn add @spore-sdk/core
 ```
 
-## Docs
+## Recipes
 
-- [Construct transactions with spore-sdk](../../docs/core/construct-transaction.md)
+### [Construct transactions with spore-sdk](../../docs/recipes/construct-transaction.md)
 
-- [Create an immortal spore](../../docs/core/create-immortal-spore.md)
+### [Create immortal spores on-chain](../../docs/recipes/create-immortal-spore.md)
 
-- [Handle spore/cluster data](../../docs/core/handle-cell-data.md)
+### [Handle spore/cluster data](../../docs/recipes/handle-cell-data.md)
 
 ## Examples
 
-- [@spore-examples/secp256k1](../../examples/secp256k1)
+### [@spore-examples/secp256k1](../../examples/secp256k1)
+
+> Provides real code examples to show developers how to construct transactions of spores/clusters, and how to sign for Secp256k1Blake160 inputs.
 
 ## Composed API
 

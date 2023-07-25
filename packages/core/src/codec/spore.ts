@@ -28,7 +28,8 @@ export function packRawSporeData(packable: RawSporeData) {
 export function unpackToRawSporeData(unpackable: BytesLike): RawSporeData {
   const unpacked = SporeData.unpack(unpackable);
   return {
-    ...unpacked,
     contentType: bufferToRawText(unpacked.contentType),
+    content: unpacked.content,
+    cluster: unpacked.content,
   };
 }

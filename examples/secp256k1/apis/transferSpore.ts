@@ -6,8 +6,8 @@ import { accounts, config } from '../utils/config';
 
   let { txSkeleton } = await transferSpore({
     sporeOutPoint: {
-      txHash: '0xb1f94d7d8e8441bfdf1fc76639d12f4c3c391b8c8a18ed558e299674095290c3',
-      index: '0x0',
+      txHash: '0xd7637d80d48afd6b0fe7aae455fbc9259c41a50c7c98fb570d0e86acd2685c54',
+      index: '0x1',
     },
     fromInfos: [CHARLIE.address],
     toLock: ALICE.lock,
