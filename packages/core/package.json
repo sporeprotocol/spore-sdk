@@ -4,25 +4,34 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "pnpm run build:lib && pnpm run build:cjs",
+    "build:lib": "tsc -p tsconfig.build.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json",
     "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "clean": "pnpm run clean:cache & pnpm run clean:build",
-    "clean:build": "rimraf lib & pnpm run clean:buildinfo",
+    "clean:build": "rimraf lib rimraf cjs && pnpm run clean:buildinfo",
     "clean:buildinfo": "rimraf tsconfig.*tsbuildinfo",
     "clean:cache": "rimraf .turbo"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "cjs/index.js",
+  "types": "cjs/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
+      "import": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "require": {
+        "types": "./cjs/index.d.ts",
+        "default": "./cjs/index.js"
+      }
     },
     "./package.json": "./package.json"
   },
   "files": [
-    "lib"
+    "lib",
+    "cjs"
   ],
   "dependencies": {
     "@ckb-lumos/bi": "^0.20.0",
