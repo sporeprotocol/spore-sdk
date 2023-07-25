@@ -1,5 +1,1 @@
-export * from './codec';
-export * from './config';
-export * from './helpers';
-export * from './extension';
-export * from './api';
+export const version = '0.1.0';

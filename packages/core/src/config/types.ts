@@ -1,19 +1,17 @@
 import { Config } from '@ckb-lumos/config-manager';
 import { CellDep } from '@ckb-lumos/base';
 import { ScriptId } from '../types';
-import { SporeExtension } from '../extension';
 
-export interface SporeConfig<T extends string = string> {
+export interface CNftConfig<T extends string = string> {
   lumos: Config;
   ckbNodeUrl: string;
   ckbIndexerUrl: string;
-  scripts: SporeConfigScripts<T>;
-  extensions: SporeExtension[];
+  scripts: CNftConfigScripts<T>;
 }
 
-export type SporeConfigScripts<T extends string> = Record<T, SporeConfigScript>;
+export type CNftConfigScripts<T extends string> = Record<T, CNftConfigScript>;
 
-export interface SporeConfigScript {
+export interface CNftConfigScript {
   script: ScriptId;
   cellDep: CellDep;
 }
