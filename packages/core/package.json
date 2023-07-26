@@ -1,12 +1,10 @@
 {
   "name": "@spore-sdk/core",
-  "version": "0.1.0-beta.4",
+  "version": "0.1.0-beta.5",
   "license": "MIT",
   "scripts": {
     "test": "vitest",
-    "build": "pnpm run build:lib && pnpm run build:cjs",
-    "build:lib": "tsc -p tsconfig.build.json",
-    "build:cjs": "tsc -p tsconfig.build.cjs.json",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "clean": "pnpm run clean:cache & pnpm run clean:build",
@@ -14,24 +12,9 @@
     "clean:buildinfo": "rimraf tsconfig.*tsbuildinfo",
     "clean:cache": "rimraf .turbo"
   },
-  "main": "cjs/index.js",
-  "types": "cjs/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
-      },
-      "require": {
-        "types": "./cjs/index.d.ts",
-        "default": "./cjs/index.js"
-      }
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "lib",
   "files": [
-    "lib",
-    "cjs"
+    "lib"
   ],
   "dependencies": {
     "@ckb-lumos/bi": "^0.20.0",
