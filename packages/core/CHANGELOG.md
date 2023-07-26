@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.5
+
+### Patch Changes
+
+- d9e71ee: Remove esm build in sdk
+
 ## 0.1.0-beta.4
 
 ### Patch Changes

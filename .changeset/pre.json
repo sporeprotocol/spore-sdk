@@ -5,6 +5,7 @@
     "@spore-sdk/core": "0.0.0"
   },
   "changesets": [
+    "few-chairs-tell",
     "gold-eggs-attend",
     "honest-masks-join",
     "modern-kids-clean",
