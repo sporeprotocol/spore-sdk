@@ -34,7 +34,7 @@ export async function fetchLocalImage(src: string) {
       // by default it creates a spore with `test.jpg` (an image) as the content
       content: await fetchLocalImage('../utils/test.jpg'),
       // fill in the spores' belonging cluster's id, optional
-      cluster: cluster.cellOutput.type?.args,
+      clusterId: cluster.cellOutput.type?.args,
     },
     fromInfos: [CHARLIE.address],
     toLock: CHARLIE.lock,

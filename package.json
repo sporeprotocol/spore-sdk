@@ -14,10 +14,10 @@
     "lint:fix": "turbo run lint:fix",
     "lint:fix-all": "prettier --write '{packages,apps}/**/*.{js,jsx,ts,tsx,md,json}'",
     "clean": "turbo run clean",
-    "clean:apps": "turbo run clean --filter=./apps/*",
     "clean:packages": "turbo run clean --filter=./packags/*",
+    "clean:examples": "turbo run clean --filter=./examples/*",
     "clean:dependencies": "pnpm clean:sub-dependencies && rimraf node_modules",
-    "clean:sub-dependencies": "rimraf packages/**/node_modules apps/**/node_modules",
+    "clean:sub-dependencies": "rimraf packages/**/node_modules examples/**/node_modules",
     "release:packages": "pnpm run build:packages && changeset version && changeset publish"
   },
   "dependencies": {
