@@ -31,6 +31,7 @@ describe('Codec', function () {
     const params = {
       contentType: bytes.hexify(bytes.bytifyRawString('image/jpeg')),
       content: bytes.hexify(bytes.bytifyRawString(source.base64)),
+      // clusterId: '0x'
     };
     console.log(params);
 
