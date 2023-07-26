@@ -5,6 +5,7 @@
     "@spore-sdk/core": "0.0.0"
   },
   "changesets": [
+    "gold-eggs-attend",
     "honest-masks-join",
     "modern-kids-clean",
     "popular-coins-mix",
