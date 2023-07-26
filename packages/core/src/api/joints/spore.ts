@@ -42,7 +42,7 @@ export interface SporeDataProps {
    * Cluster Id of the spore, optional.
    * It should be a 32-byte hash.
    */
-  cluster?: HexString;
+  clusterId?: HexString;
 }
 
 export async function injectNewSporeOutput(props: {
@@ -72,12 +72,12 @@ export async function injectNewSporeOutput(props: {
   let injectClusterCellResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
   let injectClusterInfo: { inputIndex: number; outputIndex: number } | undefined;
   let clusterCell: Cell | undefined;
-  if (sporeData.cluster) {
+  if (sporeData.clusterId) {
     const cluster = getSporeConfigScript(config, 'Cluster');
     clusterCell = await getClusterCellByType(
       {
         ...cluster.script,
-        args: sporeData.cluster,
+        args: sporeData.clusterId,
       },
       config,
     );
@@ -116,7 +116,7 @@ export async function injectNewSporeOutput(props: {
           setContentTypeParameters(sporeData.contentType, sporeData.contentTypeParameters ?? {}),
         ),
         content: sporeData.content,
-        cluster: sporeData.cluster,
+        clusterId: sporeData.clusterId,
       }),
     ),
   });
@@ -136,7 +136,7 @@ export async function injectNewSporeOutput(props: {
     });
 
     // Fix the required cluster's output index to prevent it from future reduction
-    if (sporeData.cluster && !!injectClusterCellResult) {
+    if (sporeData.clusterId && !!injectClusterCellResult) {
       fixedEntries = fixedEntries.push({
         field: 'outputs',
         index: injectClusterCellResult.outputIndex,

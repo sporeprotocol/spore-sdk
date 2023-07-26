@@ -6,22 +6,22 @@ export const SporeData = molecule.table(
   {
     contentType: blockchain.Bytes,
     content: blockchain.Bytes,
-    cluster: blockchain.BytesOpt,
+    clusterId: blockchain.BytesOpt,
   },
-  ['contentType', 'content', 'cluster'],
+  ['contentType', 'content', 'clusterId'],
 );
 
 export interface RawSporeData {
   contentType: string;
   content: Parameters<typeof SporeData.pack>[0]['content'];
-  cluster: Parameters<typeof SporeData.pack>[0]['cluster'];
+  clusterId: Parameters<typeof SporeData.pack>[0]['clusterId'];
 }
 
 export function packRawSporeData(packable: RawSporeData) {
   return SporeData.pack({
     contentType: bytes.bytifyRawString(packable.contentType),
     content: packable.content,
-    cluster: packable.cluster,
+    clusterId: packable.clusterId,
   });
 }
 
@@ -30,6 +30,6 @@ export function unpackToRawSporeData(unpackable: BytesLike): RawSporeData {
   return {
     contentType: bufferToRawText(unpacked.contentType),
     content: unpacked.content,
-    cluster: unpacked.content,
+    clusterId: unpacked.clusterId,
   };
 }

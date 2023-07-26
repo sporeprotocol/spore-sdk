@@ -12,7 +12,7 @@ The spore secp256k1 examples is a collection of code examples written in TypeScr
 Let's run the spore secp256k1 examples, but first we need to set up the local environment. 
 Assuming you've cloned the repo, and your local `spore-sdk` is located at:
 
-```typescript
+```
 ~/projects/spore-sdk
 ```
 
@@ -47,7 +47,7 @@ To run an example, for instance if you want to create a spore on-chain, you can 
 ts-node apis/createSpore.ts
 ```
 
-The example should construct and send a transaction that creates a spore, and after the sending the transaction, it should return a `Transaction Hash` for you to view the details of the transaction on [CKB Explorer](https://pudge.explorer.nervos.org/).  
+The example should construct and send a transaction that creates a spore, and after sending the transaction, it should return a `Transaction Hash` for you to view the details of the transaction on [CKB Explorer](https://pudge.explorer.nervos.org/).  
 
 ## Configurations
 

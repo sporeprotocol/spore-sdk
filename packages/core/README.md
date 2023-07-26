@@ -64,7 +64,7 @@ interface SporeDataProps {
   contentType: string;
   contentTypeParameters?: EncodableContentType['parameters'];
   content: BytesLike;
-  cluster?: HexString;
+  clusterId?: HexString;
 }
 ```
 
@@ -81,7 +81,7 @@ interface SporeDataProps {
 - `contentType`: MIME of the spore's content, for example: "image/jpeg;a=1;b=2".
 - `contentTypeParameters`: An object of contentType parameters, usually you can pass extension parameters in here, and the object will be merged into contentType during the process of transaction construction. For example if the contentType is "image/jpeg;a=1", and you've passed "{ b: 2 }" in the contentTypeParameters, later the contentType will be modified to "image/jpeg;ext1=true;ext2=true".
 - `content`: The spore's content as bytes, for example if creating a spore where its contentType is "image/jpeg", then its content should be an .jpeg image as bytes.
-- `cluster`: The spore's cluster ID, should be a 32-byte hash if exists.
+- `clusterId`: The spore's cluster ID, should be a 32-byte hash if exists.
 
 **Example**
 

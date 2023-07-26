@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.2
+
+### Patch Changes
+
+- bd7bfe8: Rename SporeData.cluster to SporeData.clusterId
+
 ## 0.1.0-beta.1
 
 ### Patch Changes
