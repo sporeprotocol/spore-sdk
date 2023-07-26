@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.4
+
+### Patch Changes
+
+- f352469: Update the script info of cluster/spore
+
 ## 0.1.0-beta.3
 
 ### Patch Changes
