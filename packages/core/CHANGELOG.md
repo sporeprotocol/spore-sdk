@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.3
+
+### Patch Changes
+
+- 1a30c54: Adds a backup in codec tests
+
 ## 0.1.0-beta.2
 
 ### Patch Changes
