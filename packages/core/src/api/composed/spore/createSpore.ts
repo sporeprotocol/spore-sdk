@@ -6,7 +6,7 @@ import { injectCapacityAndPayFee } from '../../../helpers';
 import { injectNewSporeOutput, injectSporeIds, SporeDataProps } from '../../joints/spore';
 
 export async function createSpore(props: {
-  sporeData: SporeDataProps;
+  data: SporeDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -30,7 +30,7 @@ export async function createSpore(props: {
 
   // Create and inject a new spore cell, also inject cluster if exists
   const injectNewSporeResult = await injectNewSporeOutput({
-    sporeData: props.sporeData,
+    data: props.data,
     toLock: props.toLock,
     txSkeleton,
     config,
@@ -49,7 +49,7 @@ export async function createSpore(props: {
 
   // Generate and inject spore id
   txSkeleton = injectSporeIds({
-    sporeOutputIndices: [injectNewSporeResult.outputIndex],
+    outputIndices: [injectNewSporeResult.outputIndex],
     txSkeleton,
     config,
   });

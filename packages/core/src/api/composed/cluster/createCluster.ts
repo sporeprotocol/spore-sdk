@@ -6,7 +6,7 @@ import { injectCapacityAndPayFee } from '../../../helpers';
 import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
 
 export async function createCluster(props: {
-  clusterData: ClusterDataProps;
+  data: ClusterDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -43,7 +43,7 @@ export async function createCluster(props: {
 
   // Generate and inject cluster ID
   txSkeleton = injectClusterIds({
-    clusterOutputIndices: [injectNewClusterResult.outputIndex],
+    outputIndices: [injectNewClusterResult.outputIndex],
     txSkeleton,
     config,
   });

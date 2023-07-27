@@ -5,7 +5,7 @@ import { accounts, config } from '../utils/config';
   const { CHARLIE } = accounts;
 
   let { txSkeleton } = await destroySpore({
-    sporeOutPoint: {
+    outPoint: {
       txHash: '0x3d940aed81a5d336c9dfc30ea1c9a7f5c1e34ab6fa07cddbc82868578c9c23a5',
       index: '0x1',
     },

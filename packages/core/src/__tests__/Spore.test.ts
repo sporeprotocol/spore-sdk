@@ -33,7 +33,7 @@ describe('Spore', function () {
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createSpore({
-      sporeData: {
+      data: {
         contentType: 'image/jpeg',
         content: content.arrayBuffer,
       },
@@ -63,7 +63,7 @@ describe('Spore', function () {
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await transferSpore({
-      sporeOutPoint: outPoint,
+      outPoint: outPoint,
       fromInfos: [CHARLIE.address],
       toLock: ALICE.lock,
       config,
@@ -90,7 +90,7 @@ describe('Spore', function () {
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await destroySpore({
-      sporeOutPoint: outPoint,
+      outPoint: outPoint,
       fromInfos: [ALICE.address],
       config,
     });

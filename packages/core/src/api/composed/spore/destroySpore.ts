@@ -6,7 +6,7 @@ import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
 
 export async function destroySpore(props: {
-  sporeOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   config: SporeConfig;
   changeAddress?: Address;
@@ -24,9 +24,9 @@ export async function destroySpore(props: {
   });
 
   // Inject live spore to Transaction.inputs
-  const sporeCell = await getSporeCellByOutPoint(props.sporeOutPoint, config);
+  const sporeCell = await getSporeCellByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
-    sporeCell,
+    cell: sporeCell,
     txSkeleton,
     config,
   });

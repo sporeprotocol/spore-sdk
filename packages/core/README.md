@@ -46,7 +46,7 @@ yarn add @spore-sdk/core
 
 ```typescript
 declare function createSpore(props: {
-  sporeData: SporeDataProps;
+  data: SporeDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -70,7 +70,7 @@ interface SporeDataProps {
 
 **Props**
 
-- `sporeData`: Specifies the data of the new spore.
+- `data`: Specifies the data of the new spore.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the owner of the new spore.
 - `config`: Specifies the config of the SDK.
@@ -89,7 +89,7 @@ interface SporeDataProps {
 import { createSpore, predefinedSporeConfigs } from '@spore-sdk/core';
 
 const result = await createSpore({
-  sporeData: {
+  data: {
     content: JPEG_AS_BYTES,
     contentType: 'image/jpeg',
     contentTypeParameters: {
@@ -107,7 +107,7 @@ const result = await createSpore({
 
 ```typescript
 declare function transferSpore(props: {
-  sporeOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -121,7 +121,7 @@ declare function transferSpore(props: {
 
 **Props**
 
-- `sporeOutPoint`: Specifies a target spore to transfer.
+- `outPoint`: Specifies a target spore to transfer.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the new owner of the spore.
 - `config`: Specifies the config of the SDK.
@@ -133,7 +133,7 @@ declare function transferSpore(props: {
 import { transferSpore, predefinedSporeConfigs } from '@spore-sdk/core';
 
 const result = await transferSpore({
-  sporeOutPoint: {
+  outPoint: {
     txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
     index: '0x0',
   },
@@ -147,7 +147,7 @@ const result = await transferSpore({
 
 ```typescript
 declare function destroySpore(props: {
-  sporeOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   config: SporeConfig;
   changeAddress?: Address;
@@ -159,7 +159,7 @@ declare function destroySpore(props: {
 
 **Props**
 
-- `sporeOutPoint`: Specifies a target spore to destroy.
+- `outPoint`: Specifies a target spore to destroy.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
@@ -170,7 +170,7 @@ declare function destroySpore(props: {
 import { destroySpore, predefinedSporeConfigs } from '@spore-sdk/core';
 
 const result = await destroySpore({
-  sporeOutPoint: {
+  outPoint: {
     txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
     index: '0x0',
   },
@@ -183,7 +183,7 @@ const result = await destroySpore({
 
 ```typescript
 declare function createCluster(props: {
-  clusterData: ClusterDataProps;
+  data: ClusterDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -201,7 +201,7 @@ interface ClusterDataProps {
 
 **Props**
 
-- `clusterData`: Specifies the data of the new cluster.
+- `data`: Specifies the data of the new cluster.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the owner of the new cluster.
 - `config`: Specifies the config of the SDK.
@@ -218,7 +218,7 @@ interface ClusterDataProps {
 import { createCluster, predefinedSporeConfigs } from '@spore-sdk/core';
 
 const result = await createCluster({
-  clusterData: {
+  data: {
     name: 'Cluster name',
     description: 'Description of the cluster',
   },
@@ -232,7 +232,7 @@ const result = await createCluster({
 
 ```typescript
 declare function transferCluster(props: {
-  clusterOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -246,7 +246,7 @@ declare function transferCluster(props: {
 
 **Props**
 
-- `clusterOutPoint`: Specifies a target cluster to destroy.
+- `outPoint`: Specifies a target cluster to destroy.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
@@ -257,7 +257,7 @@ declare function transferCluster(props: {
 import { transferCluster, predefinedSporeConfigs } from '@spore-sdk/core';
 
 const result = await transferCluster({
-  clusterOutPoint: {
+  outPoint: {
     txHash: '0xb1f94d7d8e8441bfdf1fc76639d12f4c3c391b8c8a18ed558e299674095290c3',
     index: '0x0',
   },

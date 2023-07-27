@@ -6,7 +6,7 @@ import { injectCapacityAndPayFee } from '../../../helpers';
 import { getClusterCellByOutPoint, injectLiveClusterCell } from '../../joints/cluster';
 
 export async function transferCluster(props: {
-  clusterOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
   config: SporeConfig;
@@ -26,12 +26,12 @@ export async function transferCluster(props: {
   });
 
   // Find cluster by OutPoint
-  const clusterCell = await getClusterCellByOutPoint(props.clusterOutPoint, config);
+  const clusterCell = await getClusterCellByOutPoint(props.outPoint, config);
 
   // Add cluster to Transaction.inputs and Transaction.outputs
   const injectInputResult = await injectLiveClusterCell({
     txSkeleton,
-    clusterCell,
+    cell: clusterCell,
     addOutput: true,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;

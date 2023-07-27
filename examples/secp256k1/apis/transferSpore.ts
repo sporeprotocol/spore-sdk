@@ -5,7 +5,7 @@ import { accounts, config } from '../utils/config';
   const { CHARLIE, ALICE } = accounts;
 
   let { txSkeleton } = await transferSpore({
-    sporeOutPoint: {
+    outPoint: {
       txHash: '0xd7637d80d48afd6b0fe7aae455fbc9259c41a50c7c98fb570d0e86acd2685c54',
       index: '0x1',
     },

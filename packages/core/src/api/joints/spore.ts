@@ -47,7 +47,7 @@ export interface SporeDataProps {
 
 export async function injectNewSporeOutput(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeData: SporeDataProps;
+  data: SporeDataProps;
   toLock: Script;
   config: SporeConfig;
 }): Promise<{
@@ -63,7 +63,7 @@ export async function injectNewSporeOutput(props: {
 }> {
   // Env
   const config = props.config;
-  const sporeData = props.sporeData;
+  const sporeData = props.data;
 
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
@@ -85,7 +85,7 @@ export async function injectNewSporeOutput(props: {
     // Add dep cluster to Transaction.inputs and Transaction.outputs,
     // but don't change its lock script
     injectClusterCellResult = await injectLiveClusterCell({
-      clusterCell,
+      cell: clusterCell,
       txSkeleton,
       config,
       addOutput: true,
@@ -150,7 +150,7 @@ export async function injectNewSporeOutput(props: {
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput !== void 0) {
     txSkeleton = injectSporeIds({
-      sporeOutputIndices: [outputIndex],
+      outputIndices: [outputIndex],
       txSkeleton,
       config,
     });
@@ -176,7 +176,7 @@ export async function injectNewSporeOutput(props: {
 
 export function injectSporeIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeOutputIndices: number[];
+  outputIndices: number[];
   config: SporeConfig;
 }): helpers.TransactionSkeletonType {
   let txSkeleton = props.txSkeleton;
@@ -198,12 +198,12 @@ export function injectSporeIds(props: {
   });
 
   // If `sporeOutputIndices` is provided, filter the result
-  if (props.sporeOutputIndices) {
+  if (props.outputIndices) {
     typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
-      const index = props.sporeOutputIndices!.findIndex((index) => index === typeIdIndex);
+      const index = props.outputIndices!.findIndex((index) => index === typeIdIndex);
       return index >= 0;
     });
-    if (typeIdGroup.length !== props.sporeOutputIndices.length) {
+    if (typeIdGroup.length !== props.outputIndices.length) {
       throw new Error('Cannot generate Spore Id because sporeOutputIndices cannot be fully handled');
     }
   }
@@ -223,7 +223,7 @@ export function injectSporeIds(props: {
 
 export async function injectLiveSporeCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeCell: Cell;
+  cell: Cell;
   config: SporeConfig;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
@@ -236,7 +236,7 @@ export async function injectLiveSporeCell(props: {
 }> {
   // Env
   const config = props.config;
-  const sporeCell = props.sporeCell;
+  const sporeCell = props.cell;
 
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
@@ -279,13 +279,13 @@ export async function injectLiveSporeCell(props: {
   };
 }
 
-export async function getSporeCellByType(clusterType: Script, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByType(type: Script, config: SporeConfig): Promise<Cell> {
   // Env
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get cell by type
   const cell = await getCellByType({
-    type: clusterType,
+    type,
     indexer,
   });
   if (cell === void 0) {
@@ -301,13 +301,13 @@ export async function getSporeCellByType(clusterType: Script, config: SporeConfi
   return cell;
 }
 
-export async function getSporeCellByOutPoint(clusterOutPoint: OutPoint, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByOutPoint(outPoint: OutPoint, config: SporeConfig): Promise<Cell> {
   // Env
   const rpc = new RPC(config.ckbNodeUrl);
 
   // Get cell from rpc
   const cellWithStatus = await getCellWithStatusByOutPoint({
-    outPoint: clusterOutPoint,
+    outPoint,
     rpc,
   });
   if (cellWithStatus.status !== 'live') {
