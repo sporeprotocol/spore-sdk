@@ -1,5 +1,28 @@
 import cloneDeep from 'lodash/cloneDeep';
+import { predefinedSporeConfigs } from './predefined';
 import { SporeConfig, SporeConfigScripts } from './types';
+
+const env: {
+  config: SporeConfig;
+} = {
+  config: predefinedSporeConfigs.Aggron4,
+};
+
+/**
+ * Set the global default SporeConfig.
+ * The default config is "predefinedSporeConfigs.Aggron4".
+ */
+export function setSporeConfig(config: SporeConfig) {
+  env.config = config;
+}
+
+/**
+ * Get the global default SporeConfig.
+ * The default config is "predefinedSporeConfigs.Aggron4".
+ */
+export function getSporeConfig() {
+  return env.config;
+}
 
 /**
  * Get a specific Script from CNftConfig,

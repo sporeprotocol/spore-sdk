@@ -1,15 +1,15 @@
+import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, OutPoint, Script } from '@ckb-lumos/base';
-import { SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
 
 export async function transferSpore(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -17,7 +17,7 @@ export async function transferSpore(props: {
   outputIndex: number;
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get TransactionSkeleton

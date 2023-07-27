@@ -2,7 +2,7 @@ import { bytes, BytesLike } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { getSporeConfigScript, SporeConfig } from '../../config';
+import { getSporeConfig, getSporeConfigScript, SporeConfig } from '../../config';
 import { EncodableContentType, setContentTypeParameters, setupCell, generateTypeIdGroup } from '../../helpers';
 import {
   correctCellMinimalCapacity,
@@ -49,7 +49,7 @@ export async function injectNewSporeOutput(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   data: SporeDataProps;
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   // spore info
@@ -62,7 +62,7 @@ export async function injectNewSporeOutput(props: {
   };
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const sporeData = props.data;
 
   // Get TransactionSkeleton
@@ -177,8 +177,12 @@ export async function injectNewSporeOutput(props: {
 export function injectSporeIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndices: number[];
-  config: SporeConfig;
+  config?: SporeConfig;
 }): helpers.TransactionSkeletonType {
+  // Env
+  const config = props.config ?? getSporeConfig();
+
+  // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
   // Get the first input
@@ -189,7 +193,7 @@ export function injectSporeIds(props: {
   }
 
   // Get SporeType script
-  const spore = getSporeConfigScript(props.config, 'Spore');
+  const spore = getSporeConfigScript(config, 'Spore');
 
   // Calculates type id by group
   let outputs = txSkeleton.get('outputs');
@@ -224,7 +228,7 @@ export function injectSporeIds(props: {
 export async function injectLiveSporeCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
-  config: SporeConfig;
+  config?: SporeConfig;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
   since?: PackedSince;
@@ -235,7 +239,7 @@ export async function injectLiveSporeCell(props: {
   outputIndex: number;
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const sporeCell = props.cell;
 
   // Get TransactionSkeleton
@@ -279,8 +283,9 @@ export async function injectLiveSporeCell(props: {
   };
 }
 
-export async function getSporeCellByType(type: Script, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
+  config = config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get cell by type
@@ -301,8 +306,9 @@ export async function getSporeCellByType(type: Script, config: SporeConfig): Pro
   return cell;
 }
 
-export async function getSporeCellByOutPoint(outPoint: OutPoint, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByOutPoint(outPoint: OutPoint, config?: SporeConfig): Promise<Cell> {
   // Env
+  config = config ?? getSporeConfig();
   const rpc = new RPC(config.ckbNodeUrl);
 
   // Get cell from rpc

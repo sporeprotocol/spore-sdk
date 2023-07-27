@@ -49,7 +49,7 @@ declare function createSpore(props: {
   data: SporeDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -110,7 +110,7 @@ declare function transferSpore(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -149,7 +149,7 @@ const result = await transferSpore({
 declare function destroySpore(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -186,7 +186,7 @@ declare function createCluster(props: {
   data: ClusterDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -235,7 +235,7 @@ declare function transferCluster(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
