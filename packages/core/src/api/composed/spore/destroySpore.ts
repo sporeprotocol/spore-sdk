@@ -1,21 +1,21 @@
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint } from '@ckb-lumos/base';
-import { SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
 
 export async function destroySpore(props: {
-  sporeOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get TransactionSkeleton
@@ -24,9 +24,9 @@ export async function destroySpore(props: {
   });
 
   // Inject live spore to Transaction.inputs
-  const sporeCell = await getSporeCellByOutPoint(props.sporeOutPoint, config);
+  const sporeCell = await getSporeCellByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
-    sporeCell,
+    cell: sporeCell,
     txSkeleton,
     config,
   });

@@ -23,7 +23,7 @@ export async function fetchLocalImage(src: string) {
   );
 
   let { txSkeleton } = await createSpore({
-    sporeData: {
+    data: {
       // Specify the content's MIME type
       contentType: 'image/jpeg',
       // Extra parameters of contentType

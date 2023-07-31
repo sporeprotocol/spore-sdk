@@ -21,7 +21,7 @@ async function createSampleSporeWithWallet(wallet: Wallet, config: SporeConfig) 
   // 3. Generate an ID for the new spore
   // 4. Pay fee in Transaction.outputs
   let { txSkeleton } = await createSpore({
-    sporeData: {
+    data: {
       contentType: 'image/jpeg',
       content: JPEG_AS_BYTES,
     },

@@ -12,7 +12,7 @@ If you want to create a spore with immortal extension enabled, you need to pass 
 import { createSpore, predefinedSporeConfigs } from '@spore-sdk/core';
 
 let { txSkeleton } = await createSpore({
-  sporeData: {
+  data: {
     content: JPEG_AS_BYTES,
     contentType: 'image/jpeg',
     contentTypeParameters: {

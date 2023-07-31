@@ -2,7 +2,7 @@ import { common, FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, RPC } from '@ckb-lumos/lumos';
 import { Address } from '@ckb-lumos/base';
 import { BIish } from '@ckb-lumos/bi';
-import { SporeConfig } from '../config';
+import { getSporeConfig, SporeConfig } from '../config';
 import { createCapacitySnapshot, injectNeededCapacity } from './capacity';
 
 /**
@@ -19,10 +19,10 @@ export async function getMinFeeRate(rpc: RPC) {
 export async function payFeeByMinFeeRate(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
-  config: SporeConfig;
+  config?: SporeConfig;
 }): Promise<helpers.TransactionSkeletonType> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const rpc = new RPC(config.ckbNodeUrl);
 
   // Get TransactionSkeleton
@@ -33,7 +33,7 @@ export async function payFeeByMinFeeRate(props: {
 
   // Pay fee
   txSkeleton = await common.payFeeByFeeRate(txSkeleton, props.fromInfos, minFeeRate, void 0, {
-    config: props.config.lumos,
+    config: config.lumos,
   });
 
   return txSkeleton;
@@ -46,12 +46,13 @@ export async function payFeeByMinFeeRate(props: {
 export async function payFee(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
-  config: SporeConfig;
+  config?: SporeConfig;
   feeRate?: BIish;
 }): Promise<helpers.TransactionSkeletonType> {
   if (props.feeRate) {
+    const config = props.config ?? getSporeConfig();
     return await common.payFeeByFeeRate(props.txSkeleton, props.fromInfos, props.feeRate, void 0, {
-      config: props.config.lumos,
+      config: config.lumos,
     });
   } else {
     return await payFeeByMinFeeRate(props);
@@ -65,7 +66,7 @@ export async function payFee(props: {
 export async function injectCapacityAndPayFee(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
-  config: SporeConfig;
+  config?: SporeConfig;
   feeRate?: BIish;
   fee?: BIish;
   changeAddress?: Address;
@@ -75,9 +76,10 @@ export async function injectCapacityAndPayFee(props: {
   before: ReturnType<typeof createCapacitySnapshot>;
   after: ReturnType<typeof createCapacitySnapshot>;
 }> {
+  const config = props.config ?? getSporeConfig();
   const injectNeededCapacityResult = await injectNeededCapacity({
     ...props,
-    config: props.config.lumos,
+    config: config.lumos,
   });
 
   const txSkeleton = await payFee({

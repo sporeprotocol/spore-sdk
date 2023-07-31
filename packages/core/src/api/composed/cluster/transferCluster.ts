@@ -1,15 +1,15 @@
 import { Address, OutPoint, Script } from '@ckb-lumos/base';
-import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
-import { SporeConfig } from '../../../config';
+import { FromInfo } from '@ckb-lumos/common-scripts';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, SporeConfig } from '../../../config';
 import { getClusterCellByOutPoint, injectLiveClusterCell } from '../../joints/cluster';
 
 export async function transferCluster(props: {
-  clusterOutPoint: OutPoint;
+  outPoint: OutPoint;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -17,7 +17,7 @@ export async function transferCluster(props: {
   outputIndex: number;
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get TransactionSkeleton
@@ -26,12 +26,12 @@ export async function transferCluster(props: {
   });
 
   // Find cluster by OutPoint
-  const clusterCell = await getClusterCellByOutPoint(props.clusterOutPoint, config);
+  const clusterCell = await getClusterCellByOutPoint(props.outPoint, config);
 
   // Add cluster to Transaction.inputs and Transaction.outputs
   const injectInputResult = await injectLiveClusterCell({
     txSkeleton,
-    clusterCell,
+    cell: clusterCell,
     addOutput: true,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;

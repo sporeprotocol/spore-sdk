@@ -10,7 +10,7 @@ describe('Cluster', function () {
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createCluster({
-      clusterData: {
+      data: {
         name: 'Testnet Spore 002',
         description: 'This is a cluster, just for testing.',
       },
@@ -40,7 +40,7 @@ describe('Cluster', function () {
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await transferCluster({
-      clusterOutPoint: outPoint,
+      outPoint: outPoint,
       fromInfos: [CHARLIE.address],
       toLock: ALICE.lock,
       config,

@@ -1,22 +1,22 @@
 import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
-import { SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, SporeConfig } from '../../../config';
 import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
 
 export async function createCluster(props: {
-  clusterData: ClusterDataProps;
+  data: ClusterDataProps;
   fromInfos: FromInfo[];
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
   changeAddress?: Address;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
 }> {
   // Env
-  const config = props.config;
+  const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get TransactionSkeleton
@@ -43,7 +43,7 @@ export async function createCluster(props: {
 
   // Generate and inject cluster ID
   txSkeleton = injectClusterIds({
-    clusterOutputIndices: [injectNewClusterResult.outputIndex],
+    outputIndices: [injectNewClusterResult.outputIndex],
     txSkeleton,
     config,
   });

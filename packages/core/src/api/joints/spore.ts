@@ -2,7 +2,7 @@ import { bytes, BytesLike } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { getSporeConfigScript, SporeConfig } from '../../config';
+import { getSporeConfig, getSporeConfigScript, SporeConfig } from '../../config';
 import { EncodableContentType, setContentTypeParameters, setupCell, generateTypeIdGroup } from '../../helpers';
 import {
   correctCellMinimalCapacity,
@@ -47,9 +47,9 @@ export interface SporeDataProps {
 
 export async function injectNewSporeOutput(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeData: SporeDataProps;
+  data: SporeDataProps;
   toLock: Script;
-  config: SporeConfig;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   // spore info
@@ -62,8 +62,8 @@ export async function injectNewSporeOutput(props: {
   };
 }> {
   // Env
-  const config = props.config;
-  const sporeData = props.sporeData;
+  const config = props.config ?? getSporeConfig();
+  const sporeData = props.data;
 
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
@@ -85,7 +85,7 @@ export async function injectNewSporeOutput(props: {
     // Add dep cluster to Transaction.inputs and Transaction.outputs,
     // but don't change its lock script
     injectClusterCellResult = await injectLiveClusterCell({
-      clusterCell,
+      cell: clusterCell,
       txSkeleton,
       config,
       addOutput: true,
@@ -150,7 +150,7 @@ export async function injectNewSporeOutput(props: {
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput !== void 0) {
     txSkeleton = injectSporeIds({
-      sporeOutputIndices: [outputIndex],
+      outputIndices: [outputIndex],
       txSkeleton,
       config,
     });
@@ -176,9 +176,13 @@ export async function injectNewSporeOutput(props: {
 
 export function injectSporeIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeOutputIndices: number[];
-  config: SporeConfig;
+  outputIndices: number[];
+  config?: SporeConfig;
 }): helpers.TransactionSkeletonType {
+  // Env
+  const config = props.config ?? getSporeConfig();
+
+  // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
   // Get the first input
@@ -189,7 +193,7 @@ export function injectSporeIds(props: {
   }
 
   // Get SporeType script
-  const spore = getSporeConfigScript(props.config, 'Spore');
+  const spore = getSporeConfigScript(config, 'Spore');
 
   // Calculates type id by group
   let outputs = txSkeleton.get('outputs');
@@ -198,12 +202,12 @@ export function injectSporeIds(props: {
   });
 
   // If `sporeOutputIndices` is provided, filter the result
-  if (props.sporeOutputIndices) {
+  if (props.outputIndices) {
     typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
-      const index = props.sporeOutputIndices!.findIndex((index) => index === typeIdIndex);
+      const index = props.outputIndices!.findIndex((index) => index === typeIdIndex);
       return index >= 0;
     });
-    if (typeIdGroup.length !== props.sporeOutputIndices.length) {
+    if (typeIdGroup.length !== props.outputIndices.length) {
       throw new Error('Cannot generate Spore Id because sporeOutputIndices cannot be fully handled');
     }
   }
@@ -223,8 +227,8 @@ export function injectSporeIds(props: {
 
 export async function injectLiveSporeCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  sporeCell: Cell;
-  config: SporeConfig;
+  cell: Cell;
+  config?: SporeConfig;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
   since?: PackedSince;
@@ -235,8 +239,8 @@ export async function injectLiveSporeCell(props: {
   outputIndex: number;
 }> {
   // Env
-  const config = props.config;
-  const sporeCell = props.sporeCell;
+  const config = props.config ?? getSporeConfig();
+  const sporeCell = props.cell;
 
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
@@ -279,13 +283,14 @@ export async function injectLiveSporeCell(props: {
   };
 }
 
-export async function getSporeCellByType(clusterType: Script, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
+  config = config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get cell by type
   const cell = await getCellByType({
-    type: clusterType,
+    type,
     indexer,
   });
   if (cell === void 0) {
@@ -301,13 +306,14 @@ export async function getSporeCellByType(clusterType: Script, config: SporeConfi
   return cell;
 }
 
-export async function getSporeCellByOutPoint(clusterOutPoint: OutPoint, config: SporeConfig): Promise<Cell> {
+export async function getSporeCellByOutPoint(outPoint: OutPoint, config?: SporeConfig): Promise<Cell> {
   // Env
+  config = config ?? getSporeConfig();
   const rpc = new RPC(config.ckbNodeUrl);
 
   // Get cell from rpc
   const cellWithStatus = await getCellWithStatusByOutPoint({
-    outPoint: clusterOutPoint,
+    outPoint,
     rpc,
   });
   if (cellWithStatus.status !== 'live') {

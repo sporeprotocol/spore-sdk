@@ -5,7 +5,7 @@ import { accounts, config } from '../utils/config';
   const { CHARLIE } = accounts;
 
   let { txSkeleton } = await createCluster({
-    clusterData: {
+    data: {
       name: 'Test cluster',
       description: 'Description of the cluster',
     },
