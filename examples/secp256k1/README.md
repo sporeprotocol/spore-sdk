@@ -15,7 +15,7 @@ The spore secp256k1 examples is a collection of code examples written in TypeScr
 
 Ensure to configure the local environment before running the examples.
 
-Assuming you've cloned the repo, and your local `spore-sdk` is located at:
+Once you have cloned the repository, ensure that your local `spore-sdk` is located at:
 
 ```
 ~/projects/spore-sdk
