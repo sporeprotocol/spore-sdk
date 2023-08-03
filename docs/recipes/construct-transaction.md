@@ -11,7 +11,8 @@ Key functionalities of the spore-sdk:
 2. Encode and decode the cell data of spores/clusters
 3. Simplify application and service development with helpful utilities
 
-So, let's start by peeling off a corner of the spore-sdk. The following instructions will show you how developers can construct a transaction to create a spore on-chain.
+So, let's start by peeling off a corner of the spore-sdk. 
+The following instructions will focus on the first functionality, demonstrating how to create a spore on-chain using spore-sdk by constructing a transaction.
 
 ## Create a transaction
 
