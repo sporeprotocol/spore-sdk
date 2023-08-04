@@ -1,5 +1,12 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.6
+
+### Patch Changes
+
+- 64f8dcd: Simplify api prop names, for example from "sporeData" to "data"
+- 9fce0be: Provide global SporeConfig apis, allow SporeConfig in composed apis to be optional
+
 ## 0.1.0-beta.5
 
 ### Patch Changes
