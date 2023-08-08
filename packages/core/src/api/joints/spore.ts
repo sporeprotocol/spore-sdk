@@ -2,15 +2,12 @@ import { bytes, BytesLike } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { getSporeConfig, getSporeConfigScript, SporeConfig } from '../../config';
-import { EncodableContentType, setContentTypeParameters, setupCell, generateTypeIdGroup } from '../../helpers';
-import {
-  correctCellMinimalCapacity,
-  getCellWithStatusByOutPoint,
-  getCellByType,
-  isScriptIdEquals,
-} from '../../helpers';
-import { getClusterCellByType, injectLiveClusterCell } from './cluster';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
+import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
+import { correctCellMinimalCapacity } from '../../helpers';
+import { getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
+import { EncodableContentType, setContentTypeParameters, generateTypeIdsByOutputs } from '../../helpers';
+import { getClusterCellById, injectLiveClusterCell } from './cluster';
 import { SporeData } from '../../codec';
 
 export interface SporeDataProps {
@@ -73,14 +70,8 @@ export async function injectNewSporeOutput(props: {
   let injectClusterInfo: { inputIndex: number; outputIndex: number } | undefined;
   let clusterCell: Cell | undefined;
   if (sporeData.clusterId) {
-    const cluster = getSporeConfigScript(config, 'Cluster');
-    clusterCell = await getClusterCellByType(
-      {
-        ...cluster.script,
-        args: sporeData.clusterId,
-      },
-      config,
-    );
+    // Search cluster by ClusterID
+    clusterCell = await getClusterCellById(sporeData.clusterId, config);
 
     // Add dep cluster to Transaction.inputs and Transaction.outputs,
     // but don't change its lock script
@@ -99,14 +90,14 @@ export async function injectNewSporeOutput(props: {
     };
   }
 
-  // Create spore cell
-  const spore = getSporeConfigScript(config, 'Spore');
+  // Create spore cell (with the latest version of SporeType script)
+  const sporeScript = getSporeScript(config, 'Spore');
   const sporeCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
       lock: props.toLock,
       type: {
-        ...spore.script,
+        ...sporeScript.script,
         args: '0x' + '0'.repeat(64), // Fill 32-byte TypeId placeholder
       },
     },
@@ -127,7 +118,7 @@ export async function injectNewSporeOutput(props: {
     return outputs.push(sporeCell);
   });
 
-  // Fix the spore's output index (and cluster's output index) to prevent it from future reduction
+  // Fix output indices to prevent them from future reduction
   txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
     // Fix the spore's output index to prevent it from future reduction
     fixedEntries = fixedEntries.push({
@@ -135,7 +126,7 @@ export async function injectNewSporeOutput(props: {
       index: outputIndex,
     });
 
-    // Fix the required cluster's output index to prevent it from future reduction
+    // Fix the dep cluster's output index to prevent it from future reduction
     if (sporeData.clusterId && !!injectClusterCellResult) {
       fixedEntries = fixedEntries.push({
         field: 'outputs',
@@ -157,8 +148,8 @@ export async function injectNewSporeOutput(props: {
   }
 
   // Add Spore cellDeps
-  txSkeleton = addCellDep(txSkeleton, spore.cellDep);
-  // Add Cluster cellDeps if exists
+  txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
+  // Add dep cluster to cellDeps, if exists
   if (clusterCell?.outPoint) {
     txSkeleton = addCellDep(txSkeleton, {
       outPoint: clusterCell.outPoint,
@@ -193,18 +184,18 @@ export function injectSporeIds(props: {
   }
 
   // Get SporeType script
-  const spore = getSporeConfigScript(config, 'Spore');
+  const sporeScript = getSporeScript(config, 'Spore');
 
-  // Calculates type id by group
+  // Calculates TypeIds by the outputs' indices
   let outputs = txSkeleton.get('outputs');
-  let typeIdGroup = generateTypeIdGroup(firstInput, outputs.toArray(), (cell) => {
-    return !!cell.cellOutput.type && isScriptIdEquals(cell.cellOutput.type, spore.script);
+  let typeIdGroup = generateTypeIdsByOutputs(firstInput, outputs.toArray(), (cell) => {
+    return !!cell.cellOutput.type && isSporeScriptSupported(sporeScript, cell.cellOutput.type);
   });
 
   // If `sporeOutputIndices` is provided, filter the result
   if (props.outputIndices) {
-    typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
-      const index = props.outputIndices!.findIndex((index) => index === typeIdIndex);
+    typeIdGroup = typeIdGroup.filter(([outputIndex]) => {
+      const index = props.outputIndices!.findIndex((index) => index === outputIndex);
       return index >= 0;
     });
     if (typeIdGroup.length !== props.outputIndices.length) {
@@ -246,9 +237,10 @@ export async function injectLiveSporeCell(props: {
   let txSkeleton = props.txSkeleton;
 
   // Check target cell type
-  const spore = getSporeConfigScript(config, 'Spore');
-  if (!sporeCell.cellOutput.type || !isScriptIdEquals(sporeCell.cellOutput.type, spore.script)) {
-    throw new Error('Cannot inject live spore because target cell type is invalid');
+  const sporeType = sporeCell.cellOutput.type;
+  const sporeScript = getSporeScript(config, 'Spore', sporeType);
+  if (!sporeType || !sporeScript) {
+    throw new Error('Cannot inject live spore because target cell type is not Spore');
   }
 
   // Add spore to Transaction.inputs
@@ -274,7 +266,7 @@ export async function injectLiveSporeCell(props: {
   }
 
   // Add spore required cellDeps
-  txSkeleton = addCellDep(txSkeleton, spore.cellDep);
+  txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
 
   return {
     txSkeleton,
@@ -289,18 +281,15 @@ export async function getSporeCellByType(type: Script, config?: SporeConfig): Pr
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get cell by type
-  const cell = await getCellByType({
-    type,
-    indexer,
-  });
+  const cell = await getCellByType({ type, indexer });
   if (cell === void 0) {
     throw new Error('Cannot find Spore by Type because target cell does not exist');
   }
 
   // Check target cell's type script
-  const spore = getSporeConfigScript(config, 'Spore');
-  if (!cell.cellOutput.type || !isScriptIdEquals(cell.cellOutput.type, spore.script)) {
-    throw new Error('Cannot find spore by OutPoint because target cell type is invalid');
+  const cellType = cell.cellOutput.type;
+  if (!cellType || !isSporeScriptSupportedByName(config, 'Spore', cellType)) {
+    throw new Error('Cannot find spore by Type because target cell type is not Spore');
   }
 
   return cell;
@@ -312,19 +301,43 @@ export async function getSporeCellByOutPoint(outPoint: OutPoint, config?: SporeC
   const rpc = new RPC(config.ckbNodeUrl);
 
   // Get cell from rpc
-  const cellWithStatus = await getCellWithStatusByOutPoint({
-    outPoint,
-    rpc,
-  });
+  const cellWithStatus = await getCellWithStatusByOutPoint({ outPoint, rpc });
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find spore by OutPoint because target cell is not lived');
   }
 
   // Check target cell's type script
-  const spore = getSporeConfigScript(config, 'Spore');
-  if (!cellWithStatus.cell.cellOutput.type || !isScriptIdEquals(cellWithStatus.cell.cellOutput.type, spore.script)) {
-    throw new Error('Cannot find spore by OutPoint because target cell type is invalid');
+  const cellType = cellWithStatus.cell.cellOutput.type;
+  if (!cellType || !isSporeScriptSupportedByName(config, 'Spore', cellType)) {
+    throw new Error('Cannot find spore by OutPoint because target cell type is not Spore');
   }
 
   return cellWithStatus.cell;
+}
+
+export async function getSporeCellById(id: HexString, config?: SporeConfig): Promise<Cell> {
+  // Env
+  config = config ?? getSporeConfig();
+
+  // Get SporeType script
+  const sporeScript = getSporeScript(config, 'Spore');
+  const versionScripts = (sporeScript.versions ?? []).map((r) => r.script);
+  const scripts = [sporeScript.script, ...versionScripts];
+
+  // Search target spore from the latest version to the oldest
+  for (const script of scripts) {
+    try {
+      return await getSporeCellByType(
+        {
+          ...script,
+          args: id,
+        },
+        config,
+      );
+    } catch {
+      // Not found in the script, don't have to do anything
+    }
+  }
+
+  throw new Error(`Cannot find spore by SporeId because target cell does not exist or it's not Spore`);
 }
