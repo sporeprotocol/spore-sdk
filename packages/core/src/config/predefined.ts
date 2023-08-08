@@ -10,12 +10,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   scripts: {
     Spore: {
       script: {
-        codeHash: '0xc1a7e2d2bd7e0fa90e2f1121782aa9f71204d1fee3a634bf3b12c61a69ee574f',
+        codeHash: '0xbbad126377d45f90a8ee120da988a2d7332c78ba8fd679aab478a19d6c133494',
         hashType: 'data1',
       },
       cellDep: {
         outPoint: {
-          txHash: '0xdc6068c4e5469b8b4e1df23295f87cf2f568c41661cd481e81ae1dd4c8bc3797',
+          txHash: '0xfd694382e621f175ddf81ce91ce2ecf8bfc027d53d7d31b8438f7d26fc37fd19',
           index: '0x0',
         },
         depType: 'code',
