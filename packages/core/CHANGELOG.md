@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.7
+
+### Patch Changes
+
+- d382b0d: Support SporeScript with versions
+
 ## 0.1.0-beta.6
 
 ### Patch Changes
