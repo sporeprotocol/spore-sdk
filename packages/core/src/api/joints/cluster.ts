@@ -2,15 +2,10 @@ import { bytes } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import {
-  correctCellMinimalCapacity,
-  getCellWithStatusByOutPoint,
-  getCellByType,
-  setupCell,
-  generateTypeIdGroup,
-} from '../../helpers';
-import { getSporeConfig, getSporeConfigScript, SporeConfig } from '../../config';
-import { isScriptIdEquals } from '../../helpers';
+import { correctCellMinimalCapacity, generateTypeIdsByOutputs } from '../../helpers';
+import { getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
+import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
 import { ClusterData } from '../../codec';
 
 export interface ClusterDataProps {
@@ -34,14 +29,14 @@ export function injectNewClusterOutput(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Create cluster cell
-  const cluster = getSporeConfigScript(config, 'Cluster');
+  // Create cluster cell (with the latest version of ClusterType script)
+  const clusterScript = getSporeScript(config, 'Cluster');
   const clusterCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
       lock: props.toLock,
       type: {
-        ...cluster.script,
+        ...clusterScript.script,
         args: '0x' + '0'.repeat(64), // Fill 32-byte TypeId placeholder
       },
     },
@@ -67,7 +62,7 @@ export function injectNewClusterOutput(props: {
     });
   });
 
-  // Generate Cluster Id if possible
+  // Generate ID for the new cluster if possible
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput) {
     txSkeleton = injectClusterIds({
@@ -78,7 +73,7 @@ export function injectNewClusterOutput(props: {
   }
 
   // Add cluster required dependencies
-  txSkeleton = addCellDep(txSkeleton, cluster.cellDep);
+  txSkeleton = addCellDep(txSkeleton, clusterScript.cellDep);
 
   return {
     txSkeleton,
@@ -106,18 +101,18 @@ export function injectClusterIds(props: {
   }
 
   // Get ClusterType script
-  const cluster = getSporeConfigScript(config, 'Cluster');
+  const clusterScript = getSporeScript(config, 'Cluster');
 
-  // Calculates type id by group
+  // Calculates TypeIds by the outputs' indices
   let outputs = txSkeleton.get('outputs');
-  let typeIdGroup = generateTypeIdGroup(firstInput, outputs.toArray(), (cell) => {
-    return !!cell.cellOutput.type && isScriptIdEquals(cell.cellOutput.type, cluster.script);
+  let typeIdGroup = generateTypeIdsByOutputs(firstInput, outputs.toArray(), (cell) => {
+    return !!cell.cellOutput.type && isSporeScriptSupported(clusterScript, cell.cellOutput.type);
   });
 
   // If `clusterOutputIndices` is provided, filter the result
   if (props.outputIndices) {
-    typeIdGroup = typeIdGroup.filter(([typeIdIndex]) => {
-      const index = props.outputIndices!.findIndex((index) => index === typeIdIndex);
+    typeIdGroup = typeIdGroup.filter(([outputIndex]) => {
+      const index = props.outputIndices!.findIndex((index) => index === outputIndex);
       return index >= 0;
     });
     if (typeIdGroup.length !== props.outputIndices.length) {
@@ -160,9 +155,10 @@ export async function injectLiveClusterCell(props: {
   let txSkeleton = props.txSkeleton;
 
   // Check target cell type
-  const cluster = getSporeConfigScript(config, 'Cluster');
-  if (!clusterCell.cellOutput.type || !isScriptIdEquals(clusterCell.cellOutput.type, cluster.script)) {
-    throw new Error('Cannot inject live cluster because target cell type is invalid');
+  const clusterCellType = clusterCell.cellOutput.type;
+  const clusterScript = getSporeScript(config, 'Cluster', clusterCellType);
+  if (!clusterCellType || !clusterScript) {
+    throw new Error('Cannot inject cluster because target cell is not Cluster');
   }
 
   // Add cluster cell to Transaction.inputs
@@ -188,7 +184,7 @@ export async function injectLiveClusterCell(props: {
   }
 
   // Add cluster required cellDeps
-  txSkeleton = addCellDep(txSkeleton, cluster.cellDep);
+  txSkeleton = addCellDep(txSkeleton, clusterScript.cellDep);
 
   return {
     txSkeleton,
@@ -203,18 +199,15 @@ export async function getClusterCellByType(type: Script, config?: SporeConfig): 
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
 
   // Get cell by type
-  const cell = await getCellByType({
-    type,
-    indexer,
-  });
+  const cell = await getCellByType({ type, indexer });
   if (cell === void 0) {
-    throw new Error('Cannot find Cluster by Type because target cell does not exist');
+    throw new Error('Cannot find cluster by Type because target cell does not exist');
   }
 
   // Check target cell's type script
-  const cluster = getSporeConfigScript(config, 'Cluster');
-  if (!cell.cellOutput.type || !isScriptIdEquals(cell.cellOutput.type, cluster.script)) {
-    throw new Error('Cannot find cluster by OutPoint because target cell type is invalid');
+  const cellType = cell.cellOutput.type;
+  if (!cellType || !isSporeScriptSupportedByName(config, 'Cluster', cellType)) {
+    throw new Error('Cannot find cluster by Type because target cell is not Cluster');
   }
 
   return cell;
@@ -231,14 +224,42 @@ export async function getClusterCellByOutPoint(outPoint: OutPoint, config?: Spor
     rpc,
   });
   if (cellWithStatus.status !== 'live') {
-    throw new Error('Cannot find Cluster by OutPoint because target cell is not lived');
+    throw new Error('Cannot find cluster by OutPoint because target cell is not lived');
   }
 
   // Check target cell's type script
-  const cluster = getSporeConfigScript(config, 'Cluster');
-  if (!cellWithStatus.cell.cellOutput.type || !isScriptIdEquals(cellWithStatus.cell.cellOutput.type, cluster.script)) {
+  const cellType = cellWithStatus.cell.cellOutput.type;
+  if (!cellType || !isSporeScriptSupportedByName(config, 'Cluster', cellType)) {
     throw new Error('Cannot find cluster by OutPoint because target cell is not Cluster');
   }
 
   return cellWithStatus.cell;
+}
+
+export async function getClusterCellById(id: HexString, config?: SporeConfig): Promise<Cell> {
+  // Env
+  config = config ?? getSporeConfig();
+
+  // Get cluster versioned script
+  const clusterScript = getSporeScript(config, 'Cluster');
+  const versionScripts = (clusterScript.versions ?? []).map((r) => r.script);
+  const scripts = [clusterScript.script, ...versionScripts];
+
+  // Search target cluster from the latest version to the oldest
+  for (const script of scripts) {
+    try {
+      return await getClusterCellByType(
+        {
+          ...script,
+          args: id,
+        },
+        config,
+      );
+    } catch (e) {
+      // Not found in the script, don't have to do anything
+      console.error('getClusterCellById error:', e);
+    }
+  }
+
+  throw new Error(`Cannot find cluster by ClusterId because target cell does not exist or it's not Cluster`);
 }

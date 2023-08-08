@@ -7,13 +7,19 @@ export interface SporeConfig<T extends string = string> {
   lumos: Config;
   ckbNodeUrl: string;
   ckbIndexerUrl: string;
-  scripts: SporeConfigScripts<T>;
   extensions: SporeExtension[];
+  scripts: SporeVersionedScripts<T>;
 }
 
-export type SporeConfigScripts<T extends string> = Record<T, SporeConfigScript>;
+export type SporeVersionedScripts<T extends string> = Record<T, SporeVersionedScript>;
 
-export interface SporeConfigScript {
+export interface SporeVersionedScript extends SporeScript {
+  versions?: SporeScript[];
+}
+
+export type SporeScripts<T extends string> = Record<T, SporeScript>;
+
+export interface SporeScript {
   script: ScriptId;
   cellDep: CellDep;
 }

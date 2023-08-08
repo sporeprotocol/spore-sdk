@@ -23,7 +23,7 @@ export function generateTypeId(firstInput: Cell, outputIndex: BIish): Hash {
 }
 
 /**
- * Generate TypeIds for a group of output cells.
+ * Generate TypeIds for a group of cells in Transaction.outputs.
  */
 export function generateTypeIdGroup(
   firstInput: Cell,
@@ -41,4 +41,30 @@ export function generateTypeIdGroup(
   }
 
   return group;
+}
+
+/**
+ * Generate TypeIds from a Transaction.outputs.
+ *
+ * This function is different from the `generateTypeIdGroup` function,
+ * because this function generates TypeIds based on each output's original index in the list,
+ * instead of generating them by each output's index in a group.
+ */
+export function generateTypeIdsByOutputs(
+  firstInput: Cell,
+  outputs: Cell[],
+  filter?: (cell: Cell) => boolean,
+): [number, Hash][] {
+  function filterOutput(cell: Cell): boolean {
+    return filter instanceof Function ? filter(cell) : true;
+  }
+
+  const result: [number, Hash][] = [];
+  for (let i = 0; i < outputs.length; i++) {
+    if (filterOutput(outputs[i])) {
+      result.push([i, generateTypeId(firstInput, i)]);
+    }
+  }
+
+  return result;
 }
