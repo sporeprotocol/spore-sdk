@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.8
+
+### Patch Changes
+
+- 9a10284: Update the testnet predefined scripts
+
 ## 0.1.0-beta.7
 
 ### Patch Changes
