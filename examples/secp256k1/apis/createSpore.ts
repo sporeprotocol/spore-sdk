@@ -14,7 +14,7 @@ export async function fetchLocalImage(src: string) {
 
   /**
    * The dependent cluster's ID.
-   * Note: Cluster is an optional for a spore.
+   * Note: Cluster is totally optional for a spore.
    *
    * A cluster on-chain (created by CHARLIE): https://pudge.explorer.nervos.org/transaction/0x1b1c11e73413997ed3ca0743c551d543cb454c87ff089cb33b65aaea6d26e215
    * The outputs[0] in the transaction is a testing cluster.
