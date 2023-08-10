@@ -18,6 +18,7 @@ export function injectNewClusterOutput(props: {
   data: ClusterDataProps;
   toLock: Script;
   config?: SporeConfig;
+  updateOutput?(cell: Cell): Cell;
 }): {
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -51,7 +52,8 @@ export function injectNewClusterOutput(props: {
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
-    return outputs.push(clusterCell);
+    const finalClusterCell = props.updateOutput instanceof Function ? props.updateOutput(clusterCell) : clusterCell;
+    return outputs.push(finalClusterCell);
   });
 
   // Fix the output's index to prevent it from future reduction
@@ -140,8 +142,8 @@ export async function injectLiveClusterCell(props: {
   config?: SporeConfig;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
-  since?: PackedSince;
   defaultWitness?: HexString;
+  since?: PackedSince;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;

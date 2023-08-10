@@ -6,6 +6,7 @@ export * from './cell';
 export * from './script';
 export * from './typeId';
 export * from './capacity';
+export * from './transaction';
 export * from './witness';
 export * from './fee';
 

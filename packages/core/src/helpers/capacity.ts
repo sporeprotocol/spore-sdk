@@ -1,8 +1,9 @@
-import { common, FromInfo, parseFromInfo } from '@ckb-lumos/common-scripts';
-import { BI, Cell, helpers } from '@ckb-lumos/lumos';
-import { Config } from '@ckb-lumos/config-manager';
-import { Address, Script } from '@ckb-lumos/base';
+import cloneDeep from 'lodash/cloneDeep';
 import { BIish } from '@ckb-lumos/bi';
+import { BI, helpers } from '@ckb-lumos/lumos';
+import { Config } from '@ckb-lumos/config-manager';
+import { Address, Script, Cell } from '@ckb-lumos/base';
+import { common, FromInfo, parseFromInfo } from '@ckb-lumos/common-scripts';
 
 /**
  * Calculate target cell's minimal occupied capacity by lock script.
@@ -28,6 +29,17 @@ export function correctCellMinimalCapacity(cell: Cell) {
     cell.cellOutput.capacity = occupiedCapacity.toHexString();
   }
 
+  return cell;
+}
+
+/**
+ * Set absolute capacity margin for a cell.
+ * The term 'absolute' means the cell's capacity will be: 'minimal capacity' + 'capacity margin'.
+ */
+export function setCellAbsoluteCapacityMargin(cell: Cell, capacityMargin: BIish) {
+  cell = cloneDeep(cell);
+  const minimalCapacity = helpers.minimalCellCapacityCompatible(cell);
+  cell.cellOutput.capacity = minimalCapacity.add(capacityMargin).toHexString();
   return cell;
 }
 

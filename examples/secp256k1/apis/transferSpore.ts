@@ -6,7 +6,7 @@ import { accounts, config } from '../utils/config';
 
   let { txSkeleton } = await transferSpore({
     outPoint: {
-      txHash: '0xd7637d80d48afd6b0fe7aae455fbc9259c41a50c7c98fb570d0e86acd2685c54',
+      txHash: '0x4655732e3d14d733db61c437d8b714ce500e577e6b68c4b42ac3b668cc72ce1a',
       index: '0x1',
     },
     fromInfos: [CHARLIE.address],

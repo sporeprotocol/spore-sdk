@@ -19,6 +19,8 @@ Provides real code examples to show developers how to construct transactions of 
 ### [Construct transactions with spore-sdk](docs/recipes/construct-transaction.md)
 
 ### [Create immortal spores on-chain](docs/recipes/create-immortal-spore.md)
+
+### [Pay fee with capacity margin](docs/recipes/capacity-margin.md)
   
 ### [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
 

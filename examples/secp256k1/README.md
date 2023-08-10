@@ -11,23 +11,15 @@ The spore secp256k1 examples is a collection of code examples written in TypeScr
 > `Node.js` >= 18.0.0  
 > `PNPM` >= 8.0.0  
 
-### Setup
+### Setup environment
 
-Ensure to configure the local environment before running the examples.
-
-Once you have cloned the repository, ensure that your local `spore-sdk` is located at:
-
-```
-~/projects/spore-sdk
-```
-
-Let's open a terminal, and install dependencies by running the following command:
+To set up the local environment, let's run the following command at the spore-sdk's root directory:
 
 ```shell
 pnpm i
 ```
 
-After installed, run the following command to build local packages:
+Then run the following command to build local packages:
 
 ```shell
 pnpm run build:packages
