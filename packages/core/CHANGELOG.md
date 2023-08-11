@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.9
+
+### Patch Changes
+
+- ca1d6ae: Support capacity margin features in Composed APIs
+
 ## 0.1.0-beta.8
 
 ### Patch Changes
