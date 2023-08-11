@@ -52,6 +52,10 @@ const result = await createSpore({
 });
 ```
 
+Note that only spores/clusters with capacity margin can be used to pay fees. 
+If the sender tries to transfer a spore/cluster with no margin in its capacity, 
+the sender has to collect additional cells to pay for the fee.
+
 ### When transferring spores/clusters
 
 By default, the spore-sdk will use capacity margin to pay fee when transferring a spore/cluster. As an example, the sender doesn't have to configure anything when transferring a spore:
