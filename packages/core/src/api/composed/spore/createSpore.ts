@@ -1,8 +1,9 @@
-import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
+import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, Script } from '@ckb-lumos/base';
-import { injectCapacityAndPayFee } from '../../../helpers';
+import { BIish } from '@ckb-lumos/bi';
 import { getSporeConfig, SporeConfig } from '../../../config';
+import { injectCapacityAndPayFee, setCellAbsoluteCapacityMargin } from '../../../helpers';
 import { injectNewSporeOutput, injectSporeIds, SporeDataProps } from '../../joints/spore';
 
 export async function createSpore(props: {
@@ -11,6 +12,8 @@ export async function createSpore(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
+  capacityMargin?: BIish;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -22,6 +25,7 @@ export async function createSpore(props: {
   // Env
   const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
+  const capacityMargin = BI.from(props.capacityMargin ?? 1_0000_0000);
 
   // Get TransactionSkeleton
   let txSkeleton = helpers.TransactionSkeleton({
@@ -32,6 +36,15 @@ export async function createSpore(props: {
   const injectNewSporeResult = await injectNewSporeOutput({
     data: props.data,
     toLock: props.toLock,
+    updateOutput(cell) {
+      if (capacityMargin.gt(0)) {
+        cell = setCellAbsoluteCapacityMargin(cell, capacityMargin);
+      }
+      if (props.updateOutput instanceof Function) {
+        cell = props.updateOutput(cell);
+      }
+      return cell;
+    },
     txSkeleton,
     config,
   });

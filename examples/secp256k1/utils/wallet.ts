@@ -11,17 +11,20 @@ export interface Wallet {
   signAndSendTransaction(txSkeleton: helpers.TransactionSkeletonType): Promise<Hash>;
 }
 
+/**
+ * Create a Secp256k1Blake160 Wallet by a private key and a SporeConfig.
+ */
 export function createWalletByPrivateKey(privateKey: HexString, config: SporeConfig): Wallet {
   const Secp256k1Blake160 = config.lumos.SCRIPTS.SECP256K1_BLAKE160!;
 
-  // Generate lock script from private key
+  // Generate a lock script from the private key
   const lock: Script = {
     codeHash: Secp256k1Blake160.CODE_HASH,
     hashType: Secp256k1Blake160.HASH_TYPE,
     args: hd.key.privateKeyToBlake160(privateKey),
   };
 
-  // Generate address from lock script
+  // Generate address from the lock script
   const address = helpers.encodeToAddress(lock, {
     config: config.lumos,
   });

@@ -32,6 +32,8 @@ yarn add @spore-sdk/core
 
 ### [Create immortal spores on-chain](../../docs/recipes/create-immortal-spore.md)
 
+### [Pay fee with capacity margin](../../docs/recipes/capacity-margin.md)
+
 ### [Handle spore/cluster data](../../docs/recipes/handle-cell-data.md)
 
 ## Examples
@@ -51,6 +53,8 @@ declare function createSpore(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
+  capacityMargin?: BIish;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -75,6 +79,8 @@ interface SporeDataProps {
 - `toLock`: Specifies the owner of the new spore.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
+- `capacityMargin`: Specifies the capacity margin of the new spore, default to "BI.from(1_0000_0000)".
+- `updateOutput`: Specifies a callback function to update the spore output as needed.
 
 **SporeDataProps**
 
@@ -112,6 +118,9 @@ declare function transferSpore(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
+  capacityMargin?: BIish;
+  useCapacityMarginAsFee?: boolean;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -126,6 +135,9 @@ declare function transferSpore(props: {
 - `toLock`: Specifies the new owner of the spore.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
+- `capacityMargin`: Specifies the capacity margin of the live spore. When "useCapacityMarginAsFee" is true, this prop should not be included in the props.
+- `useCapacityMarginAsFee`: Specifies whether to pay fee with the target spore's capacity margin, if not, the transaction is paid with capacity collected from the fromInfos, default to "true".
+- `updateOutput`: Specifies a callback function to update the target spore output as needed.
 
 **Example**
 
@@ -188,6 +200,8 @@ declare function createCluster(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
+  capacityMargin?: BIish;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -206,6 +220,8 @@ interface ClusterDataProps {
 - `toLock`: Specifies the owner of the new cluster.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
+- `capacityMargin`: Specifies the capacity margin of the new cluster, default to "BI.from(1_0000_0000)".
+- `updateOutput`: Specifies a callback function to update the cluster output as needed.
 
 **ClusterDataProps**
 
@@ -237,6 +253,9 @@ declare function transferCluster(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
+  capacityMargin?: BIish;
+  useCapacityMarginAsFee?: boolean;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -250,6 +269,9 @@ declare function transferCluster(props: {
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
+- `capacityMargin`: Specifies the capacity margin of the live cluster. When "useCapacityMarginAsFee" is true, this prop should not be included in the props.
+- `useCapacityMarginAsFee`: Specifies whether to pay fee with the target cluster cell's capacity margin, if not, the transaction will be paid with capacity collected from the fromInfos, default to "true".
+- `updateOutput`: Specifies a callback function to update the target spore output as needed.
 
 **Example**
 

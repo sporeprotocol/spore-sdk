@@ -2,8 +2,8 @@ import { predefinedSporeConfigs } from '@spore-sdk/core';
 import { createWalletByPrivateKey } from './wallet';
 
 /**
- * SporeConfig provides spore/cluster's detailed info like ScriptIds and CellDeps,
- * it is a necessary part for constructing spore/cluster transactions.
+ * SporeConfig provides spore/cluster's detailed info like ScriptIds and CellDeps.
+ * It is a necessary part for constructing spore/cluster transactions.
  */
 export const config = predefinedSporeConfigs.Aggron4;
 

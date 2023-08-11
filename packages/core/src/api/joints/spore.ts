@@ -2,11 +2,11 @@ import { bytes, BytesLike } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
-import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
-import { correctCellMinimalCapacity } from '../../helpers';
+import { EncodableContentType, setContentTypeParameters } from '../../helpers';
+import { correctCellMinimalCapacity, generateTypeIdsByOutputs } from '../../helpers';
 import { getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
-import { EncodableContentType, setContentTypeParameters, generateTypeIdsByOutputs } from '../../helpers';
+import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
 import { getClusterCellById, injectLiveClusterCell } from './cluster';
 import { SporeData } from '../../codec';
 
@@ -47,6 +47,7 @@ export async function injectNewSporeOutput(props: {
   data: SporeDataProps;
   toLock: Script;
   config?: SporeConfig;
+  updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   // spore info
@@ -115,7 +116,8 @@ export async function injectNewSporeOutput(props: {
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
-    return outputs.push(sporeCell);
+    const finalSporeCell = props.updateOutput instanceof Function ? props.updateOutput(sporeCell) : sporeCell;
+    return outputs.push(finalSporeCell);
   });
 
   // Fix output indices to prevent them from future reduction
