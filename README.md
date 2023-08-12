@@ -24,6 +24,8 @@ Provides real code examples to show developers how to construct transactions of 
   
 ### [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
 
+### [Configure spore-sdk with SporeConfig](docs/recipes/configure-spore-config.md)
+
 ## License
 
 [MIT](./LICENSE) License
