@@ -3,6 +3,7 @@ import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, Script } from '@ckb-lumos/base';
 import { BIish } from '@ckb-lumos/bi';
 import { getSporeConfig, SporeConfig } from '../../../config';
+import { assetTransactionSkeletonSize } from '../../../helpers';
 import { injectCapacityAndPayFee, setCellAbsoluteCapacityMargin } from '../../../helpers';
 import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
 
@@ -13,6 +14,7 @@ export async function createCluster(props: {
   config?: SporeConfig;
   changeAddress?: Address;
   capacityMargin?: BIish;
+  maxTransactionSize?: number | false;
   updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -22,6 +24,7 @@ export async function createCluster(props: {
   const config = props.config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
   const capacityMargin = BI.from(props.capacityMargin ?? 1_0000_0000);
+  const maxTransactionSize = props.maxTransactionSize ?? config.maxTransactionSize ?? false;
 
   // Get TransactionSkeleton
   let txSkeleton = helpers.TransactionSkeleton({
@@ -60,6 +63,11 @@ export async function createCluster(props: {
     txSkeleton,
     config,
   });
+
+  // Make sure the tx size is in range (if needed)
+  if (typeof maxTransactionSize === 'number') {
+    assetTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
+  }
 
   return {
     txSkeleton,

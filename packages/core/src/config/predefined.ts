@@ -7,6 +7,7 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   lumos: predefined.AGGRON4,
   ckbNodeUrl: 'https://testnet.ckb.dev/rpc',
   ckbIndexerUrl: 'https://testnet.ckb.dev/indexer',
+  maxTransactionSize: 500 * 1024, // 500 KB
   scripts: {
     Spore: {
       script: {
