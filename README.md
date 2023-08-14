@@ -1,6 +1,12 @@
-# Spore SDK
+<br/>
 
-> A [Lumos](https://github.com/ckb-js/lumos) based SDK to interact with the Spore Protocol.
+<p align="center">
+  <img src="./docs/assets/readme-banner.png" alt="Spore SDK">
+</p>
+
+<p align="center">
+  A <a href="https://github.com/ckb-js/lumos">Lumos</a> based TypeScript SDK to interact with the Spore Protocol.
+</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@spore-sdk/core">
