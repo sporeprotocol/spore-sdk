@@ -35,7 +35,7 @@
 
 ### [@spore-sdk/core](./packages/core)
 
-The core library of the spore-sdk, it provides developers with Composed APIs to improve the efficiency of building basic spore/cluster transactions. It also provides Joint APIs for developers to build advanced transactions by completing multiple operations at once, but as fun as building blocks.
+The core library of the spore-sdk, provides everything developers need to construct basic or advanced transactions around spores and clusters, and handling [moleculec](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary or the inverse process.
 
 ## Examples
 
