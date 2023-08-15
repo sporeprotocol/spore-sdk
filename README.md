@@ -41,14 +41,14 @@
 
 ### [@spore-sdk/core](./packages/core)
 
-The core library of the spore-sdk, provides everything developers need to construct basic or advanced transactions around spores and clusters, and handling [moleculec](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary or the inverse process.
+The core library of the spore-sdk, providing everything developers need to construct basic and advanced transactions on spores and clusters, and handling [molecule](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary, or vice versa.
 
 ## Examples
 
 ### [@spore-examples/secp256k1](./examples/secp256k1) 
 
-Real code examples of how developers can construct basic spore/cluster transactions with the spore-sdk. It also provides simple code showing how developers can sign
-and unlock [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
+Real code examples presenting how to construct basic spore/cluster transactions with the spore-sdk, along with straightforward code showing the process of signing
+and unlocking [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
 
 ## Recipes
 
