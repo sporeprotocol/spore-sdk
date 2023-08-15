@@ -32,8 +32,8 @@
 ## Features
 
 - ⚡ Composed APIs for efficient spores/clusters interactions with minimal time overhead
-- 🛠️ Joint APIs for building advanced transactions as a fun block-building process
-- 🧱 Utilities for encoding/decoding data of spores/clusters
+- 🧩 Joint APIs for building advanced transactions as a fun block-building process
+- 🛠️ Utilities for encoding/decoding data of spores/clusters
 - 💖 Designed and implemented based on [Lumos](https://github.com/ckb-js/lumos)
 - 🎹 Fully written in TypeScript
 
