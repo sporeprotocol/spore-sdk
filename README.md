@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A <a href="https://github.com/ckb-js/lumos">Lumos</a> based TypeScript SDK to interact with the Spore Protocol.
+  A <a href="https://github.com/ckb-js/lumos">Lumos</a> based TypeScript SDK to interact with Spore Protocol.
 </p>
 
 <p align="center">
