@@ -1,10 +1,11 @@
 # @spore-sdk/core
 
-The Core SDK of Spore Protocol, based on [Lumos](https://github.com/ckb-js/lumos), provides the following features:
+## Features
 
-- Functions to encode/decode data of spores/clusters
-- Functions to construct transactions around spores and clusters
-- Simple helper functions for better transaction construction experience
+- Composed APIs to efficiently construct basic spore/cluster transactions, saving more times
+- Joint APIs to merge multiple actions into a single transaction, fun as building blocks
+- Utilities for encoding/decoding data of spores/clusters
+- Designed and implemented based on [Lumos](https://github.com/ckb-js/lumos)
 
 ## Installation
 
@@ -40,7 +41,8 @@ yarn add @spore-sdk/core
 
 ### [@spore-examples/secp256k1](../../examples/secp256k1)
 
-> Provides real code examples to show developers how to construct transactions of spores/clusters, and how to sign for Secp256k1Blake160 inputs.
+Real code examples presenting how to construct basic spore/cluster transactions with the spore-sdk, along with straightforward code showing the process of signing
+and unlocking [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
 
 ## Composed API
 
