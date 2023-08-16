@@ -1,7 +1,7 @@
 <br/>
 
 <p align="center">
-  <img src="./docs/assets/readme-banner.png" alt="Spore SDK">
+  <img src="./docs/assets/readme-banner.webp" alt="Spore SDK">
 </p>
 
 <p align="center">
