@@ -60,6 +60,8 @@ and unlocking [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-sc
   
 ### [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
 
+### [Configure spore-sdk with SporeConfig](docs/recipes/configure-spore-config.md)
+
 ## License
 
 [MIT](./LICENSE) License

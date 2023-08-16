@@ -7,8 +7,9 @@ export interface SporeConfig<T extends string = string> {
   lumos: Config;
   ckbNodeUrl: string;
   ckbIndexerUrl: string;
-  extensions: SporeExtension[];
+  maxTransactionSize?: number;
   scripts: SporeVersionedScripts<T>;
+  extensions: SporeExtension[];
 }
 
 export type SporeVersionedScripts<T extends string> = Record<T, SporeVersionedScript>;

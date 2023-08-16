@@ -37,6 +37,8 @@ yarn add @spore-sdk/core
 
 ### [Handle spore/cluster data](../../docs/recipes/handle-cell-data.md)
 
+### [Configure spore-sdk with SporeConfig](../../docs/recipes/configure-spore-config.md)
+
 ## Examples
 
 ### [@spore-examples/secp256k1](../../examples/secp256k1)
