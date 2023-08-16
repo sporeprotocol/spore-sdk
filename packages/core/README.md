@@ -41,8 +41,8 @@ yarn add @spore-sdk/core
 
 ### [@spore-examples/secp256k1](../../examples/secp256k1)
 
-Real code examples of how developers can construct basic spore/cluster transactions with the spore-sdk. It also provides simple code showing how developers can sign
-and unlock [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
+Real code examples presenting how to construct basic spore/cluster transactions with the spore-sdk, along with straightforward code showing the process of signing
+and unlocking [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
 
 ## Composed API
 
