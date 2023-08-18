@@ -1,6 +1,6 @@
-import { BI, helpers, Indexer } from '@ckb-lumos/lumos';
-import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint } from '@ckb-lumos/base';
+import { FromInfo } from '@ckb-lumos/common-scripts';
+import { BI, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
@@ -10,6 +10,7 @@ export async function destroySpore(props: {
   fromInfos: FromInfo[];
   config?: SporeConfig;
   changeAddress?: Address;
+  updateWitness?: HexString | ((witness: HexString) => HexString);
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -27,6 +28,7 @@ export async function destroySpore(props: {
   const sporeCell = await getSporeCellByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
     cell: sporeCell,
+    updateWitness: props.updateWitness,
     txSkeleton,
     config,
   });

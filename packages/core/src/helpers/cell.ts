@@ -1,9 +1,9 @@
+import { bytes } from '@ckb-lumos/codec';
 import { Config } from '@ckb-lumos/config-manager';
 import { common, FromInfo } from '@ckb-lumos/common-scripts';
 import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { ScriptId } from '../codec';
-import { bytes } from '@ckb-lumos/codec';
 
 /**
  * Find and return the first cell of target type script from CKB Indexer.
@@ -39,7 +39,7 @@ export async function getCellWithStatusByOutPoint(props: { outPoint: OutPoint; r
 
 /**
  * Inject a cell to Transaction.inputs, and to Transaction.outputs if needed.
- * The function also add needed/supported witness placeholders and cellDeps.
+ * The function also adds needed/supported witness placeholders and cellDeps.
  */
 export async function setupCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
@@ -47,9 +47,10 @@ export async function setupCell(props: {
   fromInfo?: FromInfo;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
-  config?: Config;
-  since?: PackedSince;
   defaultWitness?: HexString;
+  updateWitness?: HexString | ((witness: HexString) => HexString);
+  since?: PackedSince;
+  config?: Config;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -64,9 +65,9 @@ export async function setupCell(props: {
   // Add target cell to inputs and outputs,
   // the function also handles witnesses and cellDeps
   txSkeleton = await common.setupInputCell(txSkeleton, props.input, props.fromInfo, {
-    since: props.since,
-    config: props.config,
     defaultWitness: props.defaultWitness,
+    config: props.config,
+    since: props.since,
   });
 
   // Remove it from outputs if not needed
@@ -89,6 +90,23 @@ export async function setupCell(props: {
       }
 
       return outputs.set(outputIndex, props.updateOutput!(output));
+    });
+  }
+
+  // If required to update the resulting witness placeholder
+  if (props.updateWitness) {
+    txSkeleton = txSkeleton.update('witnesses', (witnesses) => {
+      if (props.updateWitness instanceof Function) {
+        const witness = witnesses.get(inputIndex);
+        if (!witness) {
+          throw new Error(`Cannot update Transaction.witnesses[${inputIndex}] because it's undefined`);
+        }
+        return witnesses.set(inputIndex, props.updateWitness(witness));
+      }
+      if (typeof props.updateWitness === 'string') {
+        return witnesses.set(inputIndex, props.updateWitness);
+      }
+      return witnesses;
     });
   }
 

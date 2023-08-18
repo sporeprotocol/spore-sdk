@@ -1,12 +1,14 @@
+import { BIish } from '@ckb-lumos/bi';
 import { bytes } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
-import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
+import { BI, Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { correctCellMinimalCapacity, generateTypeIdsByOutputs } from '../../helpers';
+import { setAbsoluteCapacityMargin } from '../../helpers';
+import { generateTypeIdsByOutputs, correctCellMinimalCapacity, assetCellMinimalCapacity } from '../../helpers';
 import { getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
 import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
-import { ClusterData } from '../../codec';
+import { packRawClusterData } from '../../codec';
 
 export interface ClusterDataProps {
   name: string;
@@ -19,6 +21,7 @@ export function injectNewClusterOutput(props: {
   toLock: Script;
   config?: SporeConfig;
   updateOutput?(cell: Cell): Cell;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
 }): {
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -32,7 +35,7 @@ export function injectNewClusterOutput(props: {
 
   // Create cluster cell (with the latest version of ClusterType script)
   const clusterScript = getSporeScript(config, 'Cluster');
-  const clusterCell: Cell = correctCellMinimalCapacity({
+  let clusterCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
       lock: props.toLock,
@@ -41,19 +44,19 @@ export function injectNewClusterOutput(props: {
         args: '0x' + '0'.repeat(64), // Fill 32-byte TypeId placeholder
       },
     },
-    data: bytes.hexify(
-      ClusterData.pack({
-        name: bytes.bytifyRawString(props.data.name),
-        description: bytes.bytifyRawString(props.data.description),
-      }),
-    ),
+    data: bytes.hexify(packRawClusterData(props.data)),
   });
 
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
-    const finalClusterCell = props.updateOutput instanceof Function ? props.updateOutput(clusterCell) : clusterCell;
-    return outputs.push(finalClusterCell);
+    if (props.capacityMargin !== void 0) {
+      clusterCell = setAbsoluteCapacityMargin(clusterCell, props.capacityMargin);
+    }
+    if (props.updateOutput instanceof Function) {
+      clusterCell = props.updateOutput(clusterCell);
+    }
+    return outputs.push(clusterCell);
   });
 
   // Fix the output's index to prevent it from future reduction
@@ -139,9 +142,11 @@ export function injectClusterIds(props: {
 export async function injectLiveClusterCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
-  config?: SporeConfig;
   addOutput?: boolean;
+  config?: SporeConfig;
   updateOutput?(cell: Cell): Cell;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+  updateWitness?: HexString | ((witness: HexString) => HexString);
   defaultWitness?: HexString;
   since?: PackedSince;
 }): Promise<{
@@ -167,16 +172,30 @@ export async function injectLiveClusterCell(props: {
   const setupCellResult = await setupCell({
     txSkeleton,
     input: props.cell,
-    addOutput: props.addOutput,
-    updateOutput: props.updateOutput,
-    since: props.since,
     config: config.lumos,
+    addOutput: props.addOutput,
+    updateOutput(cell) {
+      if (props.capacityMargin !== void 0) {
+        cell = setAbsoluteCapacityMargin(cell, props.capacityMargin);
+      }
+      if (props.updateOutput instanceof Function) {
+        cell = props.updateOutput(cell);
+      }
+      return cell;
+    },
     defaultWitness: props.defaultWitness,
+    updateWitness: props.updateWitness,
+    since: props.since,
   });
   txSkeleton = setupCellResult.txSkeleton;
 
-  // If added to outputs, fix the cell's output index
+  // If the cluster is added to Transaction.outputs
   if (props.addOutput) {
+    // Make sure the cell's output has declared enough capacity
+    const output = txSkeleton.get('outputs').get(setupCellResult.outputIndex)!;
+    assetCellMinimalCapacity(output);
+
+    // Fix the cell's output index
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
         field: 'outputs',
