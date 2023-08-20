@@ -1,6 +1,5 @@
 {
-  "name": "@spore-examples/secp256k1",
-  "license": "MIT",
+  "name": "@spore-examples/omnilock",
   "private": true,
   "scripts": {
     "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",

@@ -37,23 +37,29 @@ importers:
         specifier: ^5.1.3
         version: 5.1.3
 
-  examples/secp256k1:
+  examples/acp:
     dependencies:
       '@ckb-lumos/base':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/bi':
-        specifier: ^0.20.0
-        version: 0.20.0
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
       '@ckb-lumos/codec':
-        specifier: ^0.20.0
-        version: 0.20.0
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/common-scripts':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/config-manager':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/lumos':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@spore-examples/shared':
+        specifier: workspace:^
+        version: link:../shared
       '@spore-sdk/core':
         specifier: workspace:^
         version: link:../../packages/core
@@ -64,23 +70,97 @@ importers:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.4.1)(typescript@5.1.3)
 
+  examples/omnilock:
+    dependencies:
+      '@ckb-lumos/base':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/codec':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/common-scripts':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/config-manager':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/lumos':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@spore-examples/shared':
+        specifier: workspace:^
+        version: link:../shared
+      '@spore-sdk/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.4.1)(typescript@5.1.3)
+
+  examples/secp256k1:
+    dependencies:
+      '@ckb-lumos/base':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/codec':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/common-scripts':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/config-manager':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/lumos':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@spore-examples/shared':
+        specifier: workspace:^
+        version: link:../shared
+      '@spore-sdk/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.4.1)(typescript@5.1.3)
+
+  examples/shared: {}
+
   packages/core:
     dependencies:
       '@ckb-lumos/base':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/bi':
-        specifier: ^0.20.0
-        version: 0.20.0
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
       '@ckb-lumos/codec':
-        specifier: ^0.20.0
-        version: 0.20.0
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0
+      '@ckb-lumos/common-scripts':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/config-manager':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@ckb-lumos/lumos':
-        specifier: ^0.20.0
-        version: 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/rpc':
+        specifier: ^0.21.0-next.0
+        version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -309,40 +389,39 @@ packages:
       prettier: 2.8.7
     dev: true
 
-  /@ckb-lumos/base@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-Zz4+iO7d7dJBMtn/7icD9uuld2fBUGI+RqoBumXW8mem3xDw41Vb4vL0knxVdOFF1EkuSX5yZ796f83h8Q/6zw==}
+  /@ckb-lumos/base@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-acxE9xNmetJwB3Eld9R9iosGhqaYFibExKQa0zEHoRqKPkrt4+CntbOW515tJyjmftRW8WA95WXFJD7rDgp3aw==}
     engines: {node: '>=12.0.0'}
-    peerDependencies:
-      jsbi: ^4.1.0
     dependencies:
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/codec': 0.20.0
-      '@ckb-lumos/toolkit': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/codec': 0.21.0-next.0
+      '@ckb-lumos/toolkit': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       '@types/blake2b': 2.1.0
       '@types/lodash.isequal': 4.5.6
       blake2b: 2.1.4
       js-xxhash: 1.0.4
-      jsbi: 4.3.0
       lodash.isequal: 4.5.0
     transitivePeerDependencies:
       - cross-fetch
+      - jsbi
     dev: false
 
-  /@ckb-lumos/bi@0.20.0:
-    resolution: {integrity: sha512-cJtv1NnvC11oQbDC8f3jIGTYdyEs2m8GvSrZgGL5KjBoaHTWghH8v6Z2XkwFgHmmCwfX5KrdXekrsOWrcIXyqw==}
+  /@ckb-lumos/bi@0.21.0-next.0:
+    resolution: {integrity: sha512-3VB8cDjOqzZQMNU2soOt0g6fooO0IbpX25Llk9oqhcnWCk6Su0CPP0qCFiDnb2wMqdWaqOEpAKQ5mhSkg3SLKA==}
     engines: {node: '>=12.0.0'}
     dependencies:
       jsbi: 4.3.0
     dev: false
 
-  /@ckb-lumos/ckb-indexer@0.20.0(jsbi@4.3.0):
-    resolution: {integrity: sha512-bw5HiuAleTa9D4l3xW+0+kYh49CH3bjRNPHxv/ySVy1TxTAYEJA6qjcIOE81T8U6qSnUxY1KKiAjk2bO+mo05w==}
+  /@ckb-lumos/ckb-indexer@0.21.0-next.0(jsbi@4.3.0):
+    resolution: {integrity: sha512-hiKYH+y306TW6HZBtjOeK0JjZ9IIYbv8cWjuovXB6rO5W5LrrPs8Exr4PJwdfhofm6SMyC+N4jjOH83NZJtP2w==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/rpc': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/toolkit': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/codec': 0.21.0-next.0
+      '@ckb-lumos/rpc': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/toolkit': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       cross-fetch: 3.1.8
       events: 3.3.0
     transitivePeerDependencies:
@@ -351,24 +430,24 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/codec@0.20.0:
-    resolution: {integrity: sha512-NHBPIaiNYz5yX0RGSM0Qz1effLnVTt0wJHPfLVAkuzNRBg5/xRZySjYOemOsogbX1t4s3Yk7N0Q17tr02AUh3A==}
+  /@ckb-lumos/codec@0.21.0-next.0:
+    resolution: {integrity: sha512-L8q5HW5VEq3IjgNDDlpK1JMZ2tA8IOF0KOXDhErC0PlBv63fFrl6mbKHWDzI1llNp0iDl7S9ZdWBjytZQrg38A==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/bi': 0.20.0
+      '@ckb-lumos/bi': 0.21.0-next.0
     dev: false
 
-  /@ckb-lumos/common-scripts@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-GSCayhyt+G0k9fNGK3bjVif2PDWbo47ovUEM0CiRuG0YrhvBYbuq69mpQ3nKezI1IKI3UZyYOax7SqhYBCJ5VQ==}
+  /@ckb-lumos/common-scripts@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-QyHrGca7ZXMq8kdWeSohEOAaCzWJeY6GMOo5FZqyV07FLBO5wy6yGo5RY99lX1lf/Qnl1C4E5t1+0Cz/Jo2Dqg==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/codec': 0.20.0
-      '@ckb-lumos/config-manager': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/helpers': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/rpc': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/toolkit': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/codec': 0.21.0-next.0
+      '@ckb-lumos/config-manager': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/helpers': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/rpc': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/toolkit': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       immutable: 4.3.0
     transitivePeerDependencies:
       - cross-fetch
@@ -376,13 +455,13 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/config-manager@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-YNhowInBGuOVMRBuhDWznhcB+83vLzYSL6HAlGCBbm2yT7lDmIrrVWh731hISmuaXeMt4IFupLfGXxpelB6zCA==}
+  /@ckb-lumos/config-manager@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-E9/7yYfkas5ZaiUz/k+ys17BZTDuBxN9jwJRp5pQ4oOteHv3swxrqrA2CEkKxq96iOjgueksWb5zdNGrKdoewQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/codec': 0.20.0
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/codec': 0.21.0-next.0
       '@types/deep-freeze-strict': 1.1.0
       deep-freeze-strict: 1.1.1
     transitivePeerDependencies:
@@ -390,12 +469,12 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/hd@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-vPzMFZwYpuOVEiQ8WeY6+TVGy0Hcdau7okbMX6mks87Kt1f8qEyW5uAP8xFWA0UmsOGucdJKirjRfSvsAPzbIw==}
+  /@ckb-lumos/hd@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-bMuSSRnhlGCgkrmSi7KUoA8V4HYUyahgxoCM6d2DCs2E0hixFrloppEjjAo69SU/KfFFexzkpBmpzHjrZlAqxQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
       bn.js: 5.2.1
       elliptic: 6.5.4
       scrypt-js: 3.0.1
@@ -406,14 +485,15 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/helpers@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-UWxiJSljZcN1zH6Blv5HyjNGgA9VSXyXFh8VSYD7W1xEeHYK05LP00rRWtEr8Z+KSfuuZ0ASg2sJofBDv/UZ9w==}
+  /@ckb-lumos/helpers@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-o1k54cVIsDoX9vuGMKI4KjuYle34oDggQO4euxIjXVrL8ochkbuV88FKjgM1b7+T5VoV1QYzb7xS4Yn3UPpV4Q==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/config-manager': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/toolkit': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/codec': 0.21.0-next.0
+      '@ckb-lumos/config-manager': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/toolkit': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
       bech32: 2.0.0
       immutable: 4.3.0
     transitivePeerDependencies:
@@ -421,19 +501,19 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/lumos@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-LIKf1tDNk0HkK3DQ+BV4dmj/B7nfkbVXlPbzqxwLRaqHTbAArXs8g3JXGfmjZIgpoU6sfXdArO1jVpGRN1xnYg==}
+  /@ckb-lumos/lumos@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-eUbDMISmj0pLu8yBVxwXgyl9w96555hdAdRNRLl56zt9YVbjUWkY4qykdSOHDPoiKzXRdIiKXVUajd9tVmMB9A==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
-      '@ckb-lumos/ckb-indexer': 0.20.0(jsbi@4.3.0)
-      '@ckb-lumos/common-scripts': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/config-manager': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/hd': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/helpers': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/rpc': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/toolkit': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
+      '@ckb-lumos/ckb-indexer': 0.21.0-next.0(jsbi@4.3.0)
+      '@ckb-lumos/common-scripts': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/config-manager': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/hd': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/helpers': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/rpc': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/toolkit': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
     transitivePeerDependencies:
       - cross-fetch
       - debug
@@ -441,12 +521,12 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/rpc@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-vAH/rXMnKYcyKVW8/vg5EvY9roW46FlDod/efLGN5FQyROn0O5Y9PTO/7bs4U1KyPeceHQpRW0ZAQ/KEHBWEzA==}
+  /@ckb-lumos/rpc@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-pAUHZ3GjuNw9YLREyTqtOQ6Ot9eP/7lyx+uZ7vk0ly9RHcq/KvRCDX6MXufAheqtDppp7BIQomKyIMrdVdnu5A==}
     engines: {node: '>=12.0.0'}
     dependencies:
-      '@ckb-lumos/base': 0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0)
-      '@ckb-lumos/bi': 0.20.0
+      '@ckb-lumos/base': 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@ckb-lumos/bi': 0.21.0-next.0
       '@vespaiach/axios-fetch-adapter': 0.3.1(axios@0.27.2)
       axios: 0.27.2
       tslib: 2.3.1
@@ -456,8 +536,8 @@ packages:
       - jsbi
     dev: false
 
-  /@ckb-lumos/toolkit@0.20.0(cross-fetch@3.1.8)(jsbi@4.3.0):
-    resolution: {integrity: sha512-nLNXRPG20NqUdXwHAnKwr0T7nZyDrf4fGwIrsxo+7ffqWeg9wNEhZoqTBJLgxEpoe0I+WHRLwYLiwUbkkqR1SQ==}
+  /@ckb-lumos/toolkit@0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0):
+    resolution: {integrity: sha512-UADzUphlL5jKWRgkE3MBNtxgZ/TgS4Z4cSjKrx8XAa1Ijblkms6vHF3bsA+J+QAxLuZD5uKtP0s1y8aIrbc9iQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       cross-fetch: ^3.1.4

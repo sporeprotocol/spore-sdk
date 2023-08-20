@@ -1,6 +1,6 @@
 import { sharedTestingPrivateKeys } from '@spore-examples/shared';
 import { predefinedSporeConfigs } from '@spore-sdk/core';
-import { createSecp256k1Wallet } from './wallet';
+import { createOmnilockSecp256k1Wallet } from './wallet';
 
 /**
  * SporeConfig provides spore/cluster's detailed info like ScriptIds and CellDeps.
@@ -13,6 +13,12 @@ export const config = predefinedSporeConfigs.Aggron4;
  * feel free to replace them with your own testing accounts.
  */
 export const accounts = {
-  CHARLIE: createSecp256k1Wallet(sharedTestingPrivateKeys.CHARLIE, config),
-  ALICE: createSecp256k1Wallet(sharedTestingPrivateKeys.ALICE, config),
+  CHARLIE: createOmnilockSecp256k1Wallet({
+    privateKey: sharedTestingPrivateKeys.CHARLIE,
+    config,
+  }),
+  ALICE: createOmnilockSecp256k1Wallet({
+    privateKey: sharedTestingPrivateKeys.ALICE,
+    config,
+  }),
 };
