@@ -1,5 +1,14 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.10
+
+### Patch Changes
+
+- 48a6506: Add Omnilock (ACP) and ACP related examples to show developers how to work with the public clusters
+- e88b8e3: Add recipe doc about how to use SporeConfig
+- e509567: Add capacity margin and input witness relevant props to improve controllability of cells in the APIs
+- 8a35bd3: Add transaction max size limit to createSpore/createCluster APIs
+
 ## 0.1.0-beta.9
 
 ### Patch Changes
