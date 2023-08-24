@@ -1,9 +1,9 @@
-import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
-import { Address, OutPoint, Script } from '@ckb-lumos/base';
-import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BIish } from '@ckb-lumos/bi';
+import { FromInfo } from '@ckb-lumos/common-scripts';
+import { Address, OutPoint, Script } from '@ckb-lumos/base';
+import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, payFeeByOutput, setCellAbsoluteCapacityMargin } from '../../../helpers';
+import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
 import { getClusterCellByOutPoint, injectLiveClusterCell } from '../../joints/cluster';
 
 export async function transferCluster(props: {
@@ -12,8 +12,9 @@ export async function transferCluster(props: {
   config?: SporeConfig;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
-  capacityMargin?: BIish;
   useCapacityMarginAsFee?: boolean;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+  updateWitness?: HexString | ((witness: HexString) => HexString);
   updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -26,11 +27,11 @@ export async function transferCluster(props: {
   const useCapacityMarginAsFee = props.useCapacityMarginAsFee ?? true;
 
   // Check capacity margin related props
-  if (!useCapacityMarginAsFee && !props.fromInfos) {
+  if (!useCapacityMarginAsFee && !props.fromInfos?.length) {
     throw new Error('When useCapacityMarginAsFee is enabled, fromInfos is also required');
   }
   if (useCapacityMarginAsFee && props.capacityMargin !== void 0) {
-    throw new Error('When useCapacityMarginAsFee is enabled, cannot set capacity margin of the cluster');
+    throw new Error('When useCapacityMarginAsFee is enabled, cannot set capacityMargin of the cluster');
   }
 
   // Get TransactionSkeleton
@@ -44,13 +45,12 @@ export async function transferCluster(props: {
   // Add cluster to Transaction.inputs and Transaction.outputs
   const injectLiveClusterCellResult = await injectLiveClusterCell({
     txSkeleton,
-    cell: clusterCell,
     addOutput: true,
+    cell: clusterCell,
+    updateWitness: props.updateWitness,
+    capacityMargin: props.capacityMargin,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;
-      if (props.capacityMargin) {
-        cell = setCellAbsoluteCapacityMargin(cell, props.capacityMargin);
-      }
       if (props.updateOutput instanceof Function) {
         cell = props.updateOutput(cell);
       }

@@ -1,15 +1,9 @@
-# Spore Secp256k1 Examples
+# Spore ACP Examples
 
-The Spore Secp256k1 Examples is a collection of code examples written in TypeScript, intended to help developers understand how to use `@spore-sdk/core` in Node environment to:
+The Spore ACP Examples is a collection of code examples written in TypeScript, intended to help developers understand how to use `@spore-sdk/core` in Node environment to:
 
-- Construct and send transactions of spores/clusters on Testnet (Aggron)
-- Use [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) as lock for transactions
-
-## Examples
-
-### [Secp256k1Blake160 Sign-all](./apis)
-
-Examples to construct basic spore/cluster transactions with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) as lock. As the default lock on Nervos CKB, it is widely used in many situations and applications. It would be a good idea to start exploring the spore-sdk with this lock.
+- Create public clusters with ACP ([Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md)) as lock
+- Create spores in a public cluster
 
 ## Run examples
 
@@ -27,13 +21,13 @@ pnpm i && pnpm run build:packages
 
 ### Run an example
 
-> The code of the examples is stored in the [examples/secp256k1/apis](./apis) directory, feel free to review and modify the code, using the examples as your playground or a sandbox to freely experiment.
+> The code of the examples is stored in the [examples/acp/apis](./apis) directory, feel free to review and modify the code, using the examples as your playground or a sandbox to freely experiment.
 
-Assuming your local environment is set up, and you're at the [examples/secp256k1](.) directory, let's run an example to see how things work. 
-For instance, if you want to create a spore on-chain, run the [examples/secp256k1/apis/createSpore.ts](./apis/createSpore.ts) example in your terminal:
+Assuming your local environment is set up, and you're at the [examples/acp](.) directory, let's run an example to see how things work. 
+For instance, if you want to create a spore on-chain, run the [examples/acp/apis/createAcpCluster.ts](./apis/createAcpCluster.ts) example in your terminal:
 
 ```shell
-ts-node apis/createSpore.ts
+ts-node apis/createAcpCluster.ts
 ```
 
 This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `Transaction Hash` should be returned so that you can review the transaction details on [CKB Explorer](https://pudge.explorer.nervos.org/).
@@ -42,7 +36,7 @@ This example constructs and sends a transaction that creates a spore on-chain. O
 
 ### Update configs
 
-If you have your own testing accounts, or if you want to configure the SporeConfig of the examples, you can go to the [examples/secp256k1/utils/config.ts](./utils/config.ts) file and update it. Inside the `utils/config.ts` file, you can:
+If you have your own testing accounts, or if you want to configure the SporeConfig of the examples, you can go to the [examples/acp/utils/config.ts](./utils/config.ts) file and update it. Inside the `utils/config.ts` file, you can:
 
 - Replace the default testing accounts with your own
 - Modify the default SporeConfig as needed
@@ -53,7 +47,7 @@ If you want a clean startup environment for testing the functionality of the spo
 
 How to replace them:
 
-- Replace locally: For replacing the testing accounts locally (only affects the secp256k1 examples), visit the [examples/secp256k1/utils/config.ts](./utils/config.ts) file and edit the `accounts` variable.
+- Replace locally: For replacing the testing accounts locally (only affects the secp256k1 examples), visit the [examples/acp/utils/config.ts](./utils/config.ts) file and edit the `accounts` variable.
 - Replace globally: If you want to replace the testing accounts globally (affects all kinds of examples), you can visit the [examples/shared/index.ts](../shared/index.ts) file and edit the `accounts` variable.
 
 ### Generate testing accounts

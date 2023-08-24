@@ -1,10 +1,9 @@
-import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, Script } from '@ckb-lumos/base';
 import { BIish } from '@ckb-lumos/bi';
+import { Address, Script } from '@ckb-lumos/base';
+import { FromInfo } from '@ckb-lumos/common-scripts';
+import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { assetTransactionSkeletonSize } from '../../../helpers';
-import { injectCapacityAndPayFee, setCellAbsoluteCapacityMargin } from '../../../helpers';
+import { injectCapacityAndPayFee, assetTransactionSkeletonSize } from '../../../helpers';
 import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
 
 export async function createCluster(props: {
@@ -13,8 +12,8 @@ export async function createCluster(props: {
   toLock: Script;
   config?: SporeConfig;
   changeAddress?: Address;
-  capacityMargin?: BIish;
   maxTransactionSize?: number | false;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -35,15 +34,8 @@ export async function createCluster(props: {
   const injectNewClusterResult = injectNewClusterOutput({
     ...props,
     txSkeleton,
-    updateOutput(cell: Cell) {
-      if (capacityMargin.gt(0)) {
-        cell = setCellAbsoluteCapacityMargin(cell, capacityMargin);
-      }
-      if (props.updateOutput instanceof Function) {
-        cell = props.updateOutput(cell);
-      }
-      return cell;
-    },
+    capacityMargin,
+    updateOutput: props.updateOutput,
   });
   txSkeleton = injectNewClusterResult.txSkeleton;
 

@@ -33,13 +33,38 @@ export function correctCellMinimalCapacity(cell: Cell) {
 }
 
 /**
+ * Make sure the target cell has declared enough amount of capacity.
+ */
+export function assetCellMinimalCapacity(cell: Cell) {
+  const minimalCapacity = helpers.minimalCellCapacityCompatible(cell);
+  if (minimalCapacity.gt(cell.cellOutput.capacity)) {
+    const minimal = minimalCapacity.toString();
+    const declared = BI.from(cell.cellOutput.capacity).toString();
+    throw new Error(`Target cell required capacity of ${minimal}, but declared ${declared}`);
+  }
+}
+
+/**
+ * Calculate the target cell's capacity margin.
+ * Could be negative if the cell's declared capacity is not enough.
+ */
+export function getCellCapacityMargin(cell: Cell) {
+  const minimalCapacity = helpers.minimalCellCapacityCompatible(cell);
+  return BI.from(cell.cellOutput.capacity).sub(minimalCapacity);
+}
+
+/**
  * Set absolute capacity margin for a cell.
  * The term 'absolute' means the cell's capacity will be: 'minimal capacity' + 'capacity margin'.
  */
-export function setCellAbsoluteCapacityMargin(cell: Cell, capacityMargin: BIish) {
+export function setAbsoluteCapacityMargin(cell: Cell, capacityMargin: BIish | ((cell: Cell, margin: BI) => BIish)) {
   cell = cloneDeep(cell);
+
+  const currentMargin = getCellCapacityMargin(cell);
+  const margin: BIish = capacityMargin instanceof Function ? capacityMargin(cell, currentMargin) : capacityMargin;
+
   const minimalCapacity = helpers.minimalCellCapacityCompatible(cell);
-  cell.cellOutput.capacity = minimalCapacity.add(capacityMargin).toHexString();
+  cell.cellOutput.capacity = minimalCapacity.add(margin).toHexString();
   return cell;
 }
 

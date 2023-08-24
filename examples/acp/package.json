@@ -1,5 +1,5 @@
 {
-  "name": "@spore-examples/secp256k1",
+  "name": "@spore-examples/acp",
   "license": "MIT",
   "private": true,
   "scripts": {

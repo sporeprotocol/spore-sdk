@@ -1,14 +1,15 @@
+import { BIish } from '@ckb-lumos/bi';
 import { bytes, BytesLike } from '@ckb-lumos/codec';
 import { OutPoint, PackedSince, Script } from '@ckb-lumos/base';
-import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
+import { BI, Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { EncodableContentType, setContentTypeParameters } from '../../helpers';
-import { correctCellMinimalCapacity, generateTypeIdsByOutputs } from '../../helpers';
+import { correctCellMinimalCapacity, setAbsoluteCapacityMargin, generateTypeIdsByOutputs } from '../../helpers';
 import { getCellWithStatusByOutPoint, getCellByType, setupCell } from '../../helpers';
 import { isSporeScriptSupported, isSporeScriptSupportedByName } from '../../config';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../config';
 import { getClusterCellById, injectLiveClusterCell } from './cluster';
-import { SporeData } from '../../codec';
+import { packRawSporeData } from '../../codec';
 
 export interface SporeDataProps {
   /**
@@ -48,12 +49,16 @@ export async function injectNewSporeOutput(props: {
   toLock: Script;
   config?: SporeConfig;
   updateOutput?(cell: Cell): Cell;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+  cluster?: {
+    updateOutput?(cell: Cell): Cell;
+    capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+    updateWitness?: HexString | ((witness: HexString) => HexString);
+  };
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
-  // spore info
   outputIndex: number;
   hasId: boolean;
-  // cluster info
   cluster?: {
     inputIndex: number;
     outputIndex: number;
@@ -66,34 +71,24 @@ export async function injectNewSporeOutput(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // If the creating spore requires a cluster, collect it to inputs/outputs
+  // If the creating spore requires a cluster, collect it to inputs/outputs to prove it's unlockable
   let injectClusterCellResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
-  let injectClusterInfo: { inputIndex: number; outputIndex: number } | undefined;
-  let clusterCell: Cell | undefined;
   if (sporeData.clusterId) {
-    // Search cluster by ClusterID
-    clusterCell = await getClusterCellById(sporeData.clusterId, config);
-
-    // Add dep cluster to Transaction.inputs and Transaction.outputs,
-    // but don't change its lock script
     injectClusterCellResult = await injectLiveClusterCell({
-      cell: clusterCell,
+      cell: await getClusterCellById(sporeData.clusterId, config),
+      capacityMargin: props.cluster?.capacityMargin,
+      updateWitness: props.cluster?.updateWitness,
+      updateOutput: props.cluster?.updateOutput,
+      addOutput: true,
       txSkeleton,
       config,
-      addOutput: true,
     });
     txSkeleton = injectClusterCellResult.txSkeleton;
-
-    // Record cluster's index info
-    injectClusterInfo = {
-      inputIndex: injectClusterCellResult.inputIndex,
-      outputIndex: injectClusterCellResult.outputIndex,
-    };
   }
 
   // Create spore cell (with the latest version of SporeType script)
   const sporeScript = getSporeScript(config, 'Spore');
-  const sporeCell: Cell = correctCellMinimalCapacity({
+  let sporeCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
       lock: props.toLock,
@@ -103,10 +98,8 @@ export async function injectNewSporeOutput(props: {
       },
     },
     data: bytes.hexify(
-      SporeData.pack({
-        contentType: bytes.bytifyRawString(
-          setContentTypeParameters(sporeData.contentType, sporeData.contentTypeParameters ?? {}),
-        ),
+      packRawSporeData({
+        contentType: setContentTypeParameters(sporeData.contentType, sporeData.contentTypeParameters ?? {}),
         content: sporeData.content,
         clusterId: sporeData.clusterId,
       }),
@@ -116,8 +109,13 @@ export async function injectNewSporeOutput(props: {
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
-    const finalSporeCell = props.updateOutput instanceof Function ? props.updateOutput(sporeCell) : sporeCell;
-    return outputs.push(finalSporeCell);
+    if (props.capacityMargin !== void 0) {
+      sporeCell = setAbsoluteCapacityMargin(sporeCell, props.capacityMargin);
+    }
+    if (props.updateOutput instanceof Function) {
+      sporeCell = props.updateOutput(sporeCell);
+    }
+    return outputs.push(sporeCell);
   });
 
   // Fix output indices to prevent them from future reduction
@@ -152,9 +150,10 @@ export async function injectNewSporeOutput(props: {
   // Add Spore cellDeps
   txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
   // Add dep cluster to cellDeps, if exists
-  if (clusterCell?.outPoint) {
+  if (injectClusterCellResult) {
+    const clusterCell = txSkeleton.get('inputs').get(injectClusterCellResult.inputIndex)!;
     txSkeleton = addCellDep(txSkeleton, {
-      outPoint: clusterCell.outPoint,
+      outPoint: clusterCell.outPoint!,
       depType: 'code',
     });
   }
@@ -163,7 +162,12 @@ export async function injectNewSporeOutput(props: {
     txSkeleton,
     outputIndex,
     hasId: firstInput !== void 0,
-    cluster: injectClusterInfo ?? void 0,
+    cluster: injectClusterCellResult
+      ? {
+          inputIndex: injectClusterCellResult.inputIndex,
+          outputIndex: injectClusterCellResult.outputIndex,
+        }
+      : void 0,
   };
 }
 
@@ -224,8 +228,10 @@ export async function injectLiveSporeCell(props: {
   config?: SporeConfig;
   addOutput?: boolean;
   updateOutput?(cell: Cell): Cell;
-  since?: PackedSince;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+  updateWitness?: HexString | ((witness: HexString) => HexString);
   defaultWitness?: HexString;
+  since?: PackedSince;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -238,7 +244,7 @@ export async function injectLiveSporeCell(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Check target cell type
+  // Check target cell's type script id
   const sporeType = sporeCell.cellOutput.type;
   const sporeScript = getSporeScript(config, 'Spore', sporeType);
   if (!sporeType || !sporeScript) {
@@ -250,10 +256,19 @@ export async function injectLiveSporeCell(props: {
     txSkeleton,
     input: sporeCell,
     addOutput: props.addOutput,
-    updateOutput: props.updateOutput,
-    since: props.since,
-    config: config.lumos,
+    updateOutput(cell) {
+      if (props.capacityMargin !== void 0) {
+        cell = setAbsoluteCapacityMargin(cell, props.capacityMargin);
+      }
+      if (props.updateOutput instanceof Function) {
+        cell = props.updateOutput(cell);
+      }
+      return cell;
+    },
     defaultWitness: props.defaultWitness,
+    updateWitness: props.updateWitness,
+    config: config.lumos,
+    since: props.since,
   });
   txSkeleton = setupCellResult.txSkeleton;
 
@@ -267,7 +282,7 @@ export async function injectLiveSporeCell(props: {
     });
   }
 
-  // Add spore required cellDeps
+  // Add spore type as cellDep
   txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
 
   return {

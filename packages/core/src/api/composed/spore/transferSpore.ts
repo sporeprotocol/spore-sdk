@@ -1,9 +1,9 @@
 import { BIish } from '@ckb-lumos/bi';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint, Script } from '@ckb-lumos/base';
-import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
+import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, payFeeByOutput, setCellAbsoluteCapacityMargin } from '../../../helpers';
+import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
 import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
 
 export async function transferSpore(props: {
@@ -12,8 +12,9 @@ export async function transferSpore(props: {
   config?: SporeConfig;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
-  capacityMargin?: BIish;
   useCapacityMarginAsFee?: boolean;
+  capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
+  updateWitness?: HexString | ((witness: HexString) => HexString);
   updateOutput?(cell: Cell): Cell;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -44,11 +45,10 @@ export async function transferSpore(props: {
     cell: sporeCell,
     txSkeleton,
     addOutput: true,
+    updateWitness: props.updateWitness,
+    capacityMargin: props.capacityMargin,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;
-      if (props.capacityMargin) {
-        cell = setCellAbsoluteCapacityMargin(cell, props.capacityMargin);
-      }
       if (props.updateOutput instanceof Function) {
         cell = props.updateOutput(cell);
       }
