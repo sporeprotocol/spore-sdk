@@ -8,7 +8,7 @@ import { helpers } from '@ckb-lumos/lumos';
  * [Calculate transaction fee](https://github.com/nervosnetwork/ckb/wiki/Transaction-%C2%BB-Transaction-Fee#calculate-transaction-fee)
  */
 export function getTransactionSize(tx: Transaction): number {
-  const serializedTx = blockchain.RawTransaction.pack(tx);
+  const serializedTx = blockchain.Transaction.pack(tx);
   return 4 + serializedTx.buffer.byteLength;
 }
 
