@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.11
+
+### Patch Changes
+
+- e41e791: Fix wrong molecule used in transaction size calculation
+
 ## 0.1.0-beta.10
 
 ### Patch Changes
