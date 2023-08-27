@@ -37,30 +37,55 @@
 - 💖 Designed and implemented based on [Lumos](https://github.com/ckb-js/lumos)
 - 🎹 Fully written in TypeScript
 
+## Getting started
+
+Start using spore-sdk with the `spore-first-example`:
+
+https://github.com/sporeprotocol/spore-first-example/blob/0fd0a79fdbfab06c0d11c08011f457986fa85d93/src/index.ts#L4-L20
+
+Follow the recipes to learn and explore the usage of spore-sdk: 
+
+- [Construct transactions with spore-sdk](docs/recipes/construct-transaction.md)
+
+- [Create immortal spores on-chain](docs/recipes/create-immortal-spore.md)
+
+- [Pay fee with capacity margin](docs/recipes/capacity-margin.md)
+
+- [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
+
+- [Configure spore-sdk with SporeConfig](docs/recipes/configure-spore-config.md)
+
 ## Packages
 
 ### [@spore-sdk/core](./packages/core)
 
-The core library of the spore-sdk, providing everything developers need to construct basic and advanced transactions on spores and clusters, and handling [molecule](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary, or vice versa.
+The core library of spore-sdk, providing everything developers need to construct basic and advanced transactions on spores and clusters, and handling [molecule](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary, or vice versa.
 
 ## Examples
 
-### [@spore-examples/secp256k1](./examples/secp256k1) 
+### [Secp256k1Blake160 Sign-all](./examples/secp256k1)
 
-Real code examples presenting how to construct basic spore/cluster transactions with the spore-sdk, along with straightforward code showing the process of signing
-and unlocking [Secp256k1Blake160](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) spores/clusters in a transaction.
+Start with the most commonly used lock in Nervos CKB to:
 
-## Recipes
+- Create/transfer clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+- Create/transfer/destroy spores with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
 
-### [Construct transactions with spore-sdk](docs/recipes/construct-transaction.md)
+### [Anyone-can-pay](./examples/acp)
 
-### [Create immortal spores on-chain](docs/recipes/create-immortal-spore.md)
+[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) (ACP) lock can be unlocked by anyone without signature verification and accepts any amount of CKB or UDT payment from the unlocker. 
+Use its flexibility to:
 
-### [Pay fee with capacity margin](docs/recipes/capacity-margin.md)
-  
-### [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
+- Create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
+- Create spores in public clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
 
-### [Configure spore-sdk with SporeConfig](docs/recipes/configure-spore-config.md)
+### [Omnilock](./examples/omnilock)
+
+[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock is an interoperable lock script supporting various blockchains (Bitcoin, Ethereum, EOS, etc.) verification methods and extensible for future additions. 
+It also offers a regulation compliance module for administrator-controlled token revocation, enabling registered assets like Apple stock on CKB when combined with the RCE (Regulation Compliance Extension). 
+Omnilock can be integrated with spore-sdk to:
+
+- Create public clusters with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
+- Create spores in public clusters with the [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock
 
 ## License
 
