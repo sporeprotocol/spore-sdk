@@ -1,20 +1,20 @@
 # Spore Omnilock Examples
 
-The Spore Omnilock Examples is a collection of code examples written in TypeScript, intended to help developers understand how to use `@spore-sdk/core` in Node environment to:
+## Introduction
 
-- Construct and send transactions of spores/clusters on Testnet (Aggron)
-- Use [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) as lock for transactions
+### What is `Omnilock` lock
 
-## Examples
+[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) is an interoperable lock script supporting various blockchains (Bitcoin, Ethereum, EOS, etc.) verification methods and extensible for future additions.
 
-### [Omnilock with Anyone-can-pay mode](./acp)
+It also offers a regulation compliance module for administrator-controlled token revocation, enabling registered assets like Apple stock on CKB when combined with the RCE (Regulation Compliance Extension).
 
-Examples to use Omnilock as lock for spores/clusters, with [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) mode enabled.
+### Featured examples
 
-An Omnilock ACP cell can be unlocked by anyone if the unlocker satisfies the rules acquired by the lock. For instance, If you've created an Omnilock ACP cluster on-chain, the cluster is considered to be a public cluster, and other users can pay capacity to the public cluster to create spores in the cluster, without needing your signature to unlock the cluster. 
+Spore Omnilock Examples is a collection of code examples where developers can learn how to interact with Omnilock and spore-sdk for various purposes.
 
-- [acp/createAcpCluster.ts](./acp/createAcpCluster.ts): Create an Omnilock ACP ([Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) mode) cluster.
-- [acp/createSporeInAcpCluster.ts](./acp/createSporeInAcpCluster.ts): Create a spore in an Omnilock ACP ([Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) mode) cluster.
+In [`/acp`](./acp):
+- Create public clusters with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
+- Create spores in public clusters with the [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock
 
 ## Run examples
 

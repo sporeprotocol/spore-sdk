@@ -1,15 +1,18 @@
 # Spore Secp256k1 Examples
 
-The Spore Secp256k1 Examples is a collection of code examples written in TypeScript, intended to help developers understand how to use `@spore-sdk/core` in Node environment to:
+## Introduction
 
-- Construct and send transactions of spores/clusters on Testnet (Aggron)
-- Use [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) as lock for transactions
+### What is `Secp256k1Blake160 Sign-all` lock
 
-## Examples
+[Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) is the most widely used lock script on Nervos CKB, or it can even be called as the default lock of Nervos CKB. Users can use the lock to protect their spores/clusters, that if anyone tries to unlock a spore/cluster, a signature must be provided to prove ownership.
 
-### [Secp256k1Blake160 Sign-all](./apis)
+### Featured examples
 
-Examples to construct basic spore/cluster transactions with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) as lock. As the default lock on Nervos CKB, it is widely used in many situations and applications. It would be a good idea to start exploring the spore-sdk with this lock.
+The Spore Secp256k1 Examples is a collection of code examples to show developers how to achieve different purposes with Secp256k1Blake160 Sign-all lock and spore-sdk.
+
+In [`/apis`](./apis):
+- Create/transfer clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+- Create/transfer/destroy spores with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
 
 ## Run examples
 

@@ -1,9 +1,21 @@
 # Spore ACP Examples
 
-The Spore ACP Examples is a collection of code examples written in TypeScript, intended to help developers understand how to use `@spore-sdk/core` in Node environment to:
+## Introduction
 
-- Create public clusters with ACP ([Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md)) as lock
-- Create spores in a public cluster
+### What is `Anyone-can-pay` lock
+
+[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) is a lock script designed to accept any amount of CKB or UDT payment from any sender. An ACP lock cell can be unlocked by anyone without signature verification if the unlocker can meet the lock's requirements.
+
+For instance, if A wants to transfer some CKB to B, normally A has to create a new cell to B, containing at least 61 CKB (if B is Secp256k1Blake160 Sign-all lock) of capacity.
+But if B has an ACP lock cell on-chain, A can just unlock the ACP lock cell and add any amount of CKB into the cell, without signature verification from B. 
+
+### Featured examples
+
+The Spore ACP Examples is a collection of code examples to show developers how to achieve different purposes with Anyone-can-pay lock and spore-sdk.
+
+In [`/apis`](./apis):
+- Create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
+- Create spores in public clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
 
 ## Run examples
 
