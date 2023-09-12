@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.1.0-beta.12
+
+### Patch Changes
+
+- f9d2e61: Fix the utf-8 encoding issue, originally the lumos `bytes.bytifyRawString` method can only handle ascii strings
+
 ## 0.1.0-beta.11
 
 ### Patch Changes
