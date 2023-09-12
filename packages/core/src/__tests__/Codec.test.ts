@@ -1,13 +1,13 @@
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { ClusterData, SporeData } from '../codec';
-import { bufferToRawText } from '../helpers';
+import { bufferToRawString, bytifyRawString } from '../helpers';
 
 describe('Codec', function () {
   it('Pack ClusterData', function () {
     const packed = ClusterData.pack({
-      name: bytes.bytifyRawString('cluster name'),
-      description: bytes.bytifyRawString('description of the cluster'),
+      name: bytifyRawString('cluster name'),
+      description: bytifyRawString('description of the cluster'),
     });
 
     console.log(packed);
@@ -29,8 +29,8 @@ describe('Codec', function () {
         '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAf/xAAfEAADAAICAwEBAAAAAAAAAAABAgMEBQARBiExQRT/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AZHc7XC1vm2wts8x8ds7Y4Ume7H+N0QtAoSepqSzp69ljEAfeUPxO1cnw7S3vV61rr4PSjsWZ2M1JJJ+kn94p9NqqYuRivrMNsfKqbZEjBSlnJBLMOumbsA9n36HExjLGhOEJJKUlCTmihVRQOgAB8AH5wP/Z',
     };
     const params = {
-      contentType: bytes.hexify(bytes.bytifyRawString('image/jpeg')),
-      content: bytes.hexify(bytes.bytifyRawString(source.base64)),
+      contentType: bytes.hexify(bytifyRawString('image/jpeg')),
+      content: bytes.hexify(bytifyRawString(source.base64)),
       // clusterId: '0x'
     };
     console.log(params);
@@ -44,6 +44,6 @@ describe('Codec', function () {
       '0xec010000100000002c000000c801000018000000696d6167652f6a7065673b696d6d6f7274616c3d7472756598010000ffd8ffe000104a46494600010101004800480000ffdb0043000a07070807060a0808080b0a0a0b0e18100e0d0d0e1d15161118231f2524221f2221262b372f26293429212230413134393b3e3e3e252e4449433c48373d3e3bffdb0043010a0b0b0e0d0e1c10101c3b2822283b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3bffc0001108000a000a03012200021101031101ffc4001500010100000000000000000000000000000407ffc4001f1000030002020301010000000000000000010203040500110621314114ffc40014010100000000000000000000000000000000ffc40014110100000000000000000000000000000000ffda000c03010002110311003f0064773b5c2d6f9b6c2db3cc7c76ced8e1499eec7f8dd10b40a127a9a92ce9ebd9631007de50fc4ed5c9f0ed2def57ad6baf83d28ec599d8cd49249fa49fde29f4daaa62e462beb30db1f2aa6d91230529672412cc3ae99bb00f67dfa1c4c632c684e10924a5250939a28554503a0001f001f9c0ffd92000000011783274ca0701ef9b50349647979e39699545776ac615c44ace228aa62e1650';
     const data = SporeData.unpack(origin);
     console.log(data);
-    console.log(bufferToRawText('0x696d6167652f6a7065673b696d6d6f7274616c3d74727565'));
+    console.log(bufferToRawString('0x696d6167652f6a7065673b696d6d6f7274616c3d74727565'));
   });
 });

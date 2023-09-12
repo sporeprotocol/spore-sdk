@@ -1,11 +1,12 @@
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { utils } from '@ckb-lumos/lumos';
+import { bytifyRawString } from '../helpers';
 import { TESTNET_ENV } from './shared';
 
 describe('Lumos', function () {
   it('Encode buffer', function () {
-    const hex = bytes.hexify(bytes.bytifyRawString('image/jpeg'));
+    const hex = bytes.hexify(bytifyRawString('image/jpeg'));
     console.log(hex);
   });
   it('Decode buffer', function () {

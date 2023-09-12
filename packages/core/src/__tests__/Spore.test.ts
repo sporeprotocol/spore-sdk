@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { OutPoint } from '@ckb-lumos/base';
+import { bytifyRawString } from '../helpers';
 import { createSpore, destroySpore, transferSpore } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
@@ -19,7 +20,7 @@ async function fetchLocalImage(src: string) {
     arrayBuffer,
     arrayBufferHex: bytes.hexify(arrayBuffer),
     base64,
-    base64Hex: bytes.hexify(bytes.bytifyRawString(base64)),
+    base64Hex: bytes.hexify(bytifyRawString(base64)),
   };
 }
 
