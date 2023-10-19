@@ -1,18 +1,23 @@
-# Spore Secp256k1 Examples
+# Spore Default Lock Examples
 
 ## Introduction
 
-### What is `Secp256k1Blake160 Sign-all` lock
+### What is `CKB Default Lock`
 
-[Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) is the most widely used lock script on Nervos CKB, or it can even be called as the default lock of Nervos CKB. Users can use the lock to protect their spores/clusters, that if anyone tries to unlock a spore/cluster, a signature must be provided to prove ownership.
+[CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1) is the most commonly used lock script on [Nervos CKB](https://www.nervos.org/), also a great starting point for beginners due to its simplicity. You can create private spores and clusters with the [CKB Default Lock](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) for safeguarding ownership of your private assets.
+
+[CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1) is also known as the `Secp256k1Blake160 Sign-all` lock. 
 
 ### Featured examples
 
-The Spore Secp256k1 Examples is a collection of code examples to show developers how to achieve different purposes with Secp256k1Blake160 Sign-all lock and spore-sdk.
+Spore:
+- [apis/createSpore.ts](./apis/createSpore.ts): Create a spore with [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1)
+- [apis/transferSpore.ts](./apis/transferSpore.ts): Unlock and transfer a spore from A to B
+- [apis/destroySpore.ts](./apis/destroySpore.ts): Unlock and destroy a spore from the blockchain
 
-In [`/apis`](./apis):
-- Create/transfer clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
-- Create/transfer/destroy spores with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+Cluster:
+- [apis/createCluster.ts](./apis/createCluster.ts): Create a cluster with [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1)
+- [apis/transferSpore.ts](./apis/transferCluster.ts): Unlock and transfer a cluster from A to B
 
 ## Run examples
 
@@ -22,7 +27,7 @@ In [`/apis`](./apis):
 
 ### Setup environment
 
-To set up the local environment, run the following command at the spore-sdk's root directory:
+To set up the local environment, run the following command at the root of the Spore SDK:
 
 ```shell
 pnpm i && pnpm run build:packages
@@ -30,16 +35,19 @@ pnpm i && pnpm run build:packages
 
 ### Run an example
 
-> The code of the examples is stored in the [examples/secp256k1/apis](./apis) directory, feel free to review and modify the code, using the examples as your playground or a sandbox to freely experiment.
-
-Assuming your local environment is set up, and you're at the [examples/secp256k1](.) directory, let's run an example to see how things work. 
-For instance, if you want to create a spore on-chain, run the [examples/secp256k1/apis/createSpore.ts](./apis/createSpore.ts) example in your terminal:
+Go to the current directory (`examples/secp256k1`) and run an example:
 
 ```shell
 ts-node apis/createSpore.ts
 ```
 
-This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `Transaction Hash` should be returned so that you can review the transaction details on [CKB Explorer](https://pudge.explorer.nervos.org/).
+### Review transaction
+
+This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `hash` value should be returned. You can later review the transaction on [CKB Explorer](https://pudge.explorer.nervos.org/):
+
+```shell
+https://pudge.explorer.nervos.org/transaction/{hash}
+```
 
 ## Customization
 

@@ -1,10 +1,10 @@
-# Configure spore-sdk with SporeConfig
+# Configure Spore SDK with SporeConfig
 
 ## What is SporeConfig
 
-To create a spore on-chain, the spore-sdk needs to know the `ScriptId`/`CellDep` of the `SporeType` script.
-And when a transaction is ready to be sent on-chain, the spore-sdk needs to know the URL of the target RPC.
-Everything required by the spore-sdk is designed to be stored in a SporeConfig, which is a context object that stores/passes information.
+To create a spore on-chain, the Spore SDK needs to know the `ScriptId`/`CellDep` of the `SporeType` script.
+And when a transaction is ready to be sent on-chain, the Spore SDK needs to know the URL of the target RPC.
+Everything required by the Spore SDK is designed to be stored in a SporeConfig, which is a context object that stores/passes information.
 
 A SporeConfig object will have the following properties:
 
@@ -15,19 +15,19 @@ A SporeConfig object will have the following properties:
 - `ckbNodeUrl`: CKB RPC node's URL, will be used when creating lumos/rpc instances. Refer to: [@ckb-lumos/rpc](https://github.com/ckb-js/lumos/tree/develop/packages/rpc).
 - `ckbIndexerUrl`: CKB Indexer node's URL, will be used when creating lumos/ckb-indexer instances. Refer to: [@ckb-lumos/ckb-indexer](https://github.com/ckb-js/lumos/tree/develop/packages/ckb-indexer).
 - `maxTransactionSize`: Specify the maximum size (in bytes) of single transactions, will be used in variants of APIs to prevent constructing oversize transactions.
-- `scripts`: Define necessary script infos, etc. ScriptId, CellDep. For instance the spore-sdk will use the script infos of Spore and Cluster.
-- `extensions`: Define what SporeExtension(s) to be used in the spore-sdk. Note: this part is WIP (working in progress).
+- `scripts`: Define necessary script infos, etc. ScriptId, CellDep. For instance, the Spore SDK will use the script infos of Spore and Cluster.
+- `extensions`: Define what SporeExtension(s) to be used in the Spore SDK. Note: this part is WIP (working in progress).
 
 ## Common usages
 
 ### Use the predefined configs
 
-When using the spore-sdk, developers might want to specify a SporeConfig in order to make actions on a target environment. The spore-sdk provides a `predefinedSporeConfigs` with mainnet/testnet predefined configurations for developers to switch to these environments faster, which contains:
+When using the Spore SDK, developers might want to specify a SporeConfig to make actions on a target environment. The Spore SDK provides a `predefinedSporeConfigs` with mainnet/testnet predefined configurations for developers to switch to these environments faster, which contains:
 
 - `Aggron4`: A SporeConfig object containing Spore Protocol infos on CKB Testnet (Aggron4).
 - `Lina (Not presented yet)`: A SporeConfig object containing Spore Protocol infos on CKB Mainnet (Lina). Note the Spore Protocol is not on mainnet yet, therefore the option is only a placeholder, we'll update it as soon as the Spore Protocol goes on mainnet.
 
-The spore-sdk uses `predefinedSporeConfigs.Aggron4` as the default config.  
+The Spore SDK uses `predefinedSporeConfigs.Aggron4` as the default config.  
 But for example, if you want to create a spore on mainnet instead of testnet, specify it like this:
 
 ```typescript

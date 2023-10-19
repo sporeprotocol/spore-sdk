@@ -1,20 +1,17 @@
 # Spore Omnilock Examples
 
-## Introduction
+## What is `Omnilock` lock
 
-### What is `Omnilock` lock
+[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) is a universal and interoperable lock script supporting various blockchains' verification methods (Bitcoin, Ethereum, EOS, etc.) and extensible for future additions. You can create private spores and clusters with it for safeguarding ownership of your assets.
 
-[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) is an interoperable lock script supporting various blockchains (Bitcoin, Ethereum, EOS, etc.) verification methods and extensible for future additions.
+[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) also supports a [compatible anyone-can-pay mode](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode), which allows you to create public clusters with the lock script and benefit from charging other users for creating spores within the public cluster. 
 
-It also offers a regulation compliance module for administrator-controlled token revocation, enabling registered assets like Apple stock on CKB when combined with the RCE (Regulation Compliance Extension).
+Please note that [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock differs from the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock in that it does not allow the minimal CKB or UDT (User-Defined Token) payment amount to be configured as `undefined`. This means that each transaction referencing an Omnilock ACP cell should receive a certain amount of payment.
 
-### Featured examples
+## Featured examples
 
-Spore Omnilock Examples is a collection of code examples where developers can learn how to interact with Omnilock and spore-sdk for various purposes.
-
-In [`/acp`](./acp):
-- Create public clusters with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
-- Create spores in public clusters with the [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock
+- [acp/createAcpCluster.ts](./acp/createAcpCluster.ts): Create a public cluster with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
+- [acp/createSporeInAcpCluster.ts](./acp/createSporeInAcpCluster.ts): Create an [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) private spore within an [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock cluster
 
 ## Run examples
 
@@ -24,7 +21,7 @@ In [`/acp`](./acp):
 
 ### Setup environment
 
-To set up the local environment, run the following command at the spore-sdk's root directory:
+To set up the local environment, run the following command at the root of the Spore SDK:
 
 ```shell
 pnpm i && pnpm run build:packages
@@ -32,15 +29,19 @@ pnpm i && pnpm run build:packages
 
 ### Run an example
 
-> The code of the examples is stored in the [examples/omnilock/acp](./acp) directory, feel free to review and modify the code, using the examples as your playground or a sandbox to freely experiment.
-
-Assuming your local environment is set up, and you're at the [examples/omnilock](.) directory, let's run an example to see how things work. For instance, if you want to create a cluster with Omnilock as lock with [anyone-can-pay mode](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) enabled, run the [examples/omnilock/acp/createAcpCluster.ts](./acp/createAcpCluster.ts) example in your terminal:
+Go to the current directory (`examples/omnilock`) and run an example:
 
 ```shell
 ts-node acp/createAcpCluster.ts
 ```
 
-This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `Transaction Hash` should be returned so that you can review the transaction details on [CKB Explorer](https://pudge.explorer.nervos.org/).
+### Review transaction
+
+This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `hash` value should be returned. You can later review the transaction on [CKB Explorer](https://pudge.explorer.nervos.org/):
+
+```shell
+https://pudge.explorer.nervos.org/transaction/{hash}
+```
 
 ## Customization
 
@@ -53,7 +54,7 @@ If you have your own testing accounts, or if you want to configure the SporeConf
 
 ### Use your own accounts
 
-If you want a clean startup environment for testing the functionality of the spore-sdk, you can replace the default testing accounts with your own accounts. Whether locally or in globally, there has two default testing accounts being used, `CHARLIE` and `ALICE`.
+If you want a clean startup environment for testing the functionality of the Spore SDK, you can replace the default testing accounts with your own accounts. Whether locally or in globally, there has two default testing accounts being used, `CHARLIE` and `ALICE`.
 
 How to replace them:
 

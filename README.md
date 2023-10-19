@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  A <a href="https://github.com/ckb-js/lumos">Lumos</a> based TypeScript SDK to interact with Spore Protocol.
+  A TypeScript SDK to interact with Spore Protocol.
 </p>
 
 <p align="center">
@@ -29,23 +29,40 @@
   </a>
 </p>
 
+## Intro
+
+Spore SDK is a Web development kit for integration with [Spore Protocol](https://github.com/sporeprotocol/spore-contract), an asset protocol for valuing on-chain contents, build on top of [CKB](https://github.com/nervosnetwork/ckb).
+It leverages the power of [Lumos](https://github.com/ckb-js/lumos) to provide seamless dapp development with Spore.
+
+
 ## Features
 
 - ⚡ Composed APIs for efficient spores/clusters interactions with minimal time overhead
 - 🧩 Joint APIs for building advanced transactions as a fun block-building process
 - 🛠️ Utilities for encoding/decoding data of spores/clusters
-- 💖 Designed and implemented based on [Lumos](https://github.com/ckb-js/lumos)
 - 🎹 Fully written in TypeScript
+
+
+## Documentation
+
+For full documentation and instructions, visit [docs.spore.pro](https://docs.spore.pro).
+
 
 ## Getting started
 
-Start using spore-sdk with the `spore-first-example`:
+### Create your first spore in Node.js
 
-https://github.com/sporeprotocol/spore-first-example/blob/0fd0a79fdbfab06c0d11c08011f457986fa85d93/src/index.ts#L4-L20
+Follow the step-by-step tutorial to create your first spore: [Creating your first Spore](https://docs.spore.pro/tutorials/create-first-spore).
 
-Follow the recipes to learn and explore the usage of spore-sdk: 
+Or you can run and play with the [spore-first-example](https://github.com/sporeprotocol/spore-first-example) on [StackBlitz](https://stackblitz.com/github/sporeprotocol/spore-first-example?file=src%2Findex.ts&view=editor).
 
-- [Construct transactions with spore-sdk](docs/recipes/construct-transaction.md)
+### Follow the recipes
+
+Visit the Spore Docs for more categorized and general [How-to recipes](https://docs.spore.pro/category/how-to).
+
+Or study the following recipes to explore the usage of the SDK:
+
+- [Construct transactions with Spore SDK](docs/recipes/construct-transaction.md)
 
 - [Create immortal spores on-chain](docs/recipes/create-immortal-spore.md)
 
@@ -53,39 +70,49 @@ Follow the recipes to learn and explore the usage of spore-sdk:
 
 - [Handle spore/cluster data](docs/recipes/handle-cell-data.md)
 
-- [Configure spore-sdk with SporeConfig](docs/recipes/configure-spore-config.md)
+- [Configure Spore SDK](docs/recipes/configure-spore-config.md)
 
-## Packages
+### Building browser env dapps
 
-### [@spore-sdk/core](./packages/core)
+The Spore SDK is built on top of [Lumos](https://github.com/ckb-js/lumos), an open-source dapp framework for Nervos CKB. Lumos incorporates certain Node-polyfills into its implementation, such as `crypto-browserify` and `buffer`, to provide specific functionalities.
 
-The core library of spore-sdk, providing everything developers need to construct basic and advanced transactions on spores and clusters, and handling [molecule](https://github.com/nervosnetwork/molecule) of spores/clusters from human-readable content to binary, or vice versa.
+If you intend to use the Spore SDK in a browser environment, it's important to note that you may need to manually add Node-polyfills to your application. This ensures that the Spore SDK functions properly in the browser. For detailed instructions on how to add these polyfills, refer to the Lumos documentation: [CRA, Vite, Webpack or Other](https://lumos-website.vercel.app/recipes/cra-vite-webpack-or-other).
 
-## Examples
+## Development
 
-### [Secp256k1Blake160 Sign-all](./examples/secp256k1)
+### Packages & toolchains
 
-Start with the most commonly used lock in Nervos CKB to:
+- [@spore-sdk/core](./packages/core) - Provides essential tools for constructing basic and advanced transactions on spores and clusters. Additionally, it offers convenient utilities for handling [serialization](https://github.com/nervosnetwork/molecule) of spores/clusters.
 
-- Create/transfer clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
-- Create/transfer/destroy spores with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+### Code references
 
-### [Anyone-can-pay](./examples/acp)
+- [Examples](./docs/resources/examples.md) - Code block examples for implementing basic and specific features.
 
-[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) (ACP) lock can be unlocked by anyone without signature verification and accepts any amount of CKB or UDT payment from the unlocker. 
-Use its flexibility to:
+- [Demos](./docs/resources/demos.md) - Demo applications with full functionality, including seamless integration with wallets.
 
-- Create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
-- Create spores in public clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
 
-### [Omnilock](./examples/omnilock)
+### APIs
 
-[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock is an interoperable lock script supporting various blockchains (Bitcoin, Ethereum, EOS, etc.) verification methods and extensible for future additions. 
-It also offers a regulation compliance module for administrator-controlled token revocation, enabling registered assets like Apple stock on CKB when combined with the RCE (Regulation Compliance Extension). 
-Omnilock can be integrated with spore-sdk to:
+- [Composed APIs](./docs/core/composed-apis.md) - APIs for efficient spores/clusters. interactions with minimal time overhead
 
-- Create public clusters with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
-- Create spores in public clusters with the [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock
+- [Joint APIs](./docs/core/joint-apis.md) - APIs for building advanced transactions as a fun block-building process.
+ 
+ 
+## Community
+
+Reach out to us if you have questions about Spore Protocol:
+- Join the community on: [ HaCKBee - Discord](https://discord.gg/9eufnpZZ8P)
+- Contact via email at [contact@spore.pro](mailto:contact@spore.pro)
+
+## Contributing
+
+To contribute and assist in enhancing the Spore SDK, we welcome your pull requests:
+
+- `Active Branch` - By default, you can submit pull requests to the `beta` branch.
+
+- `Commit Styling` - Ensure that your commit styling does not conflict with the [existing commits](https://github.com/sporeprotocol/spore-sdk/commits).
+
+- `Clear Information` - Please provide a clear and descriptive title and description for your pull requests.
 
 ## License
 

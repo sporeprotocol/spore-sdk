@@ -4,7 +4,7 @@
 
 In a typical CKB transaction, the sender usually pays the transaction fee by collecting additional cells from the sender's address and deducting the fee from the collected cells. 
 
-However, the spore-sdk provides a built-in support of adjusting the capacity margin of cluster/spore cells, which allows the sender to pay fees by a cluster/spore cell's capacity margin, instead of collecting additional cells while transaction's construction.
+However, the Spore SDK provides a built-in support of adjusting the capacity margin of cluster/spore cells, which allows the sender to pay fees by a cluster/spore cell's capacity margin, instead of collecting additional cells while transaction's construction.
 
 The usages of capacity margin for spores/clusters:
 
@@ -58,7 +58,7 @@ the sender has to collect additional cells to pay for the fee.
 
 ### When transferring spores/clusters
 
-By default, the spore-sdk will use capacity margin to pay fee when transferring a spore/cluster. As an example, the sender doesn't have to configure anything when transferring a spore:
+By default, the Spore SDK will use capacity margin to pay fee when transferring a spore/cluster. As an example, the sender doesn't have to configure anything when transferring a spore:
 
 ```typescript
 import { transferSpore } from '@spore-sdk/core';

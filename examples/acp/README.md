@@ -1,21 +1,15 @@
 # Spore ACP Examples
 
-## Introduction
+## What is `Anyone-can-pay` lock
 
-### What is `Anyone-can-pay` lock
+[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) (ACP) lock is designed to be unlocked by anyone without signature verification and accepts any amount of CKB/UDT payment from the unlocker. You can create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock and benefit from charging other users for creating spores within the public cluster.
 
-[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) is a lock script designed to accept any amount of CKB or UDT payment from any sender. An ACP lock cell can be unlocked by anyone without signature verification if the unlocker can meet the lock's requirements.
+Refer to the RFC for more detailed rules: [CKB RFC 0026: Anyone-can-pay Lock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md#script-structure).
 
-For instance, if A wants to transfer some CKB to B, normally A has to create a new cell to B, containing at least 61 CKB (if B is Secp256k1Blake160 Sign-all lock) of capacity.
-But if B has an ACP lock cell on-chain, A can just unlock the ACP lock cell and add any amount of CKB into the cell, without signature verification from B. 
+## Featured examples
 
-### Featured examples
-
-The Spore ACP Examples is a collection of code examples to show developers how to achieve different purposes with Anyone-can-pay lock and spore-sdk.
-
-In [`/apis`](./apis):
-- Create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
-- Create spores in public clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+- [apis/createAcpCluster.ts](./apis/createAcpCluster.ts): Create a public cluster with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
+- [apis/createSporeInAcpCluster.ts](./apis/createSporeInAcpCluster.ts): Create a [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1) private spore within an [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock cluster
 
 ## Run examples
 
@@ -25,7 +19,7 @@ In [`/apis`](./apis):
 
 ### Setup environment
 
-To set up the local environment, run the following command at the spore-sdk's root directory:
+To set up the local environment, run the following command at the root of the Spore SDK:
 
 ```shell
 pnpm i && pnpm run build:packages
@@ -33,16 +27,19 @@ pnpm i && pnpm run build:packages
 
 ### Run an example
 
-> The code of the examples is stored in the [examples/acp/apis](./apis) directory, feel free to review and modify the code, using the examples as your playground or a sandbox to freely experiment.
-
-Assuming your local environment is set up, and you're at the [examples/acp](.) directory, let's run an example to see how things work. 
-For instance, if you want to create a spore on-chain, run the [examples/acp/apis/createAcpCluster.ts](./apis/createAcpCluster.ts) example in your terminal:
+Go to the current directory (`examples/acp`) and run an example:
 
 ```shell
 ts-node apis/createAcpCluster.ts
 ```
 
-This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `Transaction Hash` should be returned so that you can review the transaction details on [CKB Explorer](https://pudge.explorer.nervos.org/).
+### Review transaction
+
+This example constructs and sends a transaction that creates a spore on-chain. Once the transaction is sent, a `hash` value should be returned. You can later review the transaction on [CKB Explorer](https://pudge.explorer.nervos.org/):
+
+```shell
+https://pudge.explorer.nervos.org/transaction/{hash}
+```
 
 ## Customization
 
@@ -55,7 +52,7 @@ If you have your own testing accounts, or if you want to configure the SporeConf
 
 ### Use your own accounts
 
-If you want a clean startup environment for testing the functionality of the spore-sdk, you can replace the default testing accounts with your own accounts. Whether locally or in globally, there has two default testing accounts being used, `CHARLIE` and `ALICE`.
+If you want a clean startup environment for testing the functionality of the Spore SDK, you can replace the default testing accounts with your own accounts. Whether locally or in globally, there has two default testing accounts being used, `CHARLIE` and `ALICE`.
 
 How to replace them:
 
