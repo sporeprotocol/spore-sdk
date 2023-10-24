@@ -95,7 +95,7 @@ If you intend to use the Spore SDK in a browser environment, it's important to n
 
 - [Composed APIs](./docs/core/composed-apis.md) - APIs for efficient spores/clusters. interactions with minimal time overhead
 
-- [Joint APIs](./docs/core/joint-apis.md) - APIs for building advanced transactions as a fun block-building process.
+- [Joint APIs](./docs/core/joint-apis.md) (WIP) - APIs for building advanced transactions as a fun block-building process.
  
  
 ## Community
