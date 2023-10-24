@@ -2,314 +2,59 @@
 
 ## Features
 
-- Composed APIs to efficiently construct basic spore/cluster transactions, saving more times
-- Joint APIs to merge multiple actions into a single transaction, fun as building blocks
-- Utilities for encoding/decoding data of spores/clusters
-- Designed and implemented based on [Lumos](https://github.com/ckb-js/lumos)
+- ⚡ Composed APIs for efficient spores/clusters interactions with minimal time overhead
+- 🧩 Joint APIs for building advanced transactions as a fun block-building process
+- 🛠️ Utilities for encoding/decoding data of spores/clusters
+- 🎹 Fully written in TypeScript
 
 ## Installation
 
-Install via npm:
+Install `@spore-sdk/core` as a dependency using any package manager, such as `npm`:
 
 ```shell
-npm i @spore-sdk/core
-```
-
-Install via pnpm:
-
-```shell
-pnpm add @spore-sdk/core
-```
-
-Install via yarn:
-
-```shell
-yarn add @spore-sdk/core
+npm install @spore-sdk/core
 ```
 
 ## Getting started
 
-Start using spore-sdk with the `spore-first-example`:
+### Create your first spore in Node.js
 
-https://github.com/sporeprotocol/spore-first-example/blob/0fd0a79fdbfab06c0d11c08011f457986fa85d93/src/index.ts#L4-L20
+Follow the step-by-step tutorial to create your first spore: [Creating your first Spore](https://docs.spore.pro/tutorials/create-first-spore).
 
-Follow the recipes to learn and explore the usage of spore-sdk:
+Or you can run and play with the [spore-first-example](https://github.com/sporeprotocol/spore-first-example) on [StackBlitz](https://stackblitz.com/github/sporeprotocol/spore-first-example?file=src%2Findex.ts&view=editor).
 
-- [Construct transactions with spore-sdk](../../docs/recipes/construct-transaction.md)
+### Follow the recipes
+
+Explore the categorized recipes section in the Spore Docs for detailed instructions: [How-to recipes](https://docs.spore.pro/category/how-to).
+
+Or study the following recipes to explore the usage of the SDK:
+
+- [Construct transactions with Spore SDK](../../docs/recipes/construct-transaction.md)
+
 - [Create immortal spores on-chain](../../docs/recipes/create-immortal-spore.md)
+
 - [Pay fee with capacity margin](../../docs/recipes/capacity-margin.md)
+
 - [Handle spore/cluster data](../../docs/recipes/handle-cell-data.md)
-- [Configure spore-sdk with SporeConfig](../../docs/recipes/configure-spore-config.md)
 
-## Examples
+- [Configure Spore SDK](../../docs/recipes/configure-spore-config.md)
 
-### [@spore-examples/secp256k1](../../examples/secp256k1)
+### Building browser env dapps
 
-Start with the most commonly used lock in Nervos CKB to:
+The Spore SDK is built on top of [Lumos](https://github.com/ckb-js/lumos), an open-source dapp framework for Nervos CKB. Lumos incorporates certain Node-polyfills into its implementation, such as `crypto-browserify` and `buffer`, to provide specific functionalities.
 
-- Create/transfer clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
-- Create/transfer/destroy spores with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+If you intend to use the Spore SDK in a browser environment, it's important to note that you may need to manually add Node-polyfills to your application. This ensures that the Spore SDK functions properly in the browser. For detailed instructions on how to add these polyfills, refer to the Lumos documentation: [CRA, Vite, Webpack or Other](https://lumos-website.vercel.app/recipes/cra-vite-webpack-or-other).
 
-### [@spore-examples/acp](../../examples/acp)
+## Resources
 
-[Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) (ACP) lock can be unlocked by anyone without signature verification and accepts any amount of CKB or UDT payment from the unlocker.
-Use its flexibility to:
+- [Examples](../../docs/resources/examples.md) - Code block examples for implementing basic and specific features.
+- [Demos](../../docs/resources/demos.md) - Demo applications with full functionality, including seamless integration with wallets.
 
-- Create public clusters with the [Anyone-can-pay](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md) lock
-- Create spores in public clusters with the [Secp256k1Blake160 Sign-all](https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_sighash_all.c) lock
+## API
 
-### [@spore-examples/omnilock](../../examples/omnilock)
+- [Composed APIs](../../docs/core/composed-apis.md) - APIs for efficient spores/clusters. interactions with minimal time overhead
+- [Joint APIs](../../docs/core/joint-apis.md) (WIP) - APIs for building advanced transactions as a fun block-building process.
 
-[Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock is an interoperable lock script supporting various blockchains (Bitcoin, Ethereum, EOS, etc.) verification methods and extensible for future additions.
-It also offers a regulation compliance module for administrator-controlled token revocation, enabling registered assets like Apple stock on CKB when combined with the RCE (Regulation Compliance Extension).
-Omnilock can be integrated with spore-sdk to:
+## License
 
-- Create public clusters with the [Omnilock ACP](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md#anyone-can-pay-mode) lock
-- Create spores in public clusters with the [Omnilock](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md) lock
-
-## Composed API
-
-### createSpore
-
-```typescript
-declare function createSpore(props: {
-  data: SporeDataProps;
-  fromInfos: FromInfo[];
-  toLock: Script;
-  config?: SporeConfig;
-  changeAddress?: Address;
-  capacityMargin?: BIish;
-  updateOutput?(cell: Cell): Cell;
-}): Promise<{
-  txSkeleton: helpers.TransactionSkeletonType;
-  outputIndex: number;
-  cluster?: {
-    inputIndex: number;
-    outputIndex: number;
-  };
-}>;
-
-interface SporeDataProps {
-  contentType: string;
-  contentTypeParameters?: EncodableContentType['parameters'];
-  content: BytesLike;
-  clusterId?: HexString;
-}
-```
-
-**Props**
-
-- `data`: Specifies the data of the new spore.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `toLock`: Specifies the owner of the new spore.
-- `config`: Specifies the config of the SDK.
-- `changeAddress`: Specifies the change cell's ownership.
-- `capacityMargin`: Specifies the capacity margin of the new spore, default to "BI.from(1_0000_0000)".
-- `updateOutput`: Specifies a callback function to update the spore output as needed.
-
-**SporeDataProps**
-
-- `contentType`: MIME of the spore's content, for example: "image/jpeg;a=1;b=2".
-- `contentTypeParameters`: An object of contentType parameters, usually you can pass extension parameters in here, and the object will be merged into contentType during the process of transaction construction. For example if the contentType is "image/jpeg;a=1", and you've passed "{ b: 2 }" in the contentTypeParameters, later the contentType will be modified to "image/jpeg;ext1=true;ext2=true".
-- `content`: The spore's content as bytes, for example if creating a spore where its contentType is "image/jpeg", then its content should be an .jpeg image as bytes.
-- `clusterId`: The spore's cluster ID, should be a 32-byte hash if exists.
-
-**Example**
-
-```typescript
-import { createSpore, predefinedSporeConfigs } from '@spore-sdk/core';
-
-const result = await createSpore({
-  data: {
-    content: JPEG_AS_BYTES,
-    contentType: 'image/jpeg',
-    contentTypeParameters: {
-      ext1: true,
-      ext2: 1,
-    },
-  },
-  fromInfos: [OWNER_ADDRESS],
-  toLock: OWNER_LOCK_SCRIPT,
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
-
-### transferSpore
-
-```typescript
-declare function transferSpore(props: {
-  outPoint: OutPoint;
-  fromInfos: FromInfo[];
-  toLock: Script;
-  config?: SporeConfig;
-  changeAddress?: Address;
-  capacityMargin?: BIish;
-  useCapacityMarginAsFee?: boolean;
-  updateOutput?(cell: Cell): Cell;
-}): Promise<{
-  txSkeleton: helpers.TransactionSkeletonType;
-  inputIndex: number;
-  outputIndex: number;
-}>;
-```
-
-**Props**
-
-- `outPoint`: Specifies a target spore to transfer.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `toLock`: Specifies the new owner of the spore.
-- `config`: Specifies the config of the SDK.
-- `changeAddress`: Specifies the change cell's ownership.
-- `capacityMargin`: Specifies the capacity margin of the live spore. When "useCapacityMarginAsFee" is true, this prop should not be included in the props.
-- `useCapacityMarginAsFee`: Specifies whether to pay fee with the target spore's capacity margin, if not, the transaction is paid with capacity collected from the fromInfos, default to "true".
-- `updateOutput`: Specifies a callback function to update the target spore output as needed.
-
-**Example**
-
-```typescript
-import { transferSpore, predefinedSporeConfigs } from '@spore-sdk/core';
-
-const result = await transferSpore({
-  outPoint: {
-    txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
-    index: '0x0',
-  },
-  fromInfos: [OWNER_ADDRESS],
-  toLock: RECEIVER_LOCK_SCRIPT,
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
-
-### destroySpore
-
-```typescript
-declare function destroySpore(props: {
-  outPoint: OutPoint;
-  fromInfos: FromInfo[];
-  config?: SporeConfig;
-  changeAddress?: Address;
-}): Promise<{
-  txSkeleton: helpers.TransactionSkeletonType;
-  inputIndex: number;
-}>;
-```
-
-**Props**
-
-- `outPoint`: Specifies a target spore to destroy.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `config`: Specifies the config of the SDK.
-- `changeAddress`: Specifies the change cell's ownership.
-
-**Example**
-
-```typescript
-import { destroySpore, predefinedSporeConfigs } from '@spore-sdk/core';
-
-const result = await destroySpore({
-  outPoint: {
-    txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
-    index: '0x0',
-  },
-  fromInfos: [OWNER_ADDRESS],
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
-
-### createCluster
-
-```typescript
-declare function createCluster(props: {
-  data: ClusterDataProps;
-  fromInfos: FromInfo[];
-  toLock: Script;
-  config?: SporeConfig;
-  changeAddress?: Address;
-  capacityMargin?: BIish;
-  updateOutput?(cell: Cell): Cell;
-}): Promise<{
-  txSkeleton: helpers.TransactionSkeletonType;
-  outputIndex: number;
-}>;
-
-interface ClusterDataProps {
-  name: string;
-  description: string;
-}
-```
-
-**Props**
-
-- `data`: Specifies the data of the new cluster.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `toLock`: Specifies the owner of the new cluster.
-- `config`: Specifies the config of the SDK.
-- `changeAddress`: Specifies the change cell's ownership.
-- `capacityMargin`: Specifies the capacity margin of the new cluster, default to "BI.from(1_0000_0000)".
-- `updateOutput`: Specifies a callback function to update the cluster output as needed.
-
-**ClusterDataProps**
-
-- `name`: The name of the new cluster.
-- `description`: The description text of the new cluster.
-
-**Example**
-
-```typescript
-import { createCluster, predefinedSporeConfigs } from '@spore-sdk/core';
-
-const result = await createCluster({
-  data: {
-    name: 'Cluster name',
-    description: 'Description of the cluster',
-  },
-  fromInfos: [OWNER_ADDRESS],
-  toLock: OWNER_LOCK_SCRIPT,
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
-
-### transferCluster
-
-```typescript
-declare function transferCluster(props: {
-  outPoint: OutPoint;
-  fromInfos: FromInfo[];
-  toLock: Script;
-  config?: SporeConfig;
-  changeAddress?: Address;
-  capacityMargin?: BIish;
-  useCapacityMarginAsFee?: boolean;
-  updateOutput?(cell: Cell): Cell;
-}): Promise<{
-  txSkeleton: helpers.TransactionSkeletonType;
-  inputIndex: number;
-  outputIndex: number;
-}>;
-```
-
-**Props**
-
-- `outPoint`: Specifies a target cluster to destroy.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `config`: Specifies the config of the SDK.
-- `changeAddress`: Specifies the change cell's ownership.
-- `capacityMargin`: Specifies the capacity margin of the live cluster. When "useCapacityMarginAsFee" is true, this prop should not be included in the props.
-- `useCapacityMarginAsFee`: Specifies whether to pay fee with the target cluster cell's capacity margin, if not, the transaction will be paid with capacity collected from the fromInfos, default to "true".
-- `updateOutput`: Specifies a callback function to update the target spore output as needed.
-
-**Example**
-
-```typescript
-import { transferCluster, predefinedSporeConfigs } from '@spore-sdk/core';
-
-const result = await transferCluster({
-  outPoint: {
-    txHash: '0xb1f94d7d8e8441bfdf1fc76639d12f4c3c391b8c8a18ed558e299674095290c3',
-    index: '0x0',
-  },
-  fromInfos: [OWNER_ADDRESS],
-  toLock: RECEIVER_LOCK_SCRIPT,
-  config: predefinedSporeConfigs.Aggron4,
-});
-```
+[MIT](../../LICENSE) License

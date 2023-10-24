@@ -1,18 +1,18 @@
 
-# Construct transactions with spore-sdk
+# Construct transactions with Spore SDK
 
-## The spore-sdk
+## The Spore SDK
 
-As an SDK designed to interact with the Spore Protocol, the primary mission of the spore-sdk is to provide developers with everything necessary to engage with the spores/clusters on-chain. 
+As an SDK designed to interact with the Spore Protocol, the primary mission of the Spore SDK is to provide developers with everything necessary to engage with the spores/clusters on-chain. 
 
-Key functionalities of the spore-sdk:
+Key functionalities of the Spore SDK:
 
 1. Construct spores/clusters transactions
 2. Encode and decode the cell data of spores/clusters
 3. Simplify application and service development with helpful utilities
 
-So, let's start by peeling off a corner of the spore-sdk. 
-The following instructions will focus on the first functionality, demonstrating how to create a spore on-chain using spore-sdk by constructing a transaction.
+So, let's start by peeling off a corner of the Spore SDK. 
+The following instructions will focus on the first functionality, demonstrating how to create a spore on-chain using Spore SDK by constructing a transaction.
 
 ## Create a transaction
 
