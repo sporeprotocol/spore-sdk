@@ -3,7 +3,7 @@ import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
+import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
 
 export async function destroySpore(props: {
   outPoint: OutPoint;
@@ -25,7 +25,7 @@ export async function destroySpore(props: {
   });
 
   // Inject live spore to Transaction.inputs
-  const sporeCell = await getSporeCellByOutPoint(props.outPoint, config);
+  const sporeCell = await getSporeByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
     cell: sporeCell,
     updateWitness: props.updateWitness,

@@ -4,7 +4,7 @@ import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, assetTransactionSkeletonSize } from '../../../helpers';
-import { ClusterDataProps, injectClusterIds, injectNewClusterOutput } from '../../joints/cluster';
+import { ClusterDataProps, injectNewClusterIds, injectNewClusterOutput } from '../..';
 
 export async function createCluster(props: {
   data: ClusterDataProps;
@@ -50,7 +50,7 @@ export async function createCluster(props: {
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
   // Generate and inject cluster ID
-  txSkeleton = injectClusterIds({
+  txSkeleton = injectNewClusterIds({
     outputIndices: [injectNewClusterResult.outputIndex],
     txSkeleton,
     config,
