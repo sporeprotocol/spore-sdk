@@ -6,7 +6,7 @@ import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { packRawClusterData } from '../../../codec';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
-import { injectClusterIds } from './injectClusterIds';
+import { injectNewClusterIds } from './injectNewClusterIds';
 
 export interface ClusterDataProps {
   name: string;
@@ -68,7 +68,7 @@ export function injectNewClusterOutput(props: {
   // Generate ID for the new cluster if possible
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput) {
-    txSkeleton = injectClusterIds({
+    txSkeleton = injectNewClusterIds({
       outputIndices: [outputIndex],
       txSkeleton,
       config,

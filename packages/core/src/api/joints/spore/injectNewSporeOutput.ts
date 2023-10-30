@@ -9,7 +9,7 @@ import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { injectLiveClusterCell } from '../cluster/injectLiveClusterCell';
 import { getClusterCellById } from '../cluster/getClusterCell';
-import { injectSporeIds } from './injectSporeIds';
+import { injectNewSporeIds } from './injectNewSporeIds';
 
 export interface SporeDataProps {
   /**
@@ -140,7 +140,7 @@ export async function injectNewSporeOutput(props: {
   // Generate Spore Id if possible
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput !== void 0) {
-    txSkeleton = injectSporeIds({
+    txSkeleton = injectNewSporeIds({
       outputIndices: [outputIndex],
       txSkeleton,
       config,
