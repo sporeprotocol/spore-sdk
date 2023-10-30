@@ -3,7 +3,7 @@ import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { getCellByType, getCellWithStatusByOutPoint } from '../../../helpers';
 import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
 
-export async function getSporeCellByType(type: Script, config?: SporeConfig): Promise<Cell> {
+export async function getSporeByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
   config = config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
@@ -23,7 +23,7 @@ export async function getSporeCellByType(type: Script, config?: SporeConfig): Pr
   return cell;
 }
 
-export async function getSporeCellByOutPoint(outPoint: OutPoint, config?: SporeConfig): Promise<Cell> {
+export async function getSporeByOutPoint(outPoint: OutPoint, config?: SporeConfig): Promise<Cell> {
   // Env
   config = config ?? getSporeConfig();
   const rpc = new RPC(config.ckbNodeUrl);
@@ -43,7 +43,7 @@ export async function getSporeCellByOutPoint(outPoint: OutPoint, config?: SporeC
   return cellWithStatus.cell;
 }
 
-export async function getSporeCellById(id: HexString, config?: SporeConfig): Promise<Cell> {
+export async function getSporeById(id: HexString, config?: SporeConfig): Promise<Cell> {
   // Env
   config = config ?? getSporeConfig();
 
@@ -55,7 +55,7 @@ export async function getSporeCellById(id: HexString, config?: SporeConfig): Pro
   // Search target spore from the latest version to the oldest
   for (const script of scripts) {
     try {
-      return await getSporeCellByType(
+      return await getSporeByType(
         {
           ...script,
           args: id,

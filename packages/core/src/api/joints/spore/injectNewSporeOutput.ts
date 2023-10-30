@@ -8,7 +8,7 @@ import { EncodableContentType, setContentTypeParameters } from '../../../helpers
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { injectLiveClusterCell } from '../cluster/injectLiveClusterCell';
-import { getClusterCellById } from '../cluster/getClusterCell';
+import { getClusterById } from '../cluster/getCluster';
 import { injectNewSporeIds } from './injectNewSporeIds';
 
 export interface SporeDataProps {
@@ -75,7 +75,7 @@ export async function injectNewSporeOutput(props: {
   let injectClusterCellResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
   if (sporeData.clusterId) {
     injectClusterCellResult = await injectLiveClusterCell({
-      cell: await getClusterCellById(sporeData.clusterId, config),
+      cell: await getClusterById(sporeData.clusterId, config),
       capacityMargin: props.cluster?.capacityMargin,
       updateWitness: props.cluster?.updateWitness,
       updateOutput: props.cluster?.updateOutput,
