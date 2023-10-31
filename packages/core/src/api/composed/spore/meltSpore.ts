@@ -5,7 +5,7 @@ import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
 
-export async function destroySpore(props: {
+export async function meltSpore(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
   config?: SporeConfig;
