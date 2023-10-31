@@ -1,14 +1,14 @@
 import { BIish } from '@ckb-lumos/bi';
-import { Script } from '@ckb-lumos/base';
+import { Address, Script } from '@ckb-lumos/base';
 import { bytes, BytesLike } from '@ckb-lumos/codec';
-import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
+import { FromInfo } from '@ckb-lumos/common-scripts';
+import { BI, Cell, helpers, Hash, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { packRawSporeData } from '../../../codec';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { EncodableContentType, setContentTypeParameters } from '../../../helpers';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
-import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
-import { injectLiveClusterCell } from '../cluster/injectLiveClusterCell';
-import { getClusterById } from '../cluster/getCluster';
+import { injectClusteredSporeProof } from './injectClusteredSporeProof';
 import { injectNewSporeIds } from './injectNewSporeIds';
 
 export interface SporeDataProps {
@@ -40,14 +40,15 @@ export interface SporeDataProps {
    * Cluster ID bind to the spore, optional.
    * It should be a 32-byte hash.
    */
-  clusterId?: HexString;
+  clusterId?: Hash;
 }
 
 export async function injectNewSporeOutput(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   data: SporeDataProps;
   toLock: Script;
-  config?: SporeConfig;
+  fromInfos: FromInfo[];
+  changeAddress?: Address;
   updateOutput?(cell: Cell): Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   cluster?: {
@@ -55,10 +56,12 @@ export async function injectNewSporeOutput(props: {
     capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
     updateWitness?: HexString | ((witness: HexString) => HexString);
   };
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
   hasId: boolean;
+  useLockProxyPattern: boolean;
   cluster?: {
     inputIndex: number;
     outputIndex: number;
@@ -71,19 +74,19 @@ export async function injectNewSporeOutput(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // If the creating spore requires a cluster, collect it to inputs/outputs to prove it's unlockable
-  let injectClusterCellResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
+  // If the creating spore requires a cluster, collect it to inputs/outputs to prove it's unlock-able
+  let injectClusteredSporeProofResult: Awaited<ReturnType<typeof injectClusteredSporeProof>> | undefined;
   if (sporeData.clusterId) {
-    injectClusterCellResult = await injectLiveClusterCell({
-      cell: await getClusterById(sporeData.clusterId, config),
-      capacityMargin: props.cluster?.capacityMargin,
-      updateWitness: props.cluster?.updateWitness,
-      updateOutput: props.cluster?.updateOutput,
-      addOutput: true,
+    injectClusteredSporeProofResult = await injectClusteredSporeProof({
+      clusterId: sporeData.clusterId,
+      changeAddress: props.changeAddress,
+      fromInfos: props.fromInfos,
+      cluster: props.cluster,
+      toLock: props.toLock,
       txSkeleton,
       config,
     });
-    txSkeleton = injectClusterCellResult.txSkeleton;
+    txSkeleton = injectClusteredSporeProofResult.txSkeleton;
   }
 
   // Create spore cell (with the latest version of SporeType script)
@@ -118,23 +121,12 @@ export async function injectNewSporeOutput(props: {
     return outputs.push(sporeCell);
   });
 
-  // Fix output indices to prevent them from future reduction
+  // Fix the spore's output index to prevent it from future reduction
   txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
-    // Fix the spore's output index to prevent it from future reduction
-    fixedEntries = fixedEntries.push({
+    return fixedEntries.push({
       field: 'outputs',
       index: outputIndex,
     });
-
-    // Fix the dep cluster's output index to prevent it from future reduction
-    if (sporeData.clusterId && !!injectClusterCellResult) {
-      fixedEntries = fixedEntries.push({
-        field: 'outputs',
-        index: injectClusterCellResult.outputIndex,
-      });
-    }
-
-    return fixedEntries;
   });
 
   // Generate Spore Id if possible
@@ -149,24 +141,12 @@ export async function injectNewSporeOutput(props: {
 
   // Add Spore cellDeps
   txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
-  // Add dep cluster to cellDeps, if exists
-  if (injectClusterCellResult) {
-    const clusterCell = txSkeleton.get('inputs').get(injectClusterCellResult.inputIndex)!;
-    txSkeleton = addCellDep(txSkeleton, {
-      outPoint: clusterCell.outPoint!,
-      depType: 'code',
-    });
-  }
 
   return {
     txSkeleton,
     outputIndex,
     hasId: firstInput !== void 0,
-    cluster: injectClusterCellResult
-      ? {
-          inputIndex: injectClusterCellResult.inputIndex,
-          outputIndex: injectClusterCellResult.outputIndex,
-        }
-      : void 0,
+    cluster: injectClusteredSporeProofResult?.cluster,
+    useLockProxyPattern: injectClusteredSporeProofResult?.useLockProxyPattern ?? false,
   };
 }

@@ -11,8 +11,8 @@ describe('Cluster', function () {
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createCluster({
       data: {
-        name: 'Testnet Spore 002',
-        description: 'This is a cluster, just for testing.',
+        name: 'Testnet Spore',
+        description: 'This is a testing-only cluster',
       },
       fromInfos: [CHARLIE.address],
       toLock: CHARLIE.lock,
