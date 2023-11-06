@@ -12,3 +12,4 @@ export * from './fee';
 
 // Core
 export * from './contentType';
+export * from './multipartContent';

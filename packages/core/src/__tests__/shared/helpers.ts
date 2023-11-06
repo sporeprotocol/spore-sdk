@@ -1,8 +1,11 @@
-import { hd, helpers, HexString, RPC } from '@ckb-lumos/lumos';
-import { Address, Hash, Script } from '@ckb-lumos/base';
+import { resolve } from 'path';
+import { readFileSync } from 'fs';
+import { bytes } from '@ckb-lumos/codec';
 import { common } from '@ckb-lumos/common-scripts';
+import { Address, Hash, Script } from '@ckb-lumos/base';
+import { hd, helpers, HexString, RPC } from '@ckb-lumos/lumos';
+import { bytifyRawString, createCapacitySnapshot, defaultEmptyWitnessArgs, updateWitnessArgs } from '../../helpers';
 import { SporeConfig } from '../../config';
-import { createCapacitySnapshot, defaultEmptyWitnessArgs, updateWitnessArgs } from '../../helpers';
 
 export interface TestAccount {
   lock: Script;
@@ -101,4 +104,29 @@ export async function signAndSendTransaction(props: {
   }
 
   return hash;
+}
+
+export async function fetchLocalImage(
+  src: string,
+  relativePath?: string,
+): Promise<{
+  arrayBuffer: ArrayBuffer;
+  arrayBufferHex: HexString;
+  base64: string;
+  base64Hex: HexString;
+}> {
+  const buffer = readFileSync(resolve(relativePath ?? __dirname, src));
+  const arrayBuffer = new Uint8Array(buffer).buffer;
+  const base64 = buffer.toString('base64');
+  return {
+    arrayBuffer,
+    arrayBufferHex: bytes.hexify(arrayBuffer),
+    base64,
+    base64Hex: bytes.hexify(bytifyRawString(base64)),
+  };
+}
+
+export async function fetchInternetImage(src: string): Promise<ArrayBuffer> {
+  const res = await fetch(src);
+  return await res.arrayBuffer();
 }
