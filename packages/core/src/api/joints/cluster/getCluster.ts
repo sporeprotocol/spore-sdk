@@ -67,7 +67,7 @@ export async function getClusterById(id: HexString, config?: SporeConfig): Promi
       );
     } catch (e) {
       // Not found in the script, don't have to do anything
-      console.error('getClusterCellById error:', e);
+      console.error('getClusterById error:', e);
     }
   }
 
