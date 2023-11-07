@@ -4,7 +4,7 @@ import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
-import { getClusterCellByOutPoint, injectLiveClusterCell } from '../../joints/cluster';
+import { getClusterByOutPoint, injectLiveClusterCell } from '../..';
 
 export async function transferCluster(props: {
   outPoint: OutPoint;
@@ -40,7 +40,7 @@ export async function transferCluster(props: {
   });
 
   // Find cluster by OutPoint
-  const clusterCell = await getClusterCellByOutPoint(props.outPoint, config);
+  const clusterCell = await getClusterByOutPoint(props.outPoint, config);
 
   // Add cluster to Transaction.inputs and Transaction.outputs
   const injectLiveClusterCellResult = await injectLiveClusterCell({

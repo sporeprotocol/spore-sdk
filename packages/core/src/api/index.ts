@@ -6,5 +6,11 @@ export * from './composed/spore/transferSpore';
 export * from './composed/spore/destroySpore';
 
 // Joint APIs
-export * from './joints/cluster';
-export * from './joints/spore';
+export * from './joints/cluster/injectNewClusterOutput';
+export * from './joints/cluster/injectLiveClusterCell';
+export * from './joints/cluster/injectNewClusterIds';
+export * from './joints/cluster/getCluster';
+export * from './joints/spore/injectNewSporeOutput';
+export * from './joints/spore/injectLiveSporeCell';
+export * from './joints/spore/injectNewSporeIds';
+export * from './joints/spore/getSpore';

@@ -4,7 +4,7 @@ import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
-import { getSporeCellByOutPoint, injectLiveSporeCell } from '../../joints/spore';
+import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
 
 export async function transferSpore(props: {
   outPoint: OutPoint;
@@ -40,7 +40,7 @@ export async function transferSpore(props: {
   });
 
   // Inject live spore to Transaction.inputs and Transaction.outputs
-  const sporeCell = await getSporeCellByOutPoint(props.outPoint, config);
+  const sporeCell = await getSporeByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
     cell: sporeCell,
     txSkeleton,

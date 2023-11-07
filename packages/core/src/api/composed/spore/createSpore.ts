@@ -5,7 +5,7 @@ import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { assetTransactionSkeletonSize } from '../../../helpers';
 import { injectCapacityAndPayFee, setAbsoluteCapacityMargin } from '../../../helpers';
-import { injectNewSporeOutput, injectSporeIds, SporeDataProps } from '../../joints/spore';
+import { injectNewSporeOutput, injectNewSporeIds, SporeDataProps } from '../..';
 
 export async function createSpore(props: {
   data: SporeDataProps;
@@ -71,7 +71,7 @@ export async function createSpore(props: {
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
   // Generate and inject spore id
-  txSkeleton = injectSporeIds({
+  txSkeleton = injectNewSporeIds({
     outputIndices: [injectNewSporeResult.outputIndex],
     txSkeleton,
     config,
