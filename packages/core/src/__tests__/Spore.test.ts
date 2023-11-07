@@ -17,13 +17,13 @@ describe('Spore', function () {
         clusterId: '0x0df701ca5798d381b39435475a17d0c4246d367b5263fe5726098d9ff2f056e0',
       },
       toLock: CHARLIE.lock,
-      fromInfos: [ALICE.address],
+      fromInfos: [CHARLIE.address],
       config,
     });
 
     // Sign and send transaction
     await signAndSendTransaction({
-      account: ALICE,
+      account: CHARLIE,
       txSkeleton,
       config,
       rpc,

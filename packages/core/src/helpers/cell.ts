@@ -4,6 +4,7 @@ import { common, FromInfo } from '@ckb-lumos/common-scripts';
 import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { ScriptId } from '../codec';
+import { isScriptValueEquals } from './script';
 
 /**
  * Find and return the first cell of target type script from CKB Indexer.
@@ -135,4 +136,23 @@ export function groupCells(cells: Cell[]): Record<Hash | 'null', { index: number
   }
 
   return groups;
+}
+
+export function findCellIndexByScriptFromTransactionSkeleton(props: {
+  txSkeleton: helpers.TransactionSkeletonType;
+  source: 'inputs' | 'outputs';
+  scriptName: 'lock' | 'type';
+  script: Script;
+}): number {
+  if (!['inputs', 'outputs'].includes(props.source)) {
+    throw new Error('Can only find cell from the following source: "inputs" | "outputs"');
+  }
+  if (!['lock', 'type'].includes(props.scriptName)) {
+    throw new Error('Can only find cell from the following scriptType: "lock" | "type"');
+  }
+
+  const list = props.txSkeleton.get(props.source);
+  return list.findIndex((cell) => {
+    return !!cell.cellOutput[props.scriptName] && isScriptValueEquals(cell.cellOutput[props.scriptName]!, props.script);
+  });
 }

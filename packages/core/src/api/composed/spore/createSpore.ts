@@ -6,7 +6,7 @@ import { getSporeConfig, SporeConfig } from '../../../config';
 import { assetTransactionSkeletonSize } from '../../../helpers';
 import { injectCapacityAndPayFee, setAbsoluteCapacityMargin } from '../../../helpers';
 import { injectNewSporeOutput, injectNewSporeIds, SporeDataProps } from '../..';
-import { assetClusteredSporeProof } from '../../joints/spore/injectClusteredSporeProof';
+import { assertClusteredSporeProof } from '../../joints/spore/injectClusteredSporeProof';
 
 export async function createSpore(props: {
   data: SporeDataProps;
@@ -82,8 +82,7 @@ export async function createSpore(props: {
 
   // If creating a clustered spore, validate the transaction
   if (props.data.clusterId !== void 0) {
-    await assetClusteredSporeProof({
-      useLockProxyPattern: injectNewSporeResult.useLockProxyPattern,
+    await assertClusteredSporeProof({
       clusterId: props.data.clusterId,
       txSkeleton,
       config,

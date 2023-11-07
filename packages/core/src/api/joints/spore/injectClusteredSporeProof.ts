@@ -3,8 +3,10 @@ import { Address, Hash, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { FromInfo, parseFromInfo } from '@ckb-lumos/common-scripts';
-import { isScriptValueEquals } from '../../../helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { findCellDepIndexByTypeFromTransactionSkeleton } from '../../../helpers';
+import { findCellIndexByScriptFromTransactionSkeleton } from '../../../helpers';
+import { isScriptValueEquals } from '../../../helpers';
 import { injectLiveClusterCell } from '../cluster/injectLiveClusterCell';
 import { getClusterById } from '../cluster/getCluster';
 
@@ -59,8 +61,6 @@ export async function injectClusteredSporeProof(props: {
 
   // Apply patterns of lock proxy
   const useLockProxyPattern = isAnyFromInfoEquals && (isSporeLockEquals || isChangeLockEquals);
-  console.log(isAnyFromInfoEquals, isSporeLockEquals, isChangeLockEquals);
-  console.log(useLockProxyPattern);
   if (useLockProxyPattern) {
     const clusterType = cluster.cellOutput.type;
     const clusterScript = getSporeScript(config, 'Cluster', clusterType);
@@ -113,30 +113,62 @@ export async function injectClusteredSporeProof(props: {
   };
 }
 
-export async function assetClusteredSporeProof(props: {
+export async function assertClusteredSporeProof(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  useLockProxyPattern: boolean;
   clusterId: Hash;
   config?: SporeConfig;
 }) {
-  let txSkeleton = props.txSkeleton;
   const config = props.config ?? getSporeConfig();
   const cluster = await getClusterById(props.clusterId, config);
   const clusterLock = cluster.cellOutput.lock;
+  const clusterType = cluster.cellOutput.type!;
 
-  if (props.useLockProxyPattern) {
-    const foundLockInInputs = txSkeleton.get('inputs').some((cell) => {
-      return isScriptValueEquals(cell.cellOutput.lock, clusterLock);
-    });
-    if (!foundLockInInputs) {
-      throw new Error('Cannot find lock proxy cell in Transaction.inputs');
-    }
-
-    const foundLockInOutputs = txSkeleton.get('outputs').some((cell) => {
-      return isScriptValueEquals(cell.cellOutput.lock, clusterLock);
-    });
-    if (!foundLockInOutputs) {
-      throw new Error('Cannot find lock proxy cell in Transaction.outputs');
-    }
+  // 1. Check if cluster exists in cellDeps
+  const cellDepIndex = await findCellDepIndexByTypeFromTransactionSkeleton({
+    txSkeleton: props.txSkeleton,
+    type: clusterType,
+    config,
+  });
+  if (cellDepIndex < 0) {
+    throw new Error('The referenced cluster does not exist in Transaction.cellDeps');
   }
+
+  // 2. Check if cluster exists in inputs & outputs
+  const inputClusterIndex = findCellIndexByScriptFromTransactionSkeleton({
+    txSkeleton: props.txSkeleton,
+    source: 'inputs',
+    scriptName: 'type',
+    script: clusterType,
+  });
+  const outputClusterIndex = findCellIndexByScriptFromTransactionSkeleton({
+    txSkeleton: props.txSkeleton,
+    source: 'outputs',
+    scriptName: 'type',
+    script: clusterType,
+  });
+  const useNormalUnlocking = inputClusterIndex >= 0 && outputClusterIndex >= 0;
+  if (useNormalUnlocking) {
+    return true;
+  }
+
+  // 3. Check if lock proxy exists in inputs & outputs
+  const inputLockProxyIndex = findCellIndexByScriptFromTransactionSkeleton({
+    txSkeleton: props.txSkeleton,
+    source: 'inputs',
+    scriptName: 'lock',
+    script: clusterLock,
+  });
+  const outputLockProxyIndex = findCellIndexByScriptFromTransactionSkeleton({
+    txSkeleton: props.txSkeleton,
+    source: 'outputs',
+    scriptName: 'lock',
+    script: clusterLock,
+  });
+  const useLockProxy = inputLockProxyIndex >= 0 && outputLockProxyIndex >= 0;
+  if (useLockProxy) {
+    return true;
+  }
+
+  // 4. If no unlocking rules were applied, throw an error
+  throw new Error('No proof for clustered spore creation was found');
 }
