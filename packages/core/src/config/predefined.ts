@@ -11,17 +11,31 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   scripts: {
     Spore: {
       script: {
-        codeHash: '0xbbad126377d45f90a8ee120da988a2d7332c78ba8fd679aab478a19d6c133494',
+        codeHash: '0xf8dd8ff57eb07a78f213b43665fc0f32313acd32f8596f84faa8a01d20d0805f',
         hashType: 'data1',
       },
       cellDep: {
         outPoint: {
-          txHash: '0xfd694382e621f175ddf81ce91ce2ecf8bfc027d53d7d31b8438f7d26fc37fd19',
+          txHash: '0x33042bd2a214d8698939cd5cb1f9d83ab8dfd0b8ef4ddfc21e9fd4a76174576e',
           index: '0x0',
         },
         depType: 'code',
       },
-      versions: [],
+      versions: [
+        {
+          script: {
+            codeHash: '0xbbad126377d45f90a8ee120da988a2d7332c78ba8fd679aab478a19d6c133494',
+            hashType: 'data1',
+          },
+          cellDep: {
+            outPoint: {
+              txHash: '0xfd694382e621f175ddf81ce91ce2ecf8bfc027d53d7d31b8438f7d26fc37fd19',
+              index: '0x0',
+            },
+            depType: 'code',
+          },
+        },
+      ],
     },
     Cluster: {
       script: {
