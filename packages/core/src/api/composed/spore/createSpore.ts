@@ -3,7 +3,7 @@ import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { assetTransactionSkeletonSize } from '../../../helpers';
+import { assertTransactionSkeletonSize } from '../../../helpers';
 import { injectCapacityAndPayFee, setAbsoluteCapacityMargin } from '../../../helpers';
 import { injectNewSporeOutput, injectNewSporeIds, SporeDataProps } from '../..';
 import { assertClusteredSporeProof } from '../../joints/spore/injectClusteredSporeProof';
@@ -91,7 +91,7 @@ export async function createSpore(props: {
 
   // Make sure the tx size is in range (if needed)
   if (typeof maxTransactionSize === 'number') {
-    assetTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
+    assertTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
   }
 
   return {
