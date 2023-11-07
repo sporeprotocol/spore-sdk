@@ -111,10 +111,10 @@ const result = await transferSpore({
 });
 ```
 
-### destroySpore
+### meltSpore
 
 ```typescript
-declare function destroySpore(props: {
+declare function meltSpore(props: {
   outPoint: OutPoint;
   fromInfos: FromInfo[];
   config?: SporeConfig;
@@ -135,9 +135,9 @@ declare function destroySpore(props: {
 **Example**
 
 ```typescript
-import { destroySpore, predefinedSporeConfigs } from '@spore-sdk/core';
+import { meltSpore, predefinedSporeConfigs } from '@spore-sdk/core';
 
-const result = await destroySpore({
+const result = await meltSpore({
   outPoint: {
     txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
     index: '0x0',

@@ -13,7 +13,7 @@
 Spore:
 - [apis/createSpore.ts](./apis/createSpore.ts): Create a spore with [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1)
 - [apis/transferSpore.ts](./apis/transferSpore.ts): Unlock and transfer a spore from A to B
-- [apis/destroySpore.ts](./apis/destroySpore.ts): Unlock and destroy a spore from the blockchain
+- [apis/meltSpore.ts](./apis/meltSpore.ts): Unlock and melt a spore from the blockchain
 
 Cluster:
 - [apis/createCluster.ts](./apis/createCluster.ts): Create a cluster with [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1)

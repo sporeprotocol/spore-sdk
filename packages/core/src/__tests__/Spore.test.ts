@@ -4,7 +4,7 @@ import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { OutPoint } from '@ckb-lumos/base';
 import { bytifyRawString } from '../helpers';
-import { createSpore, destroySpore, transferSpore } from '../api';
+import { createSpore, meltSpore, transferSpore } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 const localImage = './resources/test.jpg';
@@ -80,7 +80,7 @@ describe('Spore', function () {
     });
   }, 30000);
 
-  it('Destroy a spore', async function () {
+  it('Melt a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
@@ -90,7 +90,7 @@ describe('Spore', function () {
     };
 
     // Create cluster cell, collect inputs and pay fee
-    let { txSkeleton } = await destroySpore({
+    let { txSkeleton } = await meltSpore({
       outPoint: outPoint,
       fromInfos: [ALICE.address],
       config,

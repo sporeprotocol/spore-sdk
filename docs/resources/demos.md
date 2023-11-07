@@ -12,7 +12,7 @@ For example, how to connect wallets like [MetaMask](https://metamask.io) or [Joy
 
 ### A simple `Next.js` demo
 
-A Spore Protocol Demo based on Next.js + React + Spore SDK, which implements basic functionalities, such as the creation and transfer of clusters, as well as minting, transferring, and destroying of spores. 
+A Spore Protocol Demo based on Next.js + React + Spore SDK, which implements basic functionalities, such as the creation and transfer of clusters, as well as minting, transferring, and melting of spores. 
 
 The demo also shows how to connect with [MetaMask](https://metamask.io) and [JoyID](https://joy.id) wallets.
 

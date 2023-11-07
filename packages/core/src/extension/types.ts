@@ -9,5 +9,5 @@ export interface SporeExtension {
 
 export interface SporeApiHooks {
   onCreateSpore?(context: { txSkeleton: TransactionSkeletonType; outputIndex: number }): TransactionSkeletonType;
-  onDestroySpore?(context: { txSkeleton: TransactionSkeletonType; inputIndex: number }): TransactionSkeletonType;
+  onMeltSpore?(context: { txSkeleton: TransactionSkeletonType; inputIndex: number }): TransactionSkeletonType;
 }

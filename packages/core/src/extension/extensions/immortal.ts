@@ -6,7 +6,7 @@ import { SporeData } from '../../codec';
  * A core extension of Spore NFT, to allow a spore cell to be indestructible on-chain.
  *
  * When setting a spore cell to be "immortal", the spore cell will be indestructible,
- * it cannot be destroyed, therefore the cell can be lived on the blockchain forever.
+ * it cannot be melted, therefore the cell can be lived on the blockchain forever.
  */
 export function useImmortal(): SporeExtension {
   return {
@@ -29,7 +29,7 @@ export function useImmortal(): SporeExtension {
 
         return context.txSkeleton;
       },
-      onDestroySpore(context) {
+      onMeltSpore(context) {
         const outputs = context.txSkeleton.get('outputs');
         const spore = outputs.get(context.inputIndex);
         if (spore) {
@@ -37,7 +37,7 @@ export function useImmortal(): SporeExtension {
           const contentType = decodeContentType(data.contentType);
           if (contentType.parameters.immortal === 'true') {
             throw new Error(
-              `Spore at Transaction.inputs[${context.inputIndex}] cannot be destroyed because it's immortal`,
+              `Spore at Transaction.inputs[${context.inputIndex}] cannot be melted because it's immortal`,
             );
           }
         }

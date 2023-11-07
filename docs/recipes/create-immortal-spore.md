@@ -5,11 +5,11 @@
 `Immortal` serves as a Spore Extension that offers the following rules:
 
 1. Immortal extension is enabled for a spore if the spore has a `immortal=true` in its `SporeData.contentType`
-2. An immortal spore lives on-chain forever, and cannot be destroyed under any circumstances
+2. An immortal spore lives on-chain forever, and cannot be melted under any circumstances
 
 To create a spore with the immortal extension enabled, you need to pass the `immortal` parameter to the props of the `createSpore` API when calling it. 
 
-Once an immortal spore is successfully created, any attempt from the owner to destroy it will fail due to the verification by the `SporeType` script.
+Once an immortal spore is successfully created, any attempt from the owner to melt it will fail due to the verification by the `SporeType` script.
 
 ## Create immortal spores
 

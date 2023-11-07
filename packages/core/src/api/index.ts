@@ -3,7 +3,7 @@ export * from './composed/cluster/createCluster';
 export * from './composed/cluster/transferCluster';
 export * from './composed/spore/createSpore';
 export * from './composed/spore/transferSpore';
-export * from './composed/spore/destroySpore';
+export * from './composed/spore/meltSpore';
 
 // Joint APIs
 export * from './joints/cluster/injectNewClusterOutput';
