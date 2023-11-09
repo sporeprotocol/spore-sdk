@@ -86,7 +86,7 @@ declare function transferSpore(props: {
 
 **Props**
 
-- `outPoint`: Specifies a target spore to transfer.
+- `outPoint`: Specifies a target spore to transfer, which is identified by its index from a specific Transaction.outputs.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `toLock`: Specifies the new owner of the spore.
 - `config`: Specifies the config of the SDK.
@@ -127,7 +127,7 @@ declare function meltSpore(props: {
 
 **Props**
 
-- `outPoint`: Specifies a target spore to destroy.
+- `outPoint`: Specifies a target spore to melt, which is identified by its index from a specific Transaction.outputs.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
@@ -221,7 +221,7 @@ declare function transferCluster(props: {
 
 **Props**
 
-- `outPoint`: Specifies a target cluster to destroy.
+- `outPoint`: Specifies a target cluster to transfer, which is identified by its index from a specific Transaction.outputs.
 - `fromInfos`: Specifies where to collect capacity for transaction construction.
 - `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
