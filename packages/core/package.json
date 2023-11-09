@@ -36,9 +36,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ShookLyngs/spore-sdk.git"
+    "url": "git+https://github.com/sporeprotocol/spore-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/ShookLyngs/spore-sdk/issues"
+    "url": "https://github.com/sporeprotocol/spore-sdk/issues"
   }
 }
