@@ -36,11 +36,11 @@
 </p>
 
 <p align="center">
-  Spore SDK is a comprehensive web development kit specifically designed for seamless integration with <a href="https://github.com/sporeprotocol/spore-contract">Spore Protocol</a>, an innovative asset protocol built on top of <a href="https://github.com/nervosnetwork/ckb">CKB</a>. It empowers the valuation of on-chain contents, revolutionizing the way assets are assessed.
+  Spore SDK is a comprehensive web development kit specifically designed for seamless integration with <a href="https://github.com/sporeprotocol/spore-contract">Spore</a>, an on-chain asset protocol to power digital asset ownership, distribution, and value capture, built on top of <a href="https://github.com/nervosnetwork/ckb">CKB</a>.
 </p>
 
 <p align="center">
-  With Spore SDK, developers gain access to powerful tools and resources that enable them to effortlessly create applications, fully leveraging the immense potential of Spore Protocol.
+  With Spore SDK, developers gain access to powerful tools and resources that enable them to effortlessly create spore-related dapps, fully leveraging the immense potential of Spore Protocol.
 </p>
 
 ## Features
