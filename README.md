@@ -15,14 +15,6 @@
 </p>
 
 <p align="center">
-  Spore SDK is a comprehensive web development kit specifically designed for seamless integration with <a href="https://github.com/sporeprotocol/spore-contract">Spore Protocol</a>, an innovative asset protocol built on top of <a href="https://github.com/nervosnetwork/ckb">CKB</a>. It empowers the valuation of on-chain contents, revolutionizing the way assets are assessed.
-</p>
-
-<p align="center">
-  With Spore SDK, developers gain access to powerful tools and resources that enable them to effortlessly create applications, fully leveraging the immense potential of Spore Protocol.
-</p>
-
-<p align="center">
   <a href="https://www.npmjs.com/package/@spore-sdk/core">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/npm/v/@spore-sdk/core?colorA=21262d&colorB=21262d&style=flat">
@@ -43,6 +35,13 @@
   </a>
 </p>
 
+<p align="center">
+  Spore SDK is a comprehensive web development kit specifically designed for seamless integration with <a href="https://github.com/sporeprotocol/spore-contract">Spore Protocol</a>, an innovative asset protocol built on top of <a href="https://github.com/nervosnetwork/ckb">CKB</a>. It empowers the valuation of on-chain contents, revolutionizing the way assets are assessed.
+</p>
+
+<p align="center">
+  With Spore SDK, developers gain access to powerful tools and resources that enable them to effortlessly create applications, fully leveraging the immense potential of Spore Protocol.
+</p>
 
 ## Features
 
@@ -105,7 +104,7 @@ Chat everything about Spore here:
 
 To submit pull requests, make sure:
 
-- Please submit pull requests based to the `beta` branch
+- Please submit pull requests based on the `beta` branch
 - Please ensure your commit styling won't conflict with the [existing commits](https://github.com/sporeprotocol/spore-sdk/commits)
 - Please provide a clear and descriptive title and description for your pull requests
 
