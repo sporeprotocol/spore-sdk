@@ -1,12 +1,17 @@
 import { OutPoint, Script } from '@ckb-lumos/base';
 import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
-import { getCellByType, getCellWithStatusByOutPoint } from '../../../helpers';
+import { getCellByType, getCellWithStatusByOutPoint, isTypeId } from '../../../helpers';
 import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
 
 export async function getClusterByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
   config = config ?? getSporeConfig();
   const indexer = new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl);
+
+  // Check if the cluster's id is TypeID
+  if (!isTypeId(type.args)) {
+    throw new Error(`Target Cluster Id is invalid: ${type.args}`);
+  }
 
   // Get cell by type
   const cell = await getCellByType({ type, indexer });
@@ -50,7 +55,12 @@ export async function getClusterById(id: HexString, config?: SporeConfig): Promi
   // Env
   config = config ?? getSporeConfig();
 
-  // Get cluster versioned script
+  // Check if the cluster's id is TypeID
+  if (!isTypeId(id)) {
+    throw new Error(`Target ClusterId is invalid: ${id}`);
+  }
+
+  // Get cluster script
   const clusterScript = getSporeScript(config, 'Cluster');
   const versionScripts = (clusterScript.versions ?? []).map((r) => r.script);
   const scripts = [clusterScript.script, ...versionScripts];
