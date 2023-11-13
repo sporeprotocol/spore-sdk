@@ -18,3 +18,12 @@ The demo also shows how to connect with [MetaMask](https://metamask.io) and [Joy
 
 - [Online A-simple-demo app](https://a-simple-demo.spore.pro)
 - [GitHub repository](https://github.com/sporeprotocol/spore-demo)
+
+### On-chain blog demo
+
+A demo of the step-by-step tutorial on create simple on-chain blog with Spore Protocol.
+Learn how to connect wallet, create your own blog cluster and post blogs within it.
+
+- [Follow the Create on-chain blog tutorial](https://docs.spore.pro/tutorials/create-on-chain-blog)
+- [Online on-chain blog demo](https://spore-blog-tutorial.vercel.app)
+- [GitHub repository](https://github.com/sporeprotocol/spore-blog-tutorial)
