@@ -50,41 +50,68 @@ export async function decodeMultipartContentFromStream<T extends TTypedArray>(
     return chunks;
   }
 
-  return parseMimeRecursively(parseMultipartMessage(stream, boundary));
+  const firstLayer = parseMultipartMessage(stream, boundary);
+  return parseMimeRecursively(firstLayer);
 }
 
 export async function encodeMultipartContent(
   boundary: string,
-  msg: AsyncableIterable<TDecodedMultipartMessage>,
-): Promise<{ buffer: ArrayBuffer; raw: string }> {
-  const encoded = encodeMultipartMessage(boundary, msg);
-  return await readArrayBufferStream(encoded);
+  message: AsyncableIterable<TDecodedMultipartMessage>,
+): Promise<{
+  stream: ReadableStream<ArrayBuffer>;
+  buffer: ArrayBuffer;
+  bufferChunks: ArrayBuffer[];
+  rawStringChunks: string[];
+  byteLength: number;
+  codeUnitLength: number;
+}> {
+  const stream = encodeMultipartMessage(boundary, message);
+  const buffer = await readArrayBufferStream(stream);
+
+  return {
+    stream,
+    ...buffer,
+  };
 }
 
 export async function readArrayBufferStream(stream: ReadableStream<ArrayBuffer>): Promise<{
   buffer: ArrayBuffer;
-  raw: string;
+  bufferChunks: ArrayBuffer[];
+  rawStringChunks: string[];
+  byteLength: number;
+  codeUnitLength: number;
 }> {
   const reader = stream.getReader();
-  const buffers: ArrayBuffer[] = [];
+
+  const bufferChunks: ArrayBuffer[] = [];
+  const rawStringChunks: string[] = [];
+  let codeUnitLength = 0;
 
   while (true) {
     const chunk = await reader.read();
-    if (!chunk.done) {
-      buffers.push(chunk.value);
-    } else {
+    if (chunk.done) {
       break;
     }
+
+    bufferChunks.push(chunk.value);
+
+    const rawString = bufferToRawString(chunk.value);
+    codeUnitLength += rawString.length;
+    rawStringChunks.push(rawString);
   }
 
-  const buf = await new Blob(buffers).arrayBuffer();
+  const buffer = await new Blob(bufferChunks).arrayBuffer();
+  const byteLength = buffer.byteLength;
 
   return {
-    buffer: buf,
-    raw: bufferToRawString(buf),
+    buffer,
+    bufferChunks,
+    rawStringChunks,
+    byteLength,
+    codeUnitLength,
   };
 }
 
 function replaceNewLineToCRLF(str: string) {
-  return str.replace(/\r(?!n)|(?<!\r)\n/g, '\r\n');
+  return str.replace(/\r\n/g, '\n').replace(/\n/g, '\r\n');
 }

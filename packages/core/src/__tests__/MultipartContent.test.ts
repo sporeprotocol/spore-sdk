@@ -1,4 +1,3 @@
-import { bytes } from '@ckb-lumos/codec';
 import { describe, it, expect } from 'vitest';
 import { TTypedArray } from '@exact-realty/multipart-parser/dist/types';
 import { TDecodedMultipartMessage } from '@exact-realty/multipart-parser/dist/encodeMultipartMessage';
@@ -139,8 +138,20 @@ content-type: image/example
   it('Encode', async () => {
     for (let i = 0; i < tests.length; i++) {
       const test = tests[i];
+      const testString = replaceNewLineToCRLF(test.raw);
+
       const encoded = await encodeMultipartContent(...test.message);
-      expect(replaceNewLineToCRLF(encoded.raw)).eq(replaceNewLineToCRLF(test.raw));
+      const resultStringChunks = encoded.rawStringChunks;
+
+      expect(testString.length).eq(encoded.codeUnitLength);
+
+      let startIndex = 0;
+      for (let j = 0; j < resultStringChunks.length; j++) {
+        const resultStringChunk = replaceNewLineToCRLF(resultStringChunks[j]);
+        const testStringChunk = testString.slice(startIndex, startIndex + resultStringChunk.length);
+        expect(testStringChunk).eq(resultStringChunk);
+        startIndex += resultStringChunk.length;
+      }
     }
   });
 
@@ -155,7 +166,6 @@ content-type: image/example
       }
 
       expect(msgs.length).eq(refs.length);
-
       for (let i = 0; i < msgs.length; i++) {
         const msg = msgs[i];
         const ref = refs[i];
@@ -165,15 +175,20 @@ content-type: image/example
           expect(msg.headers.get(key)).eq(ref.headers.get(key));
         }
         // Body
-        const msgBody = await transformMultipartBody(msg.body);
-        const refBody = await transformMultipartBody(ref.body);
-        expect(bytes.hexify(msgBody)).eq(bytes.hexify(refBody));
+        if (ref.body) {
+          expect(msg).toHaveProperty('body');
+          const msgBody = await transformMultipartBody(msg.body);
+          const refBody = await transformMultipartBody(ref.body);
+
+          expect(msgBody.byteLength).eq(refBody.byteLength);
+          expect(Buffer.from(msgBody).compare(Buffer.from(refBody))).eq(0);
+        }
         // Parts
         if (ref.parts) {
-          expect(!!msg.parts).toBe(true);
+          expect(msg).toHaveProperty('parts');
           await testDecoded(msg.parts!, ref.parts);
         } else {
-          expect(!!msg.parts).toBe(false);
+          expect(msg.parts).toBeUndefined();
         }
       }
     }
@@ -207,5 +222,5 @@ async function transformMultipartBody(body: TDecodedMultipartMessage['body']): P
 }
 
 function replaceNewLineToCRLF(str: string) {
-  return str.replace(/(\r\n|\r|\n)/g, '\r\n');
+  return str.replace(/\r\n/g, '\n').replace(/\n/g, '\r\n');
 }
