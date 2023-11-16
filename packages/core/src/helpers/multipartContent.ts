@@ -66,11 +66,11 @@ export async function encodeMultipartContent(
   codeUnitLength: number;
 }> {
   const stream = encodeMultipartMessage(boundary, message);
-  const buffer = await readArrayBufferStream(stream);
+  const result = await readArrayBufferStream(stream);
 
   return {
     stream,
-    ...buffer,
+    ...result,
   };
 }
 
@@ -110,6 +110,24 @@ export async function readArrayBufferStream(stream: ReadableStream<ArrayBuffer>)
     byteLength,
     codeUnitLength,
   };
+}
+
+export async function isMultipartContentValid(message: string, boundary: string): Promise<boolean> {
+  try {
+    await decodeMultipartContent(message, boundary);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function isMultipartContentAsBytesValid(buf: BytesLike, boundary: string): Promise<boolean> {
+  try {
+    await decodeMultipartContentFromBytes(buf, boundary);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function replaceNewLineToCRLF(str: string) {

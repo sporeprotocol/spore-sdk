@@ -1,12 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { TTypedArray } from '@exact-realty/multipart-parser/dist/types';
 import { TDecodedMultipartMessage } from '@exact-realty/multipart-parser/dist/encodeMultipartMessage';
-import { bytifyRawString, decodeMultipartContent, encodeMultipartContent, readArrayBufferStream } from '../helpers';
+import {
+  bytifyRawString,
+  decodeMultipartContent,
+  encodeMultipartContent,
+  isMultipartContentValid,
+  readArrayBufferStream,
+} from '../helpers';
 import { AsyncableIterable, ResolvedMultipartContent } from '../helpers';
 import { fetchLocalImage } from './shared';
 
 describe('Multipart SporeData.content', async function () {
-  const tests: MultipartTestCase[] = [
+  const parseTests: MultipartTestCase[] = [
     {
       raw: `
 --boundary
@@ -135,9 +141,58 @@ content-type: image/example
     },
   ];
 
+  const validityTests: MultipartValidityTestCase[] = [
+    ...parseTests.map((r) => {
+      return {
+        expect: true,
+        message: r.raw,
+        boundary: r.message[0],
+      };
+    }),
+
+    {
+      message: 'test without boundary',
+      boundary: 'boundary',
+      expect: false,
+    },
+    {
+      message: `
+--boundary
+test without closing boundary
+`,
+      boundary: 'boundary',
+      expect: false,
+    },
+    {
+      message: `
+--boundary
+minimal viable multipart message, ending without CRLF
+--boundary--`,
+      boundary: 'boundary',
+      expect: false,
+    },
+    {
+      message: `
+--boundary
+minimal viable multipart message
+--boundary--
+`,
+      boundary: 'boundary',
+      expect: true,
+    },
+    {
+      message: `--boundary
+test with opening boundary that does not start with CRLF
+--boundary--
+`,
+      boundary: 'boundary',
+      expect: true,
+    },
+  ];
+
   it('Encode', async () => {
-    for (let i = 0; i < tests.length; i++) {
-      const test = tests[i];
+    for (let i = 0; i < parseTests.length; i++) {
+      const test = parseTests[i];
       const testString = replaceNewLineToCRLF(test.raw);
 
       const encoded = await encodeMultipartContent(...test.message);
@@ -193,10 +248,18 @@ content-type: image/example
       }
     }
 
-    for (let i = 0; i < tests.length; i++) {
-      const test = tests[i];
+    for (let i = 0; i < parseTests.length; i++) {
+      const test = parseTests[i];
       const messages = await decodeMultipartContent(test.raw, test.message[0]);
       await testDecoded(messages, test.message[1]);
+    }
+  });
+
+  it('Validity', async () => {
+    for (let i = 0; i < validityTests.length; i++) {
+      const test = validityTests[i];
+      const result = await isMultipartContentValid(test.message, test.boundary);
+      expect(result).eq(test.expect, `the #${i} validity test should match the expectation`);
     }
   });
 });
@@ -204,6 +267,12 @@ content-type: image/example
 interface MultipartTestCase {
   raw: string;
   message: Parameters<typeof encodeMultipartContent>;
+}
+
+interface MultipartValidityTestCase {
+  expect: boolean;
+  message: string;
+  boundary: string;
 }
 
 async function transformMultipartBody(body: TDecodedMultipartMessage['body']): Promise<ArrayBuffer> {
