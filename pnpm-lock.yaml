@@ -161,6 +161,9 @@ importers:
       '@ckb-lumos/rpc':
         specifier: ^0.21.0-next.0
         version: 0.21.0-next.0(cross-fetch@3.1.8)(jsbi@4.3.0)
+      '@exact-realty/multipart-parser':
+        specifier: ^1.0.9
+        version: 1.0.9
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -750,6 +753,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@exact-realty/multipart-parser@1.0.9:
+    resolution: {integrity: sha512-XU2qKFDWdds1TADn6GBvFcue+W5xAwu2pQq0zBLK5GiQrzILWo/NTrboyw2vuMbu1GLKgLqEtJOXmUvrx2JjVA==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+    dev: false
 
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
