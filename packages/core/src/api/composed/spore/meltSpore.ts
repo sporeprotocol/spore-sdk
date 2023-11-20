@@ -1,6 +1,6 @@
 import { Address, OutPoint } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
-import { BI, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
+import { helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
@@ -25,9 +25,8 @@ export async function meltSpore(props: {
   });
 
   // Inject live spore to Transaction.inputs
-  const sporeCell = await getSporeByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
-    cell: sporeCell,
+    cell: await getSporeByOutPoint(props.outPoint, config),
     updateWitness: props.updateWitness,
     txSkeleton,
     config,
@@ -36,10 +35,9 @@ export async function meltSpore(props: {
 
   // Inject needed capacity and pay fee
   const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
-    txSkeleton,
     changeAddress: props.changeAddress,
     fromInfos: props.fromInfos,
-    fee: BI.from(0),
+    txSkeleton,
     config,
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;

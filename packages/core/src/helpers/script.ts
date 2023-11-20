@@ -1,6 +1,4 @@
-import { Address, Script, values } from '@ckb-lumos/base';
-import { Config } from '@ckb-lumos/config-manager';
-import { helpers } from '@ckb-lumos/lumos';
+import { Script, values } from '@ckb-lumos/base';
 import { ScriptId } from '../types';
 
 /**
@@ -15,18 +13,4 @@ export function isScriptValueEquals(a: Script, b: Script) {
  */
 export function isScriptIdEquals(a: ScriptId, b: ScriptId) {
   return a.codeHash === b.codeHash && a.hashType === b.hashType;
-}
-
-/**
- * Check if the target address is valid.
- */
-export function isAddressValid(address: Address, config: Config) {
-  try {
-    helpers.parseAddress(address, {
-      config,
-    });
-    return true;
-  } catch {
-    return false;
-  }
 }

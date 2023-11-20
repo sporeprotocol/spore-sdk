@@ -3,7 +3,7 @@ import { Address, Transaction } from '@ckb-lumos/base';
 import { BI, helpers, RPC } from '@ckb-lumos/lumos';
 import { BIish } from '@ckb-lumos/bi';
 import { getSporeConfig, SporeConfig } from '../config';
-import { createCapacitySnapshot, injectNeededCapacity } from './capacity';
+import { CapacitySnapshot, createCapacitySnapshotFromTransactionSkeleton, injectNeededCapacity } from './capacity';
 import { getTransactionSize } from './transaction';
 
 /**
@@ -16,7 +16,7 @@ export async function getMinFeeRate(rpc: RPC | string): Promise<BI> {
 }
 
 /**
- * Calculate transaction fee by transaction size and feeRate.
+ * Calculate transaction fee by transaction's byte size and feeRate.
  */
 export function calculateFee(size: number, feeRate: BIish): BI {
   const ratio = BI.from(1000);
@@ -39,16 +39,16 @@ export function calculateFeeByTransaction(tx: Transaction, feeRate: BIish): BI {
 /**
  * Calculate transaction fee by TransactionSkeleton and a specific feeRate.
  */
-export function calculateFeeByTransactionSkeleton(txSkeleton: helpers.TransactionSkeletonType, feeRate: BIish) {
+export function calculateFeeByTransactionSkeleton(txSkeleton: helpers.TransactionSkeletonType, feeRate: BIish): BI {
   const tx = helpers.createTransactionFromSkeleton(txSkeleton);
   return calculateFeeByTransaction(tx, feeRate);
 }
 
 /**
- * Pay fee by minimal acceptable fee rate from the RPC,
- * of pay fee by a manual fee rate.
+ * Pay transaction fee via a capacity collection process,
+ * using the minimal acceptable fee rate from the RPC.
  */
-export async function payFee(props: {
+export async function payFeeThroughCollection(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
   config?: SporeConfig;
@@ -107,21 +107,21 @@ export async function payFeeByOutput(props: {
 }
 
 /**
- * Inject needed amount of capacity,
- * and then pay fee by minimal acceptable fee rate or by a manual fee rate.
+ * Inject the needed amount of capacity,
+ * and then pay the transaction fee via a capacity collection process.
  */
 export async function injectCapacityAndPayFee(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
   config?: SporeConfig;
   feeRate?: BIish;
-  fee?: BIish;
+  extraCapacity?: BIish;
   changeAddress?: Address;
   enableDeductCapacity?: boolean;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
-  before: ReturnType<typeof createCapacitySnapshot>;
-  after: ReturnType<typeof createCapacitySnapshot>;
+  before: CapacitySnapshot;
+  after: CapacitySnapshot;
 }> {
   // Env
   const config = props.config ?? getSporeConfig();
@@ -133,7 +133,7 @@ export async function injectCapacityAndPayFee(props: {
   });
 
   // Pay fee
-  const txSkeleton = await payFee({
+  const txSkeleton = await payFeeThroughCollection({
     ...props,
     txSkeleton: injectNeededCapacityResult.txSkeleton,
   });
@@ -141,6 +141,6 @@ export async function injectCapacityAndPayFee(props: {
   return {
     txSkeleton,
     before: injectNeededCapacityResult.before,
-    after: createCapacitySnapshot(txSkeleton.get('inputs').toArray(), txSkeleton.get('outputs').toArray()),
+    after: createCapacitySnapshotFromTransactionSkeleton(txSkeleton),
   };
 }

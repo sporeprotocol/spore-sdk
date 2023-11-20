@@ -4,8 +4,10 @@ import { bytes } from '@ckb-lumos/codec';
 import { common } from '@ckb-lumos/common-scripts';
 import { Address, Hash, Script } from '@ckb-lumos/base';
 import { hd, helpers, HexString, RPC } from '@ckb-lumos/lumos';
-import { bytifyRawString, createCapacitySnapshot, defaultEmptyWitnessArgs, updateWitnessArgs } from '../../helpers';
 import { SporeConfig } from '../../config';
+import { bytifyRawString } from '../../helpers';
+import { defaultEmptyWitnessArgs, updateWitnessArgs } from '../../helpers';
+import { createCapacitySnapshotFromTransactionSkeleton } from '../../helpers';
 
 export interface TestAccount {
   lock: Script;
@@ -83,7 +85,7 @@ export async function signAndSendTransaction(props: {
   txSkeleton = common.prepareSigningEntries(txSkeleton, { config: config.lumos });
   txSkeleton = account.signTransaction(txSkeleton);
   if (debug) {
-    const snap = createCapacitySnapshot(txSkeleton.get('inputs').toArray(), txSkeleton.get('outputs').toArray());
+    const snap = createCapacitySnapshotFromTransactionSkeleton(txSkeleton);
     console.log('inputsCapacity', snap.inputsCapacity.toString());
     console.log('outputsCapacity', snap.outputsCapacity.toString());
   }

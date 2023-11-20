@@ -4,6 +4,7 @@ export * from './buffer';
 // Blockchain
 export * from './cell';
 export * from './script';
+export * from './address';
 export * from './typeId';
 export * from './capacity';
 export * from './transaction';
