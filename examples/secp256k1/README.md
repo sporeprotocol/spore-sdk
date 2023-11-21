@@ -17,7 +17,7 @@ Spore:
 
 Cluster:
 - [apis/createCluster.ts](./apis/createCluster.ts): Create a cluster with [CKB Default Lock](https://www.notion.so/cryptape/examples/secp256k1)
-- [apis/transferSpore.ts](./apis/transferCluster.ts): Unlock and transfer a cluster from A to B
+- [apis/transferCluster.ts](./apis/transferCluster.ts): Unlock and transfer a cluster from A to B
 
 ## Run examples
 
