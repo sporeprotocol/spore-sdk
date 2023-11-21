@@ -3,7 +3,8 @@ import { Address, Transaction } from '@ckb-lumos/base';
 import { BI, helpers, RPC } from '@ckb-lumos/lumos';
 import { BIish } from '@ckb-lumos/bi';
 import { getSporeConfig, SporeConfig } from '../config';
-import { CapacitySnapshot, createCapacitySnapshotFromTransactionSkeleton, injectNeededCapacity } from './capacity';
+import { injectNeededCapacity, returnExceededCapacity } from './capacity';
+import { CapacitySnapshot, createCapacitySnapshotFromTransactionSkeleton } from './capacity';
 import { getTransactionSize } from './transaction';
 
 /**
@@ -142,5 +143,47 @@ export async function injectCapacityAndPayFee(props: {
     txSkeleton,
     before: injectNeededCapacityResult.before,
     after: createCapacitySnapshotFromTransactionSkeleton(txSkeleton),
+  };
+}
+
+/**
+ * Return exceeded capacity (change) to the outputs and then pay fee by the change cell.
+ */
+export async function returnExceededCapacityAndPayFee(props: {
+  txSkeleton: helpers.TransactionSkeletonType;
+  changeAddress: Address;
+  config?: SporeConfig;
+}): Promise<{
+  txSkeleton: helpers.TransactionSkeletonType;
+  changeCellOutputIndex: number;
+  createdChangeCell: boolean;
+}> {
+  let txSkeleton = props.txSkeleton;
+  const config = props.config ?? getSporeConfig();
+
+  // Return exceeded (change) capacity
+  const returnExceededCapacityResult = returnExceededCapacity({
+    txSkeleton,
+    config: config.lumos,
+    changeAddress: props.changeAddress,
+  });
+  txSkeleton = returnExceededCapacityResult.txSkeleton;
+
+  // If no change was returned, throw error as it is unexpected
+  if (!returnExceededCapacityResult.returnedChange) {
+    throw new Error(`Cannot pay fee with change cell because no change was returned`);
+  }
+
+  // Pay fee by change cell in outputs
+  txSkeleton = await payFeeByOutput({
+    outputIndex: returnExceededCapacityResult.changeCellOutputIndex,
+    txSkeleton,
+    config,
+  });
+
+  return {
+    txSkeleton,
+    createdChangeCell: returnExceededCapacityResult.createdChangeCell,
+    changeCellOutputIndex: returnExceededCapacityResult.changeCellOutputIndex,
   };
 }

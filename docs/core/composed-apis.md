@@ -116,9 +116,8 @@ const result = await transferSpore({
 ```typescript
 declare function meltSpore(props: {
   outPoint: OutPoint;
-  fromInfos: FromInfo[];
-  config?: SporeConfig;
   changeAddress?: Address;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -128,9 +127,8 @@ declare function meltSpore(props: {
 **Props**
 
 - `outPoint`: Specifies a target spore to melt, which is identified by its index from a specific Transaction.outputs.
-- `fromInfos`: Specifies where to collect capacity for transaction construction.
-- `config`: Specifies the config of the SDK.
 - `changeAddress`: Specifies the change cell's ownership.
+- `config`: Specifies the config of the SDK.
 
 **Example**
 
@@ -142,7 +140,7 @@ const result = await meltSpore({
     txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
     index: '0x0',
   },
-  fromInfos: [OWNER_ADDRESS],
+  changeAddress: OWNER_ADDRESS,
   config: predefinedSporeConfigs.Aggron4,
 });
 ```
