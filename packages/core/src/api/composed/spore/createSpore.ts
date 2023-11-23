@@ -3,9 +3,10 @@ import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { assetTransactionSkeletonSize } from '../../../helpers';
+import { assertTransactionSkeletonSize } from '../../../helpers';
 import { injectCapacityAndPayFee, setAbsoluteCapacityMargin } from '../../../helpers';
 import { injectNewSporeOutput, injectNewSporeIds, SporeDataProps } from '../..';
+import { assertClusteredSporeProof } from '../../joints/spore/injectClusteredSporeProof';
 
 export async function createSpore(props: {
   data: SporeDataProps;
@@ -44,6 +45,8 @@ export async function createSpore(props: {
   const injectNewSporeResult = await injectNewSporeOutput({
     data: props.data,
     toLock: props.toLock,
+    fromInfos: props.fromInfos,
+    changeAddress: props.changeAddress,
     capacityMargin: props.capacityMargin,
     updateOutput(cell) {
       if (capacityMargin.gt(0)) {
@@ -77,9 +80,18 @@ export async function createSpore(props: {
     config,
   });
 
+  // If creating a clustered spore, validate the transaction
+  if (props.data.clusterId !== void 0) {
+    await assertClusteredSporeProof({
+      clusterId: props.data.clusterId,
+      txSkeleton,
+      config,
+    });
+  }
+
   // Make sure the tx size is in range (if needed)
   if (typeof maxTransactionSize === 'number') {
-    assetTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
+    assertTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
   }
 
   return {

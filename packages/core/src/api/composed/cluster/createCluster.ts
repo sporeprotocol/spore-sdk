@@ -3,7 +3,7 @@ import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, assetTransactionSkeletonSize } from '../../../helpers';
+import { injectCapacityAndPayFee, assertTransactionSkeletonSize } from '../../../helpers';
 import { ClusterDataProps, injectNewClusterIds, injectNewClusterOutput } from '../..';
 
 export async function createCluster(props: {
@@ -58,7 +58,7 @@ export async function createCluster(props: {
 
   // Make sure the tx size is in range (if needed)
   if (typeof maxTransactionSize === 'number') {
-    assetTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
+    assertTransactionSkeletonSize(txSkeleton, void 0, maxTransactionSize);
   }
 
   return {

@@ -1,24 +1,23 @@
 import { describe, it } from 'vitest';
 import { OutPoint } from '@ckb-lumos/base';
-import { createSpore, meltSpore, transferSpore } from '../api';
-import { fetchLocalImage, signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
+import { bytifyRawString } from '../helpers';
+import { createSpore, transferSpore, meltSpore } from '../api';
+import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 describe('Spore', function () {
-  it('Create a spore (no cluster)', async function () {
+  it('Create a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
-    const { CHARLIE } = TESTNET_ACCOUNTS;
-
-    // Generate local image content
-    const content = await fetchLocalImage('./resources/test.jpg', __dirname);
+    const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createSpore({
       data: {
-        contentType: 'image/jpeg',
-        content: content.arrayBuffer,
+        contentType: 'text/plain',
+        content: bytifyRawString('test spore with cluster'),
+        clusterId: '0x0df701ca5798d381b39435475a17d0c4246d367b5263fe5726098d9ff2f056e0',
       },
-      fromInfos: [CHARLIE.address],
       toLock: CHARLIE.lock,
+      fromInfos: [CHARLIE.address],
       config,
     });
 
@@ -61,7 +60,7 @@ describe('Spore', function () {
 
   it('Melt a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
-    const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
+    const { ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
       txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
@@ -77,7 +76,7 @@ describe('Spore', function () {
 
     // Sign and send transaction
     await signAndSendTransaction({
-      account: CHARLIE,
+      account: ALICE,
       txSkeleton,
       config,
       rpc,

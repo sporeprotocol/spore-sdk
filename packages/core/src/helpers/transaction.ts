@@ -63,7 +63,7 @@ export function assetTransactionSize(tx: Transaction, min?: number, max?: number
  * Throw an error if the TransactionSkeleton's size (in bytes) is not as expected.
  * Expected: min < size <= max.
  */
-export function assetTransactionSkeletonSize(
+export function assertTransactionSkeletonSize(
   txSkeleton: helpers.TransactionSkeletonType,
   min?: number,
   max?: number,
