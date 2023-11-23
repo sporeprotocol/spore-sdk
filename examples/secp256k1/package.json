@@ -3,8 +3,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
+    "lint": "prettier --check '{apis,utils}/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "prettier --write '{apis,utils}/**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@spore-sdk/core": "workspace:^",
