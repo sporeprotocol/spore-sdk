@@ -5,6 +5,7 @@ export * from './buffer';
 export * from './cell';
 export * from './cellDep';
 export * from './script';
+export * from './address';
 export * from './typeId';
 export * from './capacity';
 export * from './transaction';

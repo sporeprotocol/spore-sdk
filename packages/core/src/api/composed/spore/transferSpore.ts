@@ -64,7 +64,6 @@ export async function transferSpore(props: {
       txSkeleton,
       changeAddress: props.changeAddress,
       fromInfos: props.fromInfos!,
-      fee: BI.from(0),
       config,
     });
     txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;

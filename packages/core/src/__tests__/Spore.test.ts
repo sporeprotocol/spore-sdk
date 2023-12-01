@@ -63,14 +63,14 @@ describe('Spore', function () {
     const { ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
-      txHash: '0x76cede56c91f8531df0e3084b3127686c485d08ad8e86ea948417094f3f023f9',
+      txHash: '0x8ef248af053927c04e892c6d1e20eb5c0f112d2fb54777291c136b6ed0f776bd',
       index: '0x0',
     };
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await meltSpore({
       outPoint: outPoint,
-      fromInfos: [ALICE.address],
+      changeAddress: ALICE.address,
       config,
     });
 
