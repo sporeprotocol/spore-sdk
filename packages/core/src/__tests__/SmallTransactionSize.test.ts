@@ -1,15 +1,36 @@
+import { resolve } from 'path';
+import { readFileSync } from 'fs';
 import { describe, it } from 'vitest';
+import { bytes } from '@ckb-lumos/codec';
 import { OutPoint } from '@ckb-lumos/base';
+import { bytifyRawString } from '../helpers';
 import { createSpore, meltSpore, transferSpore } from '../api';
-import { fetchLocalImage, signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
+import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
+
+const localImage = './resources/test_000.png';
+async function fetchInternetImage(src: string) {
+  const res = await fetch(src);
+  return await res.arrayBuffer();
+}
+async function fetchLocalImage(src: string) {
+  const buffer = readFileSync(resolve(__dirname, src));
+  const arrayBuffer = new Uint8Array(buffer).buffer;
+  const base64 = buffer.toString('base64');
+  return {
+    arrayBuffer,
+    arrayBufferHex: bytes.hexify(arrayBuffer),
+    base64,
+    base64Hex: bytes.hexify(bytifyRawString(base64)),
+  };
+}
 
 describe('Spore', function () {
-  it('Create a spore (no cluster)', async function () {
+  it('Create a spore (png & small)', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE } = TESTNET_ACCOUNTS;
 
     // Generate local image content
-    const content = await fetchLocalImage('./resources/test.jpg', __dirname);
+    const content = await fetchLocalImage(localImage);
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await createSpore({
@@ -31,13 +52,12 @@ describe('Spore', function () {
       send: false,
     });
   }, 30000);
-
   it('Transfer a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
-      txHash: '0x5d202c168e100b100b0187e21dbceaaeb0f7bfdca0e74d078abb337c4850aa33',
+      txHash: '0x26d7b66de842a257540730aebd708818daf1ce8abba5dde24181602020860c29',
       index: '0x0',
     };
 
@@ -59,25 +79,25 @@ describe('Spore', function () {
     });
   }, 30000);
 
-  it('Melt a spore', async function () {
+  it('Destroy a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
-      txHash: '0x3541f4da5c5ac0c24f4bf0fbf4aff05ece2429fcce5b965d6ea4aafca5e93e40',
+      txHash: '0x1439fc95c4dac34e00e51349209890b39936713dd3ba81dbd65e34ac79c356b4',
       index: '0x0',
     };
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await meltSpore({
       outPoint: outPoint,
-      changeAddress: ALICE.address,
+      fromInfos: [ALICE.address],
       config,
     });
 
     // Sign and send transaction
     await signAndSendTransaction({
-      account: ALICE,
+      account: CHARLIE,
       txSkeleton,
       config,
       rpc,

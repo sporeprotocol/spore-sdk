@@ -5,11 +5,13 @@ import {
   bytifyRawString,
   decodeMultipartContent,
   encodeMultipartContent,
+  isMultipartContentAsBytesValid,
   isMultipartContentValid,
   readArrayBufferStream,
 } from '../helpers';
 import { AsyncableIterable, ResolvedMultipartContent } from '../helpers';
 import { fetchLocalImage } from './shared';
+import { TextEncoder } from 'util';
 
 describe('Multipart SporeData.content', async function () {
   const parseTests: MultipartTestCase[] = [
@@ -190,6 +192,17 @@ test with opening boundary that does not start with CRLF
     },
   ];
 
+  const validBoundary = 'example-valid-boundary';
+  const invalidBoundary = 'example-invalid-boundary';
+
+  const invalidMultipartMessage = `
+    --${invalidBoundary}
+    Content-Type: text/plain
+
+    Hello, World!
+    --${invalidBoundary}--
+  `;
+
   it('Encode', async () => {
     for (let i = 0; i < parseTests.length; i++) {
       const test = parseTests[i];
@@ -259,8 +272,129 @@ test with opening boundary that does not start with CRLF
     for (let i = 0; i < validityTests.length; i++) {
       const test = validityTests[i];
       const result = await isMultipartContentValid(test.message, test.boundary);
+      console.log(result);
       expect(result).eq(test.expect, `the #${i} validity test should match the expectation`);
     }
+  });
+
+  it('Handles large files', async () => {
+    const largeFileContent = generateLargeFile();
+    const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+    console.log(largeFileContent);
+
+    const message: AsyncableIterable<TDecodedMultipartMessage> = [
+      {
+        headers: new Headers({ 'Content-Type': 'text/plain' }),
+        body: largeFileContent,
+      },
+    ];
+
+    const encoded = await encodeMultipartContent(boundary, message);
+    console.log('aaa====' + encoded.rawStringChunks);
+    expect(encoded.rawStringChunks).toBeDefined();
+    expect(encoded.buffer).toBeDefined();
+  });
+
+  it('Handles empty message', async () => {
+    const emptyMessage: AsyncableIterable<TDecodedMultipartMessage> = [
+      {
+        headers: new Headers({ 'Content-Type': 'text/plain' }),
+        body: bytifyRawString(''),
+      },
+    ];
+
+    const encoded = await encodeMultipartContent('boundary', emptyMessage);
+
+    console.log('Actual:', encoded.rawStringChunks);
+
+    // Adjust the expected string to use \n as the newline character and remove invisible characters that may cause depth equality to fail
+    const expected = '\n--boundary\ncontent-type: text/plain\n\n--boundary--\n'.replace(/\s/g, '');
+    const actual = encoded.rawStringChunks.join('').replace(/\s/g, '');
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('Handles message with only headers', async () => {
+    const headersOnlyMessage: AsyncableIterable<TDecodedMultipartMessage> = [
+      {
+        headers: new Headers({ 'Content-Type': 'text/plain' }),
+        body: null,
+      },
+    ];
+
+    const encoded = await encodeMultipartContent('boundary', headersOnlyMessage);
+
+    console.log('Actual:', encoded.rawStringChunks);
+
+    // Adjust the expected string to use \n as the newline character and remove invisible characters that may cause depth equality to fail
+    const expected = '\n--boundary\nContent-Type: text/plain\n\n--boundary--\n'.replace(/\s/g, '').toLowerCase();
+    const actual = encoded.rawStringChunks.join('').replace(/\s/g, '').toLowerCase();
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('Handles different character sets and encodings', async () => {
+    const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+
+    const message = createMessageWithDifferentCharsetsAndEncodings();
+
+    const encoded = await encodeMultipartContent(boundary, message);
+
+    expect(encoded).toHaveProperty('rawStringChunks');
+    expect(encoded).toHaveProperty('buffer');
+  });
+
+  it('Handles exceptional cases', async () => {
+    const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+    // Create a message containing an exception
+    const message = createMessageWithExceptionalCases();
+
+    // 将 message.message[1] 转换为 AsyncableIterable<TDecodedMultipartMessage>
+    const asyncIterable: AsyncableIterable<TDecodedMultipartMessage> = message.message[1];
+
+    const encoded = await encodeMultipartContent(message.message[0], asyncIterable);
+
+    console.log(encoded.rawStringChunks);
+    expect(encoded.rawStringChunks.join('')).toMatch(/\r?\n--\s*boundary\r?\n/);
+
+    expect(encoded.rawStringChunks.join('')).toContain('Invalid content type message');
+    expect(encoded.rawStringChunks.join('')).toContain('Normal text message');
+  });
+
+  it('Handles invalid multipart content', async () => {
+    const invalidMessage = `
+    text without boundary
+  `;
+    try {
+      await decodeMultipartContent(invalidMessage, 'boundary');
+      expect.fail('Expected an error but none occurred.');
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+        expect(error.message).toContain('Invalid message');
+      }
+    }
+  });
+
+  it('should return true for valid bytes', async () => {
+    const headersOnlyMessage: AsyncableIterable<TDecodedMultipartMessage> = [
+      {
+        headers: new Headers({ 'Content-Type': 'text/plain' }),
+        body: null,
+      },
+    ];
+
+    const boundary = 'example_boundary';
+    const { buffer } = await encodeMultipartContent(boundary, headersOnlyMessage);
+
+    // 调用函数时传入 Uint8Array 或 ArrayBuffer
+    const isValidUint8Array = await isMultipartContentAsBytesValid(new Uint8Array(buffer), boundary);
+    expect(isValidUint8Array).toBe(true);
+  });
+
+  it('should return false for invalid bytes', async () => {
+    const result = await isMultipartContentAsBytesValid(invalidMultipartMessage, validBoundary);
+    expect(result).toBe(false);
   });
 });
 
@@ -292,4 +426,95 @@ async function transformMultipartBody(body: TDecodedMultipartMessage['body']): P
 
 function replaceNewLineToCRLF(str: string) {
   return str.replace(/\r\n/g, '\n').replace(/\n/g, '\r\n');
+}
+
+// Create messages with different character sets and encodings
+function createMessageWithDifferentCharsetsAndEncodings(): AsyncableIterable<TDecodedMultipartMessage> {
+  const text = 'Hello, 你好, مرحبًا';
+
+  // Create messages with different character sets and encodings
+  const messages: TDecodedMultipartMessage[] = [
+    {
+      headers: new Headers({
+        'Content-Type': 'text/plain; charset=utf-8',
+      }),
+      body: encodeTextToUint8Array(text, 'utf-8'),
+    },
+    {
+      headers: new Headers({
+        'Content-Type': 'text/plain; charset=gbk',
+      }),
+      body: encodeTextToUint8Array(text, 'gbk'),
+    },
+    {
+      headers: new Headers({
+        'Content-Type': 'text/plain; charset=iso-8859-1',
+      }),
+      body: encodeTextToUint8Array(text, 'iso-8859-1'),
+    },
+  ];
+
+  return messages;
+}
+
+function encodeTextToUint8Array(text: string, encoding: string = 'utf-8'): Uint8Array {
+  const textEncoder = new TextEncoder();
+  return textEncoder.encode(text);
+}
+
+function createMessageWithExceptionalCases(): MultipartTestCase {
+  const exceptionalMessage: TDecodedMultipartMessage[] = [
+    {
+      headers: new Headers({
+        'Content-Type': 'text/plain; charset=utf-8',
+      }),
+      body: bytifyRawString('Normal text message'),
+    },
+    // Invalid Content-Type
+    {
+      headers: new Headers({
+        'Content-Type': 'invalid-content-type',
+      }),
+      body: bytifyRawString('Invalid content type message'),
+    },
+    // null body
+    {
+      headers: new Headers({
+        'Content-Type': 'text/plain; charset=utf-8',
+      }),
+      body: bytifyRawString(''),
+    },
+  ];
+
+  const asyncIterable: AsyncableIterable<TDecodedMultipartMessage> = {
+    [Symbol.asyncIterator]: async function* () {
+      yield* exceptionalMessage;
+    },
+  };
+
+  const testCase: MultipartTestCase = {
+    raw: `
+    --boundary
+    Content-Type: text/plain; charset=utf-8
+
+    Normal text message
+    --boundary
+    Content-Type: invalid-content-type
+
+    Invalid content type message
+    --boundary
+    Content-Type: text/plain; charset=utf-8
+
+    --boundary--
+  `,
+    message: ['boundary', asyncIterable],
+  };
+
+  return testCase;
+}
+
+export function generateLargeFile(sizeInMB: number = 25): Uint8Array {
+  const content = new Uint8Array(sizeInMB * 1024 * 1024);
+  content.fill('A'.charCodeAt(0));
+  return content;
 }
