@@ -1,6 +1,6 @@
 import { BIish } from '@ckb-lumos/bi';
 import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, OutPoint, Script } from '@ckb-lumos/base';
+import { Address, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
@@ -9,13 +9,15 @@ import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
 export async function transferSpore(props: {
   outPoint: OutPoint;
   toLock: Script;
-  config?: SporeConfig;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
   useCapacityMarginAsFee?: boolean;
+  updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   updateWitness?: HexString | ((witness: HexString) => HexString);
-  updateOutput?(cell: Cell): Cell;
+  defaultWitness?: HexString;
+  since?: PackedSince;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -34,7 +36,7 @@ export async function transferSpore(props: {
     throw new Error('When useCapacityMarginAsFee is enabled, cannot set capacity margin of the spore');
   }
 
-  // Get TransactionSkeleton
+  // TransactionSkeleton
   let txSkeleton = helpers.TransactionSkeleton({
     cellProvider: indexer,
   });
@@ -42,11 +44,9 @@ export async function transferSpore(props: {
   // Inject live spore to Transaction.inputs and Transaction.outputs
   const sporeCell = await getSporeByOutPoint(props.outPoint, config);
   const injectLiveSporeCellResult = await injectLiveSporeCell({
-    cell: sporeCell,
     txSkeleton,
+    cell: sporeCell,
     addOutput: true,
-    updateWitness: props.updateWitness,
-    capacityMargin: props.capacityMargin,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;
       if (props.updateOutput instanceof Function) {
@@ -54,6 +54,10 @@ export async function transferSpore(props: {
       }
       return cell;
     },
+    capacityMargin: props.capacityMargin,
+    defaultWitness: props.defaultWitness,
+    updateWitness: props.updateWitness,
+    since: props.since,
     config,
   });
   txSkeleton = injectLiveSporeCellResult.txSkeleton;
@@ -62,8 +66,8 @@ export async function transferSpore(props: {
     // Inject needed capacity from fromInfos and pay fee
     const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
       txSkeleton,
-      changeAddress: props.changeAddress,
       fromInfos: props.fromInfos!,
+      changeAddress: props.changeAddress,
       config,
     });
     txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
