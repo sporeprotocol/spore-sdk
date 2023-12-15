@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch: {}
   schedule:
-    - cron: '0 22 * * *' # 每天早上6点触发 (UTC时间)
+    - cron: '0 22 * * *' # Triggered every morning at 6 am (UTC time)
 
 jobs:
   test:

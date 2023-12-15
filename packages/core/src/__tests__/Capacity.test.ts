@@ -120,7 +120,7 @@ describe('Capacity', function () {
   });
 
   it('Handle invalid input data: negative capacity', async () => {
-    // 创建一个包含无效输入数据的 txSkeleton，例如负的容量值
+    // Create a txSkeleton with invalid input data, such as a negative capacity value
     let txSkeleton = new helpers.TransactionSkeleton({
       cellProvider: indexer,
     });
@@ -128,42 +128,38 @@ describe('Capacity', function () {
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push({
         cellOutput: {
-          capacity: BI.from(-100).toHexString(), // 负的容量值
+          capacity: BI.from(-100).toHexString(), // negative capacity value
           lock: CHARLIE.lock,
         },
         data: '0x',
       });
     });
 
-    // 在这里可以添加其他的设置，比如添加有效的输出等
-
-    // 这里使用 try-catch 捕获可能的异常
     try {
-      // 尝试进行容量处理和支付费用
+      // Attempt capacity processing and payment charges
       const injected = await injectCapacityAndPayFee({
         fromInfos: [CHARLIE.address],
         txSkeleton,
         config,
       });
 
-      // 如果系统没有正确处理无效数据，下面的断言会失败
+      // If the system does not handle invalid data correctly, the following assertion will fail
       expect.fail('Should have thrown an exception for negative capacity.');
     } catch (error: any) {
-      // 确保系统正确地拒绝或处理无效数据
+      // Ensure the system correctly rejects or handles invalid data
       expect((error as Error).message).toContain('Invalid capacity value');
     }
   });
 
   it('Handle invalid input: invalid lock condition', async () => {
-    // 创建一个包含无效输入数据的 txSkeleton，例如锁定条件不满足的情况
+    // Create a txSkeleton containing invalid input data, for example if the locking condition is not met
     let txSkeleton = new helpers.TransactionSkeleton({
       cellProvider: indexer,
     });
 
-    // 替换为实际的 Script 对象
     const invalidLock: Script = {
       codeHash: '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-      hashType: 'type', // 或者 'data'，取决于实际情况
+      hashType: 'type',
       args: '0x0123456789abcdef0123456789abcdef01234567',
     };
 
@@ -171,25 +167,24 @@ describe('Capacity', function () {
       return outputs.push({
         cellOutput: {
           capacity: BI.from(100).toHexString(),
-          lock: invalidLock, // 使用有效的 Script 对象
+          lock: invalidLock,
         },
         data: '0x',
       });
     });
 
-    // 这里使用 try-catch 捕获可能的异常
     try {
-      // 尝试进行容量处理和支付费用
+      // Attempt capacity processing and payment charges
       const injected = await injectCapacityAndPayFee({
         fromInfos: [CHARLIE.address],
         txSkeleton,
         config,
       });
 
-      // 如果系统没有正确处理无效数据，下面的断言会失败
+      // If the system does not handle invalid data correctly, the following assertion will fail
       expect.fail('Should have thrown an exception for invalid lock condition.');
     } catch (error: any) {
-      // 确保系统正确地拒绝或处理无效数据
+      // Ensure the system correctly rejects or handles invalid data
       expect((error as Error).message).toContain('Invalid lock condition');
     }
   });
@@ -222,24 +217,24 @@ describe('Capacity', function () {
       config,
     });
 
-    // 获取新的锁定脚本
+    // Get new lock script
     const newLockScript = {
       code_hash: '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',
       args: '0x6cd8ae51f91bacd7910126f880138b30ac5d3015',
       hash_type: 'type',
     };
 
-    // 将新的锁定脚本转换为 unknown 类型
+    // Convert new lock script to type unknown
     const newLockScriptUnknown: unknown = newLockScript;
 
-    // 手动创建符合 Script 类型的对象
+    // Manually create objects conforming to the Script type
     const newLockScriptTyped: Script = {
       codeHash: (newLockScriptUnknown as { code_hash: string }).code_hash,
       args: newLockScript.args,
       hashType: newLockScript.hash_type as HashType,
     };
 
-    // 添加一个新的输出，使用新的锁定脚本
+    // Add a new output, using the new locking script
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push({
         cellOutput: {
@@ -250,7 +245,7 @@ describe('Capacity', function () {
       });
     });
 
-    // 尝试进行容量处理和支付费用
+    // Attempt capacity processing and payment charges
     try {
       const injectedWithNewLock = await injectCapacityAndPayFee({
         fromInfos: [CHARLIE.address],
