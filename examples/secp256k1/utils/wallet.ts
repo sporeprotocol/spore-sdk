@@ -90,4 +90,3 @@ export function createSecp256k1Wallet(privateKey: HexString, config: SporeConfig
     signAndSendTransaction,
   };
 }
-

@@ -21,7 +21,7 @@ export async function fetchLocalImage(src: string) {
     toLock: CHARLIE.lock,
     fromInfos: [CHARLIE.address],
     cluster: {
-      capacityMargin:(_cell, margin) => margin.add(1),
+      capacityMargin: (_cell, margin) => margin.add(1),
       updateWitness: '0x',
     },
     config,

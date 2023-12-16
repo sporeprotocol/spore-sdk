@@ -15,7 +15,7 @@ export interface RawClusterData {
   description: string;
 }
 
-export function packRawClusterData(packable: RawClusterData) {
+export function packRawClusterData(packable: RawClusterData): Uint8Array {
   return ClusterData.pack({
     name: bytifyRawString(packable.name),
     description: bytifyRawString(packable.description),
@@ -24,7 +24,6 @@ export function packRawClusterData(packable: RawClusterData) {
 
 export function unpackToRawClusterData(unpackable: BytesLike): RawClusterData {
   const decoded = ClusterData.unpack(unpackable);
-
   return {
     name: bufferToRawString(decoded.name),
     description: bufferToRawString(decoded.description),

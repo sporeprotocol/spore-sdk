@@ -57,7 +57,9 @@ export function createOmnilockWallet(props: {
 
   // Sign prepared signing entries,
   // and then fill signatures into Transaction.witnesses
-  async function signTransaction(txSkeleton: helpers.TransactionSkeletonType): Promise<helpers.TransactionSkeletonType> {
+  async function signTransaction(
+    txSkeleton: helpers.TransactionSkeletonType,
+  ): Promise<helpers.TransactionSkeletonType> {
     const signingEntries = txSkeleton.get('signingEntries');
     const signatures = new Map<HexString, Hash>();
     const inputs = txSkeleton.get('inputs');
@@ -130,7 +132,7 @@ export function createOmnilockSecp256k1Wallet(props: {
     return bytes.hexify(
       omnilock.OmnilockWitnessLock.pack({
         signature: sig,
-      })
+      }),
     );
   }
 
@@ -147,11 +149,7 @@ export function createOmnilockSecp256k1Wallet(props: {
 /**
  * Create an Omnilock lock script.
  */
-export function createOmnilockLock(props: {
-  lockAuth: HexString;
-  lockArgs?: HexString;
-  config?: SporeConfig;
-}): Script {
+export function createOmnilockLock(props: { lockAuth: HexString; lockArgs?: HexString; config?: SporeConfig }): Script {
   const config = props.config ?? getSporeConfig();
   const Omnilock = config.lumos.SCRIPTS.OMNILOCK!;
   const omnilockArgs = props.lockArgs ?? '0x00';
