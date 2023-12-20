@@ -1,4 +1,4 @@
-import { createClusterProxy, getClusterById } from '@spore-sdk/core';
+import { createClusterProxy, getClusterById, unpackToRawClusterProxyArgs } from '@spore-sdk/core';
 import { accounts, config } from '../utils/config';
 
 (async function main() {
@@ -34,5 +34,6 @@ import { accounts, config } from '../utils/config';
   console.log('ClusterProxy output index:', outputIndex);
 
   const clusterProxyCell = txSkeleton.get('outputs').get(outputIndex)!;
-  console.log('ClusterProxy ID:', clusterProxyCell.cellOutput.type!.args);
+  const clusterProxyArgs = unpackToRawClusterProxyArgs(clusterProxyCell.cellOutput.type!.args);
+  console.log('ClusterProxy ID:', clusterProxyArgs.id);
 })();
