@@ -2,7 +2,7 @@ import { bytes } from '@ckb-lumos/codec';
 import { helpers } from '@ckb-lumos/lumos';
 import { generateTypeIdsByOutputs } from '../../../helpers';
 import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs } from '../../../codec';
-import { getSporeConfig, getSporeScript, isSporeScriptSupported, SporeConfig } from '../../../config';
+import { getSporeConfig, isSporeScriptSupported, SporeConfig } from '../../../config';
 
 export function injectNewClusterProxyIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
@@ -21,13 +21,10 @@ export function injectNewClusterProxyIds(props: {
     throw new Error('Cannot generate ClusterProxy Id because Transaction.inputs[0] does not exist');
   }
 
-  // Get ClusterProxyType script
-  const clusterProxyScript = getSporeScript(config, 'ClusterProxy');
-
   // Generate TypeIds by the output indices
   let outputs = txSkeleton.get('outputs');
   let typeIdGroup = generateTypeIdsByOutputs(firstInput, outputs.toArray(), (cell) => {
-    return !!cell.cellOutput.type && isSporeScriptSupported(clusterProxyScript, cell.cellOutput.type);
+    return !!cell.cellOutput.type && isSporeScriptSupported(config, cell.cellOutput.type, 'ClusterProxy');
   });
 
   // Only keep the TypeIDs corresponding to the specified output indices

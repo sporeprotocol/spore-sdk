@@ -1,7 +1,7 @@
 import { OutPoint } from '@ckb-lumos/base';
 import { Cell, RPC } from '@ckb-lumos/lumos';
 import { getCellWithStatusByOutPoint } from '../../../helpers';
-import { SporeConfig, getSporeConfig, isSporeScriptSupportedByName } from '../../../config';
+import { SporeConfig, getSporeConfig, isSporeScriptSupported } from '../../../config';
 
 export async function getClusterAgentByOutPoint(outPoint: OutPoint, config?: SporeConfig): Promise<Cell> {
   // Env
@@ -19,7 +19,7 @@ export async function getClusterAgentByOutPoint(outPoint: OutPoint, config?: Spo
 
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'ClusterAgent', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterAgent')) {
     throw new Error('Cannot find ClusterAgent by OutPoint because target cell is not ClusterAgent');
   }
 

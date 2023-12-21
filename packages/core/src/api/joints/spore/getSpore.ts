@@ -1,7 +1,7 @@
 import { OutPoint, Script } from '@ckb-lumos/base';
 import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { getCellByType, getCellWithStatusByOutPoint, isTypeId } from '../../../helpers';
-import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScriptCategory, isSporeScriptSupported, SporeConfig } from '../../../config';
 
 export async function getSporeByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
@@ -21,7 +21,7 @@ export async function getSporeByType(type: Script, config?: SporeConfig): Promis
 
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'Spore', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'Spore')) {
     throw new Error('Cannot find spore by Type because target cell type is not Spore');
   }
 
@@ -41,7 +41,7 @@ export async function getSporeByOutPoint(outPoint: OutPoint, config?: SporeConfi
 
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'Spore', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'Spore')) {
     throw new Error('Cannot find spore by OutPoint because target cell type is not Spore');
   }
 
@@ -58,9 +58,8 @@ export async function getSporeById(id: HexString, config?: SporeConfig): Promise
   }
 
   // Get SporeType script
-  const sporeScript = getSporeScript(config, 'Spore');
-  const versionScripts = (sporeScript.versions ?? []).map((r) => r.script);
-  const scripts = [sporeScript.script, ...versionScripts];
+  const sporeScript = getSporeScriptCategory(config, 'Spore');
+  const scripts = (sporeScript.versions ?? []).map((r) => r.script);
 
   // Search target spore from the latest version to the oldest
   for (const script of scripts) {

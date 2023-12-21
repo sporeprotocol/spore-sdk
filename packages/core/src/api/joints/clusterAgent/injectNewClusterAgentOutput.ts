@@ -5,7 +5,7 @@ import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { packRawClusterAgentDataToHash } from '../../../codec';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
-import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScript, isSporeScriptSupported, SporeConfig } from '../../../config';
 import { injectLiveClusterProxyReference } from '../clusterProxy/injectLiveClusterProxyReference';
 
 export async function injectNewClusterAgentOutput(props: {
@@ -47,7 +47,7 @@ export async function injectNewClusterAgentOutput(props: {
   // Get the referenced ClusterProxy
   const clusterProxyCell = props.clusterProxyCell;
   const clusterProxyType = clusterProxyCell.cellOutput.type;
-  if (!clusterProxyType || !isSporeScriptSupportedByName(config, 'ClusterProxy', clusterProxyType)) {
+  if (!clusterProxyType || !isSporeScriptSupported(config, clusterProxyType, 'ClusterProxy')) {
     throw new Error('Cannot reference ClusterProxy because target cell is not ClusterProxy');
   }
 

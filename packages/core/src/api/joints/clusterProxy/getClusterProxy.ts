@@ -2,7 +2,7 @@ import { bytes } from '@ckb-lumos/codec';
 import { Cell, Indexer, RPC } from '@ckb-lumos/lumos';
 import { Hash, OutPoint, Script } from '@ckb-lumos/base';
 import { getCellByType, getCellWithStatusByOutPoint } from '../../../helpers';
-import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScriptCategory, isSporeScriptSupported, SporeConfig } from '../../../config';
 import { packRawClusterProxyArgs } from '../../../codec';
 
 export async function getClusterProxyByType(type: Script, config?: SporeConfig): Promise<Cell> {
@@ -18,7 +18,7 @@ export async function getClusterProxyByType(type: Script, config?: SporeConfig):
 
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'ClusterProxy', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterProxy')) {
     throw new Error('Cannot find ClusterProxy by Type because target cell is not ClusterProxy');
   }
 
@@ -41,7 +41,7 @@ export async function getClusterProxyByOutPoint(outPoint: OutPoint, config?: Spo
 
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'ClusterProxy', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterProxy')) {
     throw new Error('Cannot find ClusterProxy by OutPoint because target cell is not ClusterProxy');
   }
 
@@ -53,9 +53,8 @@ export async function getClusterProxyById(id: Hash, config?: SporeConfig): Promi
   config = config ?? getSporeConfig();
 
   // Get ClusterProxy script
-  const clusterProxyScript = getSporeScript(config, 'ClusterProxy');
-  const versionScripts = (clusterProxyScript.versions ?? []).map((r) => r.script);
-  const scripts = [clusterProxyScript.script, ...versionScripts];
+  const clusterProxyScript = getSporeScriptCategory(config, 'ClusterProxy');
+  const scripts = (clusterProxyScript.versions ?? []).map((r) => r.script);
 
   // Search target cluster proxy from the latest version to the oldest
   const args = bytes.hexify(
