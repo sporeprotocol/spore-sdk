@@ -1,7 +1,7 @@
 import { BIish, BI } from '@ckb-lumos/bi';
 import { blockchain, Hash } from '@ckb-lumos/base';
 import { BytesLike, createBytesCodec } from '@ckb-lumos/codec';
-import { Uint64Opt } from './utils';
+import { Uint16Opt } from './utils';
 
 export interface PackableClusterProxyArgs {
   id: BytesLike;
@@ -16,7 +16,7 @@ export interface RawClusterProxyArgs {
 export const ClusterProxyArgs = createBytesCodec({
   pack(packable: PackableClusterProxyArgs): Uint8Array {
     const id = blockchain.Byte32.pack(packable.id);
-    const minPayment = Uint64Opt.pack(packable.minPayment);
+    const minPayment = Uint16Opt.pack(packable.minPayment);
 
     const composed = new Uint8Array(id.length + minPayment.length);
     composed.set(id, 0);
@@ -27,7 +27,7 @@ export const ClusterProxyArgs = createBytesCodec({
   unpack(unpackable: Uint8Array): RawClusterProxyArgs {
     return {
       id: blockchain.Byte32.unpack(unpackable.slice(0, 32)),
-      minPayment: Uint64Opt.unpack(unpackable.slice(32, 40)),
+      minPayment: BI.from(Uint16Opt.unpack(unpackable.slice(32, 34))),
     };
   },
 });

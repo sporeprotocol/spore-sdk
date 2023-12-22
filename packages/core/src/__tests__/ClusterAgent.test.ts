@@ -13,7 +13,7 @@ describe('ClusterAgent', function () {
 
   it('Create a ClusterAgent', async () => {
     const clusterProxy = await getClusterProxyById(
-      '0x9f9aed2ec1c048b320f3264c7e5567c7cdff04e33eb3f75352d12b146ee6840c',
+      '0xf0688acc6191b9613650bcaee4567d87db07e47bfc6cf556061b785731648b470',
       config,
     );
 
