@@ -164,14 +164,61 @@ export function createOmnilockLock(props: { lockAuth: HexString; lockArgs?: HexS
 /**
  * Create ACP Omnilock args with minimalCkb and minimalUdt parameters.
  * minCkb: The minimal required digit of payment CKBytes.
- * minUdt: The minimal required digit of payment UDT, not useful for spores/clusters.
  */
-export function createOmnilockAcpArgs(minCkb: number, minUdt: number): HexString {
-  const minimalCkb = bytes.hexify(number.Uint8.pack(minCkb ?? 0));
-  const minimalUdt = bytes.hexify(number.Uint8.pack(minUdt ?? 0));
-  return `0x02${removeHexPrefix(minimalCkb)}${removeHexPrefix(minimalUdt)}`;
+export function createOmnilockAcpArgs(props: {
+  minCkb: number,
+}): HexString {
+  const minimalCkb = bytes.hexify(number.Uint8.pack(props.minCkb ?? 0));
+  return `0x02${removeHexPrefix(minimalCkb)}00`;
 }
 
-function removeHexPrefix(str: string) {
+export function getInfoFromOmnilockArgs(args: HexString) {
+  args = removeHexPrefix(args);
+
+  // Omnilock args
+  const lockArgs = args.slice(42);
+
+  // Function to cut lockArgs content
+  let startIndex = 0;
+  function getFromLockArgs(length: number) {
+    const content = lockArgs.slice(startIndex, startIndex + length);
+    startIndex += length;
+    return content;
+  }
+
+  // Omnilock args flag
+  const flag = number.Uint8.unpack(`0x${getFromLockArgs(2)}`);
+  const flagArray: number[] = [];
+  for (let i = 7; i >= 0; i--) {
+    flagArray.push((flag >> i) & 1);
+  }
+
+  // Is "administrator mode" enabled
+  let adminListCellTypeId: Hash | undefined;
+  if (flagArray[7] === 1) {
+    adminListCellTypeId = `0x${getFromLockArgs(64)}`;
+  }
+
+  // Is "anyone-can-pay mode" enabled
+  let minCkb: number | undefined;
+  let minUdt: number | undefined;
+  if (flagArray[6] === 1) {
+    const ckb = getFromLockArgs(2);
+    const udt = getFromLockArgs(2);
+    minCkb = number.Uint8.unpack(`0x${ckb}`);
+    minUdt = number.Uint8.unpack(`0x${udt}`);
+  }
+
+  return {
+    lockArgs,
+    flag,
+    flagArray,
+    adminListCellTypeId,
+    minCkb,
+    minUdt,
+  };
+}
+
+function removeHexPrefix(str: string): string {
   return str.startsWith('0x') ? str.slice(2) : str;
 }
