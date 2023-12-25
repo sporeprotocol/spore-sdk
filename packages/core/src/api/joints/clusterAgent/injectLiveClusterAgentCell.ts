@@ -2,19 +2,19 @@ import { BIish } from '@ckb-lumos/bi';
 import { PackedSince } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { assetCellMinimalCapacity, setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
 
-export async function injectLiveSporeCell(props: {
+export async function injectLiveClusterAgentCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
   addOutput?: boolean;
-  updateOutput?: (cell: Cell) => Cell;
+  config?: SporeConfig;
+  updateOutput?(cell: Cell): Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   updateWitness?: HexString | ((witness: HexString) => HexString);
   defaultWitness?: HexString;
   since?: PackedSince;
-  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -22,22 +22,23 @@ export async function injectLiveSporeCell(props: {
 }> {
   // Env
   const config = props.config ?? getSporeConfig();
-  const sporeCell = props.cell;
+  const clusterAgentCell = props.cell;
 
-  // Get TransactionSkeleton
+  // TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Check target cell's type script id
-  const sporeType = sporeCell.cellOutput.type;
-  const sporeScript = getSporeScript(config, 'Spore', sporeType);
-  if (!sporeType || !sporeScript) {
-    throw new Error('Cannot inject live spore because target cell type is not Spore');
+  // Check the target cell's type
+  const cellType = clusterAgentCell.cellOutput.type;
+  const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType);
+  if (!cellType || !clusterAgentScript) {
+    throw new Error('Cannot inject ClusterAgent because target cell is not ClusterAgent');
   }
 
-  // Add spore to Transaction.inputs
+  // Add the target cell to Transaction.inputs (and outputs if needed)
   const setupCellResult = await setupCell({
     txSkeleton,
-    input: sporeCell,
+    input: clusterAgentCell,
+    config: config.lumos,
     addOutput: props.addOutput,
     updateOutput(cell) {
       if (props.capacityMargin !== void 0) {
@@ -50,13 +51,17 @@ export async function injectLiveSporeCell(props: {
     },
     defaultWitness: props.defaultWitness,
     updateWitness: props.updateWitness,
-    config: config.lumos,
     since: props.since,
   });
   txSkeleton = setupCellResult.txSkeleton;
 
-  // If added to outputs, fix the cell's output index
+  // If the target cell has been added to Transaction.outputs
   if (props.addOutput) {
+    // Make sure the cell's output has declared enough capacity
+    const output = txSkeleton.get('outputs').get(setupCellResult.outputIndex)!;
+    assetCellMinimalCapacity(output);
+
+    // Fix the cell's output index
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
         field: 'outputs',
@@ -65,8 +70,8 @@ export async function injectLiveSporeCell(props: {
     });
   }
 
-  // Add Spore's type script as cellDep
-  txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
+  // Add ClusterAgent required cellDeps
+  txSkeleton = addCellDep(txSkeleton, clusterAgentScript.cellDep);
 
   return {
     txSkeleton,

@@ -1,15 +1,13 @@
-import { Address, OutPoint, PackedSince } from '@ckb-lumos/base';
+import { Address, OutPoint } from '@ckb-lumos/base';
 import { helpers, HexString, Indexer } from '@ckb-lumos/lumos';
-import { returnExceededCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
+import { returnExceededCapacityAndPayFee } from '../../../helpers';
+import { getClusterAgentByOutPoint, injectLiveClusterAgentCell } from '../..';
 
-export async function meltSpore(props: {
+export async function meltClusterAgent(props: {
   outPoint: OutPoint;
   changeAddress?: Address;
   updateWitness?: HexString | ((witness: HexString) => HexString);
-  defaultWitness?: HexString;
-  since?: PackedSince;
   config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
@@ -24,22 +22,22 @@ export async function meltSpore(props: {
     cellProvider: indexer,
   });
 
-  // Inject live spore to Transaction.inputs
-  const sporeCell = await getSporeByOutPoint(props.outPoint, config);
-  const injectLiveSporeCellResult = await injectLiveSporeCell({
+  // Get ClusterAgent cell
+  const clusterAgentCell = await getClusterAgentByOutPoint(props.outPoint, config);
+
+  // Inject target cell to Transaction.inputs
+  const injectLiveClusterAgentCellResult = await injectLiveClusterAgentCell({
     txSkeleton,
-    cell: sporeCell,
+    cell: clusterAgentCell,
     updateWitness: props.updateWitness,
-    defaultWitness: props.defaultWitness,
-    since: props.since,
     config,
   });
-  txSkeleton = injectLiveSporeCellResult.txSkeleton;
+  txSkeleton = injectLiveClusterAgentCellResult.txSkeleton;
 
-  // Redeem capacity from the melted spore
-  const sporeAddress = helpers.encodeToAddress(sporeCell.cellOutput.lock, { config: config.lumos });
+  // Redeem occupied capacity from the melted cell
+  const targetCellAddress = helpers.encodeToAddress(clusterAgentCell.cellOutput.lock, { config: config.lumos });
   const returnExceededCapacityAndPayFeeResult = await returnExceededCapacityAndPayFee({
-    changeAddress: props.changeAddress ?? sporeAddress,
+    changeAddress: props.changeAddress ?? targetCellAddress,
     txSkeleton,
     config,
   });
@@ -47,6 +45,6 @@ export async function meltSpore(props: {
 
   return {
     txSkeleton,
-    inputIndex: injectLiveSporeCellResult.inputIndex,
+    inputIndex: injectLiveClusterAgentCellResult.inputIndex,
   };
 }

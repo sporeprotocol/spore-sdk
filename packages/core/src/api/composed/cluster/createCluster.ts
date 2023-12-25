@@ -8,13 +8,13 @@ import { ClusterDataProps, injectNewClusterIds, injectNewClusterOutput } from '.
 
 export async function createCluster(props: {
   data: ClusterDataProps;
-  fromInfos: FromInfo[];
   toLock: Script;
-  config?: SporeConfig;
+  fromInfos: FromInfo[];
   changeAddress?: Address;
-  maxTransactionSize?: number | false;
+  updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
-  updateOutput?(cell: Cell): Cell;
+  maxTransactionSize?: number | false;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
@@ -25,30 +25,32 @@ export async function createCluster(props: {
   const capacityMargin = BI.from(props.capacityMargin ?? 1_0000_0000);
   const maxTransactionSize = props.maxTransactionSize ?? config.maxTransactionSize ?? false;
 
-  // Get TransactionSkeleton
+  // TransactionSkeleton
   let txSkeleton = helpers.TransactionSkeleton({
     cellProvider: indexer,
   });
 
-  // Generate and inject cluster cell
+  // Generate and inject Cluster cell
   const injectNewClusterResult = injectNewClusterOutput({
-    ...props,
     txSkeleton,
-    capacityMargin,
+    data: props.data,
+    toLock: props.toLock,
     updateOutput: props.updateOutput,
+    capacityMargin,
+    config,
   });
   txSkeleton = injectNewClusterResult.txSkeleton;
 
   // Inject needed capacity and pay fee
   const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
     txSkeleton,
-    changeAddress: props.changeAddress,
     fromInfos: props.fromInfos,
+    changeAddress: props.changeAddress,
     config,
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
-  // Generate and inject cluster ID
+  // Generate ID for the new Cluster (if possible)
   txSkeleton = injectNewClusterIds({
     outputIndices: [injectNewClusterResult.outputIndex],
     txSkeleton,

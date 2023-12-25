@@ -1,4 +1,6 @@
 export * from './utils';
 
-export * from './cluster';
 export * from './spore';
+export * from './cluster';
+export * from './clusterProxy';
+export * from './clusterAgent';

@@ -1,13 +1,16 @@
 import { BIish } from '@ckb-lumos/bi';
+import { bytes } from '@ckb-lumos/codec';
 import { PackedSince } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
-import { setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { assetCellMinimalCapacity, setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
+import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs } from '../../../codec';
 
-export async function injectLiveSporeCell(props: {
+export async function injectLiveClusterProxyCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
+  minPayment?: BIish;
   addOutput?: boolean;
   updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
@@ -22,24 +25,32 @@ export async function injectLiveSporeCell(props: {
 }> {
   // Env
   const config = props.config ?? getSporeConfig();
-  const sporeCell = props.cell;
+  const clusterProxyCell = props.cell;
 
-  // Get TransactionSkeleton
+  // TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Check target cell's type script id
-  const sporeType = sporeCell.cellOutput.type;
-  const sporeScript = getSporeScript(config, 'Spore', sporeType);
-  if (!sporeType || !sporeScript) {
-    throw new Error('Cannot inject live spore because target cell type is not Spore');
+  // Check target cell's type
+  const cellType = clusterProxyCell.cellOutput.type;
+  const clusterProxyScript = getSporeScript(config, 'ClusterProxy', cellType);
+  if (!cellType || !clusterProxyScript) {
+    throw new Error('Cannot inject ClusterProxy because target cell is not ClusterProxy');
   }
 
-  // Add spore to Transaction.inputs
+  // Add target cell to Transaction.inputs (and outputs if needed)
   const setupCellResult = await setupCell({
     txSkeleton,
-    input: sporeCell,
+    input: clusterProxyCell,
     addOutput: props.addOutput,
     updateOutput(cell) {
+      if (props.minPayment !== void 0) {
+        const unpackedArgs = unpackToRawClusterProxyArgs(cell.cellOutput.type!.args!);
+        const newArgs = packRawClusterProxyArgs({
+          ...unpackedArgs,
+          minPayment: BI.from(props.minPayment),
+        });
+        cell.cellOutput.type!.args = bytes.hexify(newArgs);
+      }
       if (props.capacityMargin !== void 0) {
         cell = setAbsoluteCapacityMargin(cell, props.capacityMargin);
       }
@@ -50,13 +61,18 @@ export async function injectLiveSporeCell(props: {
     },
     defaultWitness: props.defaultWitness,
     updateWitness: props.updateWitness,
-    config: config.lumos,
     since: props.since,
+    config: config.lumos,
   });
   txSkeleton = setupCellResult.txSkeleton;
 
-  // If added to outputs, fix the cell's output index
+  // If the target cell is added to Transaction.outputs
   if (props.addOutput) {
+    // Make sure the cell's output has declared enough capacity
+    const output = txSkeleton.get('outputs').get(setupCellResult.outputIndex)!;
+    assetCellMinimalCapacity(output);
+
+    // Fix the cell's output index
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
         field: 'outputs',
@@ -65,8 +81,8 @@ export async function injectLiveSporeCell(props: {
     });
   }
 
-  // Add Spore's type script as cellDep
-  txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
+  // Add ClusterProxy required cellDeps
+  txSkeleton = addCellDep(txSkeleton, clusterProxyScript.cellDep);
 
   return {
     txSkeleton,

@@ -4,11 +4,13 @@ import { Address, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
-import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
+import { getClusterProxyByOutPoint } from '../../joints/clusterProxy/getClusterProxy';
+import { injectLiveClusterProxyCell } from '../../joints/clusterProxy/injectLiveClusterProxyCell';
 
-export async function transferSpore(props: {
+export async function transferClusterProxy(props: {
   outPoint: OutPoint;
   toLock: Script;
+  minPayment?: BIish;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
   useCapacityMarginAsFee?: boolean;
@@ -33,7 +35,7 @@ export async function transferSpore(props: {
     throw new Error('When useCapacityMarginAsFee is enabled, fromInfos is also required');
   }
   if (useCapacityMarginAsFee && props.capacityMargin !== void 0) {
-    throw new Error('When useCapacityMarginAsFee is enabled, cannot set capacity margin of the spore');
+    throw new Error('When useCapacityMarginAsFee is enabled, cannot update capacityMargin of the cell');
   }
 
   // TransactionSkeleton
@@ -41,11 +43,13 @@ export async function transferSpore(props: {
     cellProvider: indexer,
   });
 
-  // Inject live spore to Transaction.inputs and Transaction.outputs
-  const sporeCell = await getSporeByOutPoint(props.outPoint, config);
-  const injectLiveSporeCellResult = await injectLiveSporeCell({
+  // Get target ClusterProxy cell
+  const clusterProxyCell = await getClusterProxyByOutPoint(props.outPoint, config);
+
+  // Inject live ClusterProxy cell to inputs/outputs of the Transaction
+  const injectLiveClusterProxyCellResult = await injectLiveClusterProxyCell({
     txSkeleton,
-    cell: sporeCell,
+    cell: clusterProxyCell,
     addOutput: true,
     updateOutput(cell) {
       cell.cellOutput.lock = props.toLock;
@@ -54,13 +58,14 @@ export async function transferSpore(props: {
       }
       return cell;
     },
+    minPayment: props.minPayment,
     capacityMargin: props.capacityMargin,
-    defaultWitness: props.defaultWitness,
     updateWitness: props.updateWitness,
+    defaultWitness: props.defaultWitness,
     since: props.since,
     config,
   });
-  txSkeleton = injectLiveSporeCellResult.txSkeleton;
+  txSkeleton = injectLiveClusterProxyCellResult.txSkeleton;
 
   if (!useCapacityMarginAsFee) {
     // Inject needed capacity from fromInfos and pay fee
@@ -74,7 +79,7 @@ export async function transferSpore(props: {
   } else {
     // Pay fee by the spore cell's capacity margin
     txSkeleton = await payFeeByOutput({
-      outputIndex: injectLiveSporeCellResult.outputIndex,
+      outputIndex: injectLiveClusterProxyCellResult.outputIndex,
       txSkeleton,
       config,
     });
@@ -82,7 +87,7 @@ export async function transferSpore(props: {
 
   return {
     txSkeleton,
-    inputIndex: injectLiveSporeCellResult.inputIndex,
-    outputIndex: injectLiveSporeCellResult.outputIndex,
+    inputIndex: injectLiveClusterProxyCellResult.inputIndex,
+    outputIndex: injectLiveClusterProxyCellResult.outputIndex,
   };
 }

@@ -1,11 +1,11 @@
-import { common, FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, Transaction } from '@ckb-lumos/base';
-import { BI, helpers, RPC } from '@ckb-lumos/lumos';
 import { BIish } from '@ckb-lumos/bi';
+import { BI, helpers, RPC } from '@ckb-lumos/lumos';
+import { common, FromInfo } from '@ckb-lumos/common-scripts';
+import { Address, Header, Transaction } from '@ckb-lumos/base';
 import { getSporeConfig, SporeConfig } from '../config';
 import { injectNeededCapacity, returnExceededCapacity } from './capacity';
 import { CapacitySnapshot, createCapacitySnapshotFromTransactionSkeleton } from './capacity';
-import { getTransactionSize } from './transaction';
+import { getTransactionSize, getTransactionSkeletonSize } from './transaction';
 
 /**
  * Get minimal acceptable fee rate from RPC.
@@ -52,21 +52,47 @@ export function calculateFeeByTransactionSkeleton(txSkeleton: helpers.Transactio
 export async function payFeeThroughCollection(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   fromInfos: FromInfo[];
-  config?: SporeConfig;
+  changeAddress?: Address;
   feeRate?: BIish;
+  tipHeader?: Header;
   enableDeductCapacity?: boolean;
   useLocktimeCellsFirst?: boolean;
+  config?: SporeConfig;
 }): Promise<helpers.TransactionSkeletonType> {
   // Env
   const config = props.config ?? getSporeConfig();
   const feeRate = props.feeRate ?? (await getMinFeeRate(config.ckbNodeUrl));
 
-  // Use lumos common script to pay fee
-  return await common.payFeeByFeeRate(props.txSkeleton, props.fromInfos, feeRate, void 0, {
-    useLocktimeCellsFirst: props.useLocktimeCellsFirst,
-    enableDeductCapacity: props.enableDeductCapacity,
-    config: config.lumos,
-  });
+  let size = 0;
+  let newTxSkeleton = props.txSkeleton;
+
+  /**
+   * Only one case `currentTransactionSize < size`:
+   * change output capacity equals current fee (feeA), so one output reduced,
+   * and if reduce the fee, change output will add again, fee will increase to feeA.
+   */
+  let currentTransactionSize = getTransactionSkeletonSize(newTxSkeleton);
+  while (currentTransactionSize > size) {
+    size = currentTransactionSize;
+    const fee = calculateFee(size, feeRate);
+
+    newTxSkeleton = await common.injectCapacity(
+      props.txSkeleton,
+      props.fromInfos,
+      fee,
+      props.changeAddress,
+      props.tipHeader,
+      {
+        config: config.lumos,
+        enableDeductCapacity: props.enableDeductCapacity,
+        useLocktimeCellsFirst: props.useLocktimeCellsFirst,
+      },
+    );
+
+    currentTransactionSize = getTransactionSkeletonSize(newTxSkeleton);
+  }
+
+  return newTxSkeleton;
 }
 
 /**
