@@ -25,34 +25,6 @@ async function fetchLocalImage(src: string) {
 }
 
 describe('Spore', function () {
-  // it('Create a spore (no cluster)', async function () {
-  //     const { rpc, config } = TESTNET_ENV;
-  //     const { CHARLIE } = TESTNET_ACCOUNTS;
-  //
-  //     // Generate local image content
-  //     const content = await fetchLocalImage(localImage);
-  //
-  //     // Create cluster cell, collect inputs and pay fee
-  //     let { txSkeleton } = await createSpore({
-  //         data: {
-  //             contentType: 'image/jpeg',
-  //             content: content.arrayBuffer,
-  //         },
-  //         fromInfos: [CHARLIE.address],
-  //         toLock: CHARLIE.lock,
-  //         config,
-  //     });
-  //
-  //     // Sign and send transaction
-  //     await signAndSendTransaction({
-  //         account: CHARLIE,
-  //         txSkeleton,
-  //         config,
-  //         rpc,
-  //         send: true,
-  //     });
-  // }, 30000);
-
   it('Transfer a spore', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
@@ -78,13 +50,6 @@ describe('Spore', function () {
       rpc,
       send: true,
     });
-    // await signAndSendTransaction({
-    //     account: CHARLIE,
-    //     txSkeleton,
-    //     config,
-    //     rpc,
-    //     send: true,
-    // });
   }, 30000);
 
   it('Transfer a spore', async function () {
