@@ -119,6 +119,21 @@ export async function signAndSendTransaction(props: {
   return hash;
 }
 
+export async function fetchLocalFile(
+  src: string,
+  relativePath?: string,
+): Promise<{
+  bytes: ArrayBuffer;
+  hex: HexString;
+}> {
+  const buffer = readFileSync(resolve(relativePath ?? __dirname, src));
+  const uint8Array = new Uint8Array(buffer);
+  return {
+    bytes: uint8Array,
+    hex: bytes.hexify(uint8Array),
+  };
+}
+
 export async function fetchLocalImage(
   src: string,
   relativePath?: string,

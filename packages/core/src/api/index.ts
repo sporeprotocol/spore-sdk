@@ -21,6 +21,10 @@ export * from './composed/clusterAgent/createClusterAgent';
 export * from './composed/clusterAgent/transferClusterAgent';
 export * from './composed/clusterAgent/meltClusterAgent';
 
+// Mutant
+export * from './composed/mutant/createMutant';
+export * from './composed/mutant/transferMutant';
+
 /**
  * Joint APIs
  */
@@ -50,3 +54,10 @@ export * from './joints/clusterAgent/injectNewClusterAgentOutput';
 export * from './joints/clusterAgent/injectLiveClusterAgentCell';
 export * from './joints/clusterAgent/injectLiveClusterAgentReference';
 export * from './joints/clusterAgent/getClusterAgent';
+
+// Mutant
+export * from './joints/mutant/injectNewMutantOutput';
+export * from './joints/mutant/injectNewMutantIds';
+export * from './joints/mutant/injectLiveMutantCell';
+export * from './joints/mutant/injectLiveMutantReferences';
+export * from './joints/mutant/getMutant';

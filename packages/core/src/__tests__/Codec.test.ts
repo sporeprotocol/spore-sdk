@@ -86,15 +86,16 @@ describe('Codec', function () {
         description: 'description of the cluster',
       },
       packed:
-        '0x3a0000000c0000001c0000000c000000636c7573746572206e616d651a0000006465736372697074696f6e206f662074686520636c7573746572',
+        '0x3e00000010000000200000003e0000000c000000636c7573746572206e616d651a0000006465736372697074696f6e206f662074686520636c7573746572',
     },
     {
       packable: {
-        name: 'cluster name\r\n',
-        description: 'description of the cluster\r\n',
+        name: 'cluster name',
+        description: 'description of the cluster',
+        mutantId: '0x000000000000000000000000000000000000000000000000000000000000000a',
       },
       packed:
-        '0x3e0000000c0000001e0000000e000000636c7573746572206e616d650d0a1c0000006465736372697074696f6e206f662074686520636c75737465720d0a',
+        '0x6200000010000000200000003e0000000c000000636c7573746572206e616d651a0000006465736372697074696f6e206f662074686520636c757374657220000000000000000000000000000000000000000000000000000000000000000000000a',
     },
   ];
   it('Pack ClusterData', function () {
@@ -108,6 +109,31 @@ describe('Codec', function () {
   it('Unpack ClusterData', function () {
     for (let i = 0; i < clusterDataTests.length; i++) {
       const test = clusterDataTests[i];
+      const unpacked = unpackToRawClusterData(test.packed);
+
+      // ClusterData.name
+      expect(unpacked.name).eq(test.packable.name, `ClusterData.name in test #${i} should be unpackable`);
+
+      // ClusterData.description
+      expect(unpacked.description).eq(
+        test.packable.description,
+        `ClusterData.description in test #${i} should be unpackable`,
+      );
+    }
+  });
+  const clusterDataV1Tests: PackableTest<RawClusterData>[] = [
+    {
+      packable: {
+        name: 'cluster name',
+        description: 'description of the cluster',
+      },
+      packed:
+        '0x3a0000000c0000001c0000000c000000636c7573746572206e616d651a0000006465736372697074696f6e206f662074686520636c7573746572',
+    },
+  ];
+  it('Unpack ClusterData', function () {
+    for (let i = 0; i < clusterDataV1Tests.length; i++) {
+      const test = clusterDataV1Tests[i];
       const unpacked = unpackToRawClusterData(test.packed);
 
       // ClusterData.name

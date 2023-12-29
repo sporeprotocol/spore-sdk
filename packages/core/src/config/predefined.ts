@@ -12,14 +12,14 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     Spore: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xd0d46552fc27b489425bb8f72ea9a371df49c978b27e1e7e8bffe6f9c72560c6',
+            codeHash: '0x49d12ddc57a6eb4ea57ab4bf4c380c7607a647ea8e83f7499b97e1b9ce894ad0',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x42dfa042a0e99a8007376b9880f58d02e5e5659676a359d080ba32b3cd5a703e',
+              txHash: '0x469fb1c7a1003266e2d98e51ce9b5aa19d0c1e39ea667c1f5cd973c0d7da9649',
               index: '0x0',
             },
             depType: 'code',
@@ -44,14 +44,14 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     Cluster: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x15f835c4ca0b861df38f10d4e95c51ba9cee3c89f178b21e2e28baa67ebd8b42',
+            codeHash: '0x1dbd4b03f1cf9d27b5359f8e3569efcb848bc71e6f204654509ce67c07bb1fdd',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0xd2074fecae077a6b8e6be04a6809829bbfc003aca6616f00905fc6198aed9c3d',
+              txHash: '0x91555ebd2bbddf80da141a58220648d6dd3f8c04ba4bb8312d01907165b636ad',
               index: '0x0',
             },
             depType: 'code',
@@ -76,15 +76,15 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     ClusterProxy: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x428457c447f0200e302c3b64f0ee0c165b759e9d3b98118c55710bf2f294a7c2',
+            codeHash: '0x71833e6e8c1326a478762d1f67dd529363fd43696d73df75315eb7aae2bdd31c',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0xd2074fecae077a6b8e6be04a6809829bbfc003aca6616f00905fc6198aed9c3d',
-              index: '0x1',
+              txHash: '0x39b4867ac23373d2f4ffd9c875ffe29fd0f9347e7a9ffc6e1cc453f1921ff25f',
+              index: '0x0',
             },
             depType: 'code',
           },
@@ -94,14 +94,14 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     ClusterAgent: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xe3682566556fa3439c24f7f9f9306abc292c15010943494133d8940d0e05ba32',
+            codeHash: '0x98bfdda3000708d2b058e0bd17827b6d3ca21827f059baeea23b228b74c678b3',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x69008e68e680a228b81af12ef2bd7369eb2adac17d1db958d5d36a595e6920e2',
+              txHash: '0x6d41f6921410c5227c50c8d6b99583a587f6363e917ecd1805d0c592c6560f12',
               index: '0x0',
             },
             depType: 'code',
@@ -112,14 +112,14 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     Mutant: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xb4d3f207831e2774d310a87571fb0095f5b4af4fa176d8bfaae0191a4d6989c8',
+            codeHash: '0x2b4ec50a886bd1e697c5223aca624d4ab3793d74d85723c511461da143406482',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x384b17cf549e261bf55917e6b515e0852a1272c43e6c427201542f333ba37f4b',
+              txHash: '0xbb65bb4f6064e85ef8af018b3ab5b283b1feeec39fb6fd1bdc4565411a79c7f9',
               index: '0x0',
             },
             depType: 'code',
@@ -130,7 +130,7 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
     Lua: {
       versions: [
         {
-          tags: ['v2'],
+          tags: ['v2', 'preview'],
           script: {
             codeHash: '0xed08faee8c29b7a7c29bd9d495b4b93cc207bd70ca93f7b356f39c677e7ab0fc',
             hashType: 'data1',
