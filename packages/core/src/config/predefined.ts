@@ -14,12 +14,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x49d12ddc57a6eb4ea57ab4bf4c380c7607a647ea8e83f7499b97e1b9ce894ad0',
+            codeHash: '0x217b04fe8e4868f57ce581adf3ac24798aa55e15caeae29e50f68998dbd73166',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x469fb1c7a1003266e2d98e51ce9b5aa19d0c1e39ea667c1f5cd973c0d7da9649',
+              txHash: '0x84999a8146bb8680c69e9ced430bc034ea15ecf3add5ffba59f248770f1e3ef2',
               index: '0x0',
             },
             depType: 'code',
@@ -78,12 +78,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x71833e6e8c1326a478762d1f67dd529363fd43696d73df75315eb7aae2bdd31c',
+            codeHash: '0x1cd31b737dba535a7eb72ca89a44ee35c82377af96d999c1f1a09a9ea0eb13d4',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x39b4867ac23373d2f4ffd9c875ffe29fd0f9347e7a9ffc6e1cc453f1921ff25f',
+              txHash: '0x8886c3e6b1df9ac9301cf39e8ee60c08b58b049b239c7342b1fe46a46a4961a5',
               index: '0x0',
             },
             depType: 'code',
@@ -96,12 +96,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x98bfdda3000708d2b058e0bd17827b6d3ca21827f059baeea23b228b74c678b3',
+            codeHash: '0x19c3121acfceb8740f8395205ea3308caab530455f6a17a86fcbfc9f19d8dde1',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x6d41f6921410c5227c50c8d6b99583a587f6363e917ecd1805d0c592c6560f12',
+              txHash: '0x8f62bf1108aa69e7d83bdc40729c9949a87b88f852c09840775a1c4328daecd8',
               index: '0x0',
             },
             depType: 'code',
