@@ -11,5 +11,4 @@ export const ScriptId = molecule.struct(
 
 export const ScriptIdOpt = molecule.option(ScriptId);
 
-export const Uint16Opt = molecule.option(number.Uint16LE);
-export const Uint64Opt = molecule.option(number.Uint64LE);
+export const Uint8Opt = molecule.option(number.Uint8);

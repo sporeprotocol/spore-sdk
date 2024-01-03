@@ -1,13 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { BI, HexString } from '@ckb-lumos/lumos';
-import { TESTNET_ENV } from './shared';
-import { getSporeScript } from '../config';
-import { bytifyRawString, isScriptValueEquals } from '../helpers';
-import { RawSporeData, packRawSporeData, unpackToRawSporeData } from '../codec';
-import { RawClusterData, packRawClusterData, unpackToRawClusterData } from '../codec';
-import { RawClusterProxyArgs, packRawClusterProxyArgs, unpackToRawClusterProxyArgs } from '../codec';
-import { RawClusterAgentData, packRawClusterAgentDataToHash, unpackToRawClusterAgentData } from '../codec';
+import { bytifyRawString } from '../helpers';
+import { packRawSporeData, unpackToRawSporeData, RawSporeData } from '../codec';
+import { packRawClusterData, unpackToRawClusterData, RawClusterData } from '../codec';
+import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs, RawClusterProxyArgs } from '../codec';
+import { packRawClusterAgentDataToHash, RawClusterAgentData } from '../codec';
 
 interface PackableTest<T> {
   packable: T;
@@ -15,8 +13,6 @@ interface PackableTest<T> {
 }
 
 describe('Codec', function () {
-  const { config } = TESTNET_ENV;
-
   /**
    * SporeData
    */
@@ -141,14 +137,14 @@ describe('Codec', function () {
         id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
         minPayment: BI.from(1),
       },
-      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b90100',
+      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b901',
     },
     {
       packable: {
         id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
-        minPayment: BI.from(65535),
+        minPayment: BI.from(255),
       },
-      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9ffff',
+      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9ff',
     },
   ];
   it('Pack ClusterProxyArgs', function () {
@@ -178,19 +174,33 @@ describe('Codec', function () {
       }
     }
   });
+  const clusterProxyArgsFailTests: RawClusterProxyArgs[] = [
+    {
+      id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9ff',
+      minPayment: void 0,
+    },
+    {
+      id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
+      minPayment: BI.from(256),
+    },
+  ];
+  it('Pack unpackable ClusterProxyArgs', function () {
+    for (const test of clusterProxyArgsFailTests) {
+      expect(() => packRawClusterProxyArgs(test)).toThrow();
+    }
+  });
 
   /**
    * ClusterAgentData
    */
-  const clusterAgentScript = getSporeScript(config, 'ClusterAgent');
   const clusterAgentDataTests: PackableTest<RawClusterAgentData>[] = [
     {
       packable: {
-        codeHash: clusterAgentScript.script.codeHash,
-        hashType: clusterAgentScript.script.hashType,
+        codeHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        hashType: 'type',
         args: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
       },
-      packed: '0x2abeab67be9a63aa882c369a9cc5b38c5fc2dab59ee0f1b39116f6fa6b7e2d65',
+      packed: '0xbd18dfa7db881ee319740db006d7495d96074fbbffc7a4fab5e5adb176305357',
     },
   ];
   it('Pack ClusterAgentData', function () {
@@ -198,16 +208,6 @@ describe('Codec', function () {
       const test = clusterAgentDataTests[i];
       const packedHex = packRawClusterAgentDataToHash(test.packable);
       expect(packedHex).eq(test.packed, `ClusterAgentData in test #${i} should be packable`);
-    }
-  });
-  it('Unpack ClusterAgentData', function () {
-    for (let i = 0; i < clusterAgentDataTests.length; i++) {
-      const test = clusterAgentDataTests[i];
-      const unpacked = unpackToRawClusterAgentData(test.packed);
-      expect(isScriptValueEquals(unpacked, test.packable)).eq(
-        true,
-        `ClusterAgentData in test #${i} should be unpackable`,
-      );
     }
   });
 });
