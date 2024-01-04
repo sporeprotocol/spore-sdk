@@ -9,12 +9,12 @@ export async function injectLiveClusterCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
   addOutput?: boolean;
-  config?: SporeConfig;
-  updateOutput?(cell: Cell): Cell;
+  updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   updateWitness?: HexString | ((witness: HexString) => HexString);
   defaultWitness?: HexString;
   since?: PackedSince;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;

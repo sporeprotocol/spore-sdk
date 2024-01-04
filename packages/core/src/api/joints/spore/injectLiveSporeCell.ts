@@ -8,13 +8,13 @@ import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 export async function injectLiveSporeCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
-  config?: SporeConfig;
   addOutput?: boolean;
-  updateOutput?(cell: Cell): Cell;
+  updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   updateWitness?: HexString | ((witness: HexString) => HexString);
   defaultWitness?: HexString;
   since?: PackedSince;
+  config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   inputIndex: number;
@@ -65,7 +65,7 @@ export async function injectLiveSporeCell(props: {
     });
   }
 
-  // Add spore type as cellDep
+  // Add Spore's type script as cellDep
   txSkeleton = addCellDep(txSkeleton, sporeScript.cellDep);
 
   return {

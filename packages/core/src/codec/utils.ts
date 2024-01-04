@@ -1,4 +1,4 @@
-import { molecule } from '@ckb-lumos/codec';
+import { molecule, number } from '@ckb-lumos/codec';
 import { blockchain } from '@ckb-lumos/base';
 
 export const ScriptId = molecule.struct(
@@ -10,3 +10,5 @@ export const ScriptId = molecule.struct(
 );
 
 export const ScriptIdOpt = molecule.option(ScriptId);
+
+export const Uint8Opt = molecule.option(number.Uint8);
