@@ -1,6 +1,9 @@
 // Bytes
 export * from './buffer';
 
+// Utils
+export * from './retryWork';
+
 // Blockchain
 export * from './cell';
 export * from './cellDep';

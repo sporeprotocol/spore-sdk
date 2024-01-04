@@ -9,7 +9,7 @@ import {
   readArrayBufferStream,
 } from '../helpers';
 import { AsyncableIterable, ResolvedMultipartContent } from '../helpers';
-import { fetchLocalImage } from './shared';
+import { fetchLocalImage } from './helpers';
 
 describe('Multipart SporeData.content', async function () {
   const parseTests: MultipartTestCase[] = [
