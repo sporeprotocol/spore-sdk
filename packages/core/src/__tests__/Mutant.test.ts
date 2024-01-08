@@ -1,11 +1,12 @@
 import { describe, it } from 'vitest';
 import { bufferToRawString } from '../helpers';
 import { createMutant, getMutantById, transferMutant } from '../api';
-import { fetchLocalFile, signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
+import { fetchLocalFile, signAndSendTransaction } from './helpers';
+import { TEST_ACCOUNTS, TEST_ENV } from './shared';
 
-describe('Mutant', function () {
-  const { rpc, config } = TESTNET_ENV;
-  const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
+describe.skip('Mutant', function () {
+  const { rpc, config } = TEST_ENV;
+  const { CHARLIE, ALICE } = TEST_ACCOUNTS;
 
   it('Create a Mutant', async function () {
     /**

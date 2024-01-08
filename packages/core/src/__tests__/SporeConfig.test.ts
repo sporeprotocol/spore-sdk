@@ -1,11 +1,11 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { describe, expect, it } from 'vitest';
-import { TESTNET_ENV } from './shared';
+import { TEST_ENV } from './shared';
 import { forkSporeConfig, getSporeConfigHash, isSporeScriptCategorySupported } from '../config';
 
 describe('SporeConfig', function () {
   it('Hash a SporeConfig', () => {
-    const config = cloneDeep(TESTNET_ENV.config);
+    const config = cloneDeep(TEST_ENV.config);
     const hash1 = getSporeConfigHash(config);
 
     config.maxTransactionSize = Math.random() * 1000;
@@ -14,7 +14,7 @@ describe('SporeConfig', function () {
     expect(hash1).not.eq(hash2, 'Hash should be different after altering the config');
   });
   it('Fork a SporeConfig', function () {
-    const { config } = TESTNET_ENV;
+    const { config } = TEST_ENV;
     const newConfig = forkSporeConfig(config, {
       scripts: {
         Some: {
