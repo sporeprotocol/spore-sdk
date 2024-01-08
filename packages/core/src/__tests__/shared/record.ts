@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { afterAll } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { retryWork } from '../../helpers';
 import { meltClusterAgent, meltClusterProxy, meltSpore } from '../../api';
@@ -12,7 +11,7 @@ export const CLUSTER_OUTPOINT_RECORDS: OutPointRecord[] = [];
 export const CLUSTER_PROXY_OUTPOINT_RECORDS: OutPointRecord[] = [];
 export const CLUSTER_AGENT_OUTPOINT_RECORDS: OutPointRecord[] = [];
 
-afterAll(async () => {
+export async function cleanupRecords(props: { name: string }) {
   const [sporeCleanupResults, clusterProxyCleanupResults, clusterAgentCleanupResults] = await Promise.all([
     cleanupSporeRecords(),
     cleanupClusterProxyRecords(),
@@ -31,12 +30,12 @@ afterAll(async () => {
   }
 
   const json = JSON.stringify(result, null, 2);
-  writeFileSync(resolve(path, `cleanup-${Date.now()}.json`), json);
-}, 0);
+  writeFileSync(resolve(path, `${props.name}-cleanup-${Date.now()}.json`), json);
+}
 
 const { config, rpc } = TEST_ENV;
 
-async function cleanupSporeRecords() {
+export async function cleanupSporeRecords() {
   const promises = SPORE_OUTPOINT_RECORDS.map((record) => {
     return retryWork({
       getter: async () => {
@@ -70,7 +69,7 @@ async function cleanupSporeRecords() {
   });
 }
 
-async function cleanupClusterProxyRecords() {
+export async function cleanupClusterProxyRecords() {
   const promises = CLUSTER_PROXY_OUTPOINT_RECORDS.map((record) => {
     return retryWork({
       getter: async () => {
@@ -104,7 +103,7 @@ async function cleanupClusterProxyRecords() {
   });
 }
 
-async function cleanupClusterAgentRecords() {
+export async function cleanupClusterAgentRecords() {
   const promises = CLUSTER_AGENT_OUTPOINT_RECORDS.map((record) => {
     return retryWork({
       getter: async () => {
