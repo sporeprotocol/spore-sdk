@@ -35,6 +35,9 @@ export async function getMutantByOutPoint(outPoint: OutPoint, config?: SporeConf
     outPoint,
     rpc,
   });
+  if (!cellWithStatus.cell) {
+    throw new Error('Cannot find Mutant by OutPoint because target cell is unknown');
+  }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find Mutant by OutPoint because target cell is not lived');
   }

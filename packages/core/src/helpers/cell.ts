@@ -3,6 +3,7 @@ import { Config } from '@ckb-lumos/config-manager';
 import { common, FromInfo } from '@ckb-lumos/common-scripts';
 import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
+import { CKBComponents } from '@ckb-lumos/rpc/lib/types/api';
 import { ScriptId } from '../codec';
 import { isScriptValueEquals } from './script';
 
@@ -24,13 +25,18 @@ export async function getCellByType(props: { type: Script; indexer: Indexer }) {
 /**
  * A wrapper function, to get a Cell structure from RPC.getLiveCell() method.
  */
-export async function getCellWithStatusByOutPoint(props: { outPoint: OutPoint; rpc: RPC }) {
+export async function getCellWithStatusByOutPoint(props: { outPoint: OutPoint; rpc: RPC }): Promise<{
+  cell?: Cell;
+  status: CKBComponents.CellStatus;
+}> {
   const liveCell = await props.rpc.getLiveCell(props.outPoint, true);
-  const cell: Cell = {
-    cellOutput: liveCell.cell.output,
-    data: liveCell.cell.data.content,
-    outPoint: props.outPoint,
-  };
+  const cell: Cell | undefined = liveCell.cell
+    ? {
+        cellOutput: liveCell.cell.output,
+        data: liveCell.cell.data.content,
+        outPoint: props.outPoint,
+      }
+    : void 0;
 
   return {
     cell,

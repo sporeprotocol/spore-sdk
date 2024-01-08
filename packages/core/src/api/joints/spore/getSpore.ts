@@ -35,6 +35,9 @@ export async function getSporeByOutPoint(outPoint: OutPoint, config?: SporeConfi
 
   // Get cell from rpc
   const cellWithStatus = await getCellWithStatusByOutPoint({ outPoint, rpc });
+  if (!cellWithStatus.cell) {
+    throw new Error('Cannot find spore by OutPoint because target cell is unknown');
+  }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find spore by OutPoint because target cell is not lived');
   }
