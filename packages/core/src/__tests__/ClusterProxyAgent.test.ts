@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { BI } from '@ckb-lumos/lumos';
 import { getSporeScript } from '../config';
 import { bytifyRawString, minimalCellCapacityByLock } from '../helpers';
@@ -17,15 +17,22 @@ import {
   CLUSTER_OUTPOINT_RECORDS,
   CLUSTER_PROXY_OUTPOINT_RECORDS,
   CLUSTER_AGENT_OUTPOINT_RECORDS,
+  cleanupRecords,
 } from './shared';
 
-describe('ClusterProxy and ClusterAgent', function () {
+describe('ClusterProxy and ClusterAgent', () => {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
 
   let existingClusterRecord: OutPointRecord | undefined;
   let existingClusterProxyRecord: OutPointRecord | undefined;
   let existingClusterAgentRecord: OutPointRecord | undefined;
+
+  afterAll(async () => {
+    await cleanupRecords({
+      name: 'ClusterProxyAgent',
+    });
+  }, 0);
 
   describe('ClusterProxy basics', () => {
     it.skipIf(existingClusterRecord !== void 0 || CLUSTER_OUTPOINT_RECORDS.length > 0)(
