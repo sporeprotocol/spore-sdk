@@ -1,5 +1,5 @@
+import { blockchain, Hash } from '@ckb-lumos/base';
 import { BytesLike, molecule } from '@ckb-lumos/codec';
-import { blockchain, Hash, HexString } from '@ckb-lumos/base';
 import { bufferToRawString, bytifyRawString } from '../helpers';
 
 export const SporeData = molecule.table(

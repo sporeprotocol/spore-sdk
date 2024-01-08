@@ -7,7 +7,7 @@ import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { packRawClusterProxyArgs } from '../../../codec';
 import { composeInputLocks, composeOutputLocks } from '../../../helpers';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
-import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScript, isSporeScriptSupported, SporeConfig } from '../../../config';
 import { injectLiveClusterReference } from '../cluster/injectLiveClusterReference';
 import { injectNewClusterProxyIds } from './injectNewClusterProxyIds';
 
@@ -47,7 +47,7 @@ export async function injectNewClusterProxyOutput(props: {
   // Get Referenced cluster cell
   const referencedClusterCell = props.clusterCell;
   const referencedClusterType = referencedClusterCell.cellOutput.type;
-  if (!referencedClusterType || !isSporeScriptSupportedByName(config, 'Cluster', referencedClusterType)) {
+  if (!referencedClusterType || !isSporeScriptSupported(config, referencedClusterType, 'Cluster')) {
     throw new Error('Cannot reference Cluster because target cell is not Cluster');
   }
 

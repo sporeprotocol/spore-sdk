@@ -1,7 +1,7 @@
 import { OutPoint, Script } from '@ckb-lumos/base';
 import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { getCellByType, getCellWithStatusByOutPoint, isTypeId } from '../../../helpers';
-import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScriptCategory, isSporeScriptSupported, SporeConfig } from '../../../config';
 
 export async function getClusterByType(type: Script, config?: SporeConfig): Promise<Cell> {
   // Env
@@ -21,7 +21,7 @@ export async function getClusterByType(type: Script, config?: SporeConfig): Prom
 
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'Cluster', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'Cluster')) {
     throw new Error('Cannot find cluster by Type because target cell is not Cluster');
   }
 
@@ -44,7 +44,7 @@ export async function getClusterByOutPoint(outPoint: OutPoint, config?: SporeCon
 
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
-  if (!cellType || !isSporeScriptSupportedByName(config, 'Cluster', cellType)) {
+  if (!cellType || !isSporeScriptSupported(config, cellType, 'Cluster')) {
     throw new Error('Cannot find cluster by OutPoint because target cell is not Cluster');
   }
 
@@ -61,9 +61,8 @@ export async function getClusterById(id: HexString, config?: SporeConfig): Promi
   }
 
   // Get cluster script
-  const clusterScript = getSporeScript(config, 'Cluster');
-  const versionScripts = (clusterScript.versions ?? []).map((r) => r.script);
-  const scripts = [clusterScript.script, ...versionScripts];
+  const clusterScript = getSporeScriptCategory(config, 'Cluster');
+  const scripts = (clusterScript.versions ?? []).map((r) => r.script);
 
   // Search target cluster from the latest version to the oldest
   for (const script of scripts) {

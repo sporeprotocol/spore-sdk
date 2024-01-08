@@ -1,18 +1,19 @@
 import { BIish } from '@ckb-lumos/bi';
+import { BytesLike } from '@ckb-lumos/codec';
 import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
-import { RawClusterData } from '../../../codec';
 import { getSporeConfig, SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, assertTransactionSkeletonSize } from '../../../helpers';
-import { injectNewClusterIds, injectNewClusterOutput } from '../..';
+import { assertTransactionSkeletonSize, injectCapacityAndPayFee } from '../../../helpers';
+import { injectNewMutantOutput, injectNewMutantIds } from '../..';
 
-export async function createCluster(props: {
-  data: RawClusterData;
+export async function createMutant(props: {
+  data: BytesLike;
+  minPayment?: BIish;
   toLock: Script;
   fromInfos: FromInfo[];
   changeAddress?: Address;
-  updateOutput?: (cell: Cell) => Cell;
+  updateOutput?(cell: Cell): Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
   maxTransactionSize?: number | false;
   config?: SporeConfig;
@@ -31,16 +32,17 @@ export async function createCluster(props: {
     cellProvider: indexer,
   });
 
-  // Generate and inject Cluster cell
-  const injectNewClusterResult = injectNewClusterOutput({
+  // Create and inject a new Mutant cell
+  const injectNewMutantResult = injectNewMutantOutput({
     txSkeleton,
     data: props.data,
     toLock: props.toLock,
+    minPayment: props.minPayment,
     updateOutput: props.updateOutput,
     capacityMargin,
     config,
   });
-  txSkeleton = injectNewClusterResult.txSkeleton;
+  txSkeleton = injectNewMutantResult.txSkeleton;
 
   // Inject needed capacity and pay fee
   const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
@@ -51,9 +53,9 @@ export async function createCluster(props: {
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
 
-  // Generate ID for the new Cluster (if possible)
-  txSkeleton = injectNewClusterIds({
-    outputIndices: [injectNewClusterResult.outputIndex],
+  // Generate and inject ID for the new Mutant
+  txSkeleton = injectNewMutantIds({
+    outputIndices: [injectNewMutantResult.outputIndex],
     txSkeleton,
     config,
   });
@@ -65,6 +67,6 @@ export async function createCluster(props: {
 
   return {
     txSkeleton,
-    outputIndex: injectNewClusterResult.outputIndex,
+    outputIndex: injectNewMutantResult.outputIndex,
   };
 }

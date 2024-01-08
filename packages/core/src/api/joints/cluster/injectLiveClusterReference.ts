@@ -77,7 +77,7 @@ export async function injectLiveClusterReference(props: {
     txSkeleton,
     referenceType: referenceResult.referencedCell ? 'cell' : 'lockProxy',
     cluster:
-      referenceResult.referencedLockProxy && injectLiveClusterResult !== void 0
+      referenceResult.referencedCell && injectLiveClusterResult !== void 0
         ? {
             inputIndex: injectLiveClusterResult.inputIndex,
             outputIndex: injectLiveClusterResult.outputIndex,

@@ -13,6 +13,7 @@ export * from './witness';
 export * from './fee';
 
 // Core
+export * from './mimeType';
 export * from './contentType';
 export * from './multipartContent';
 export * from './lockProxy';

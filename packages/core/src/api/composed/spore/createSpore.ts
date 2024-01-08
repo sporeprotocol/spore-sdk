@@ -24,12 +24,16 @@ export async function createSpore(props: {
     capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
     updateWitness?: HexString | ((witness: HexString) => HexString);
   };
+  mutant?: {
+    paymentAmount?: (minPayment: BI, lock: Script, cell: Cell) => BIish;
+  };
   maxTransactionSize?: number | false;
   config?: SporeConfig;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndex: number;
   reference: Awaited<ReturnType<typeof injectNewSporeOutput>>['reference'];
+  mutantReference: Awaited<ReturnType<typeof injectNewSporeOutput>>['mutantReference'];
 }> {
   // Env
   const config = props.config ?? getSporeConfig();
@@ -58,6 +62,7 @@ export async function createSpore(props: {
     updateOutput: props.updateOutput,
     clusterAgent: props.clusterAgent,
     cluster: props.cluster,
+    mutant: props.mutant,
     clusterAgentCell,
     capacityMargin,
     config,
@@ -91,5 +96,6 @@ export async function createSpore(props: {
     txSkeleton,
     outputIndex: injectNewSporeResult.outputIndex,
     reference: injectNewSporeResult.reference,
+    mutantReference: injectNewSporeResult.mutantReference,
   };
 }

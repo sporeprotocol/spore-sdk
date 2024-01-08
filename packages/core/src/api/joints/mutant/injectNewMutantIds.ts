@@ -1,10 +1,10 @@
 import { bytes } from '@ckb-lumos/codec';
 import { helpers } from '@ckb-lumos/lumos';
 import { generateTypeIdsByOutputs } from '../../../helpers';
-import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs } from '../../../codec';
+import { packRawMutantArgs, unpackToRawMutantArgs } from '../../../codec';
 import { getSporeConfig, isSporeScriptSupported, SporeConfig } from '../../../config';
 
-export function injectNewClusterProxyIds(props: {
+export function injectNewMutantIds(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   outputIndices?: number[];
   config?: SporeConfig;
@@ -18,13 +18,13 @@ export function injectNewClusterProxyIds(props: {
   // Get the Transaction.inputs[0]
   const firstInput = txSkeleton.get('inputs').get(0);
   if (!firstInput) {
-    throw new Error('Cannot generate ClusterProxy Id because Transaction.inputs[0] does not exist');
+    throw new Error('Cannot generate Mutant Id because Transaction.inputs[0] does not exist');
   }
 
   // Generate TypeIds by the output indices
   let outputs = txSkeleton.get('outputs');
   let typeIdGroup = generateTypeIdsByOutputs(firstInput, outputs.toArray(), (cell) => {
-    return !!cell.cellOutput.type && isSporeScriptSupported(config, cell.cellOutput.type, 'ClusterProxy');
+    return !!cell.cellOutput.type && isSporeScriptSupported(config, cell.cellOutput.type, 'Mutant');
   });
 
   // Only keep the TypeIDs corresponding to the specified output indices
@@ -34,7 +34,7 @@ export function injectNewClusterProxyIds(props: {
       return index >= 0;
     });
     if (typeIdGroup.length !== props.outputIndices.length) {
-      throw new Error('Cannot generate ClusterProxy Id because outputIndices cannot be fully handled');
+      throw new Error('Cannot generate Mutant Id because outputIndices cannot be fully handled');
     }
   }
 
@@ -42,11 +42,11 @@ export function injectNewClusterProxyIds(props: {
   for (const [index, typeId] of typeIdGroup) {
     const output = outputs.get(index);
     if (!output) {
-      throw new Error(`Cannot generate ClusterProxy Id because Transaction.outputs[${index}] does not exist`);
+      throw new Error(`Cannot generate Mutant Id because Transaction.outputs[${index}] does not exist`);
     }
 
-    const unpackedArgs = unpackToRawClusterProxyArgs(output.cellOutput.type!.args);
-    const packedNewArgs = packRawClusterProxyArgs({
+    const unpackedArgs = unpackToRawMutantArgs(output.cellOutput.type!.args);
+    const packedNewArgs = packRawMutantArgs({
       id: typeId,
       minPayment: unpackedArgs.minPayment,
     });
