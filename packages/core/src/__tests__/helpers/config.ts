@@ -16,9 +16,9 @@ export function generateTestConfig(network: string, configPath?: string): SporeC
   return predefinedSporeConfigs.Aggron4;
 }
 
-export function generateDevnetSporeConfig(lumosConfig: Record<any, any>): SporeConfig {
+export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig {
   return {
-    lumos: lumosConfig as Config,
+    lumos: config as Config,
     ckbNodeUrl: 'http://127.0.0.1:8114',
     ckbIndexerUrl: 'http://127.0.0.1:8114',
     maxTransactionSize: 500 * 1024, // 500 KB
@@ -28,15 +28,15 @@ export function generateDevnetSporeConfig(lumosConfig: Record<any, any>): SporeC
           {
             tags: ['v2', 'preview'],
             script: {
-              codeHash: lumosConfig.SCRIPTS.SPORE.CODE_HASH,
-              hashType: lumosConfig.SCRIPTS.SPORE.HASH_TYPE,
+              codeHash: config.SCRIPTS.SPORE.CODE_HASH,
+              hashType: config.SCRIPTS.SPORE.HASH_TYPE,
             },
             cellDep: {
               outPoint: {
-                txHash: lumosConfig.SCRIPTS.SPORE.TX_HASH,
-                index: lumosConfig.SCRIPTS.SPORE.INDEX,
+                txHash: config.SCRIPTS.SPORE.TX_HASH,
+                index: config.SCRIPTS.SPORE.INDEX,
               },
-              depType: lumosConfig.SCRIPTS.SPORE.DEP_TYPE,
+              depType: config.SCRIPTS.SPORE.DEP_TYPE,
             },
           },
         ],
@@ -46,15 +46,15 @@ export function generateDevnetSporeConfig(lumosConfig: Record<any, any>): SporeC
           {
             tags: ['v2', 'preview'],
             script: {
-              codeHash: lumosConfig.SCRIPTS.CLUSTER.CODE_HASH,
-              hashType: lumosConfig.SCRIPTS.CLUSTER.HASH_TYPE,
+              codeHash: config.SCRIPTS.CLUSTER.CODE_HASH,
+              hashType: config.SCRIPTS.CLUSTER.HASH_TYPE,
             },
             cellDep: {
               outPoint: {
-                txHash: lumosConfig.SCRIPTS.CLUSTER.TX_HASH,
-                index: lumosConfig.SCRIPTS.CLUSTER.INDEX,
+                txHash: config.SCRIPTS.CLUSTER.TX_HASH,
+                index: config.SCRIPTS.CLUSTER.INDEX,
               },
-              depType: lumosConfig.SCRIPTS.CLUSTER.DEP_TYPE,
+              depType: config.SCRIPTS.CLUSTER.DEP_TYPE,
             },
           },
         ],
@@ -64,15 +64,15 @@ export function generateDevnetSporeConfig(lumosConfig: Record<any, any>): SporeC
           {
             tags: ['v2', 'preview'],
             script: {
-              codeHash: lumosConfig.SCRIPTS.CLUSTER_PROXY.CODE_HASH,
-              hashType: lumosConfig.SCRIPTS.CLUSTER_PROXY.HASH_TYPE,
+              codeHash: config.SCRIPTS.CLUSTER_PROXY.CODE_HASH,
+              hashType: config.SCRIPTS.CLUSTER_PROXY.HASH_TYPE,
             },
             cellDep: {
               outPoint: {
-                txHash: lumosConfig.SCRIPTS.CLUSTER_PROXY.TX_HASH,
-                index: lumosConfig.SCRIPTS.CLUSTER_PROXY.INDEX,
+                txHash: config.SCRIPTS.CLUSTER_PROXY.TX_HASH,
+                index: config.SCRIPTS.CLUSTER_PROXY.INDEX,
               },
-              depType: lumosConfig.SCRIPTS.CLUSTER_PROXY.DEP_TYPE,
+              depType: config.SCRIPTS.CLUSTER_PROXY.DEP_TYPE,
             },
           },
         ],
@@ -82,15 +82,15 @@ export function generateDevnetSporeConfig(lumosConfig: Record<any, any>): SporeC
           {
             tags: ['v2', 'preview'],
             script: {
-              codeHash: lumosConfig.SCRIPTS.CLUSTER_AGENT.CODE_HASH,
-              hashType: lumosConfig.SCRIPTS.CLUSTER_AGENT.HASH_TYPE,
+              codeHash: config.SCRIPTS.CLUSTER_AGENT.CODE_HASH,
+              hashType: config.SCRIPTS.CLUSTER_AGENT.HASH_TYPE,
             },
             cellDep: {
               outPoint: {
-                txHash: lumosConfig.SCRIPTS.CLUSTER_AGENT.TX_HASH,
-                index: lumosConfig.SCRIPTS.CLUSTER_AGENT.INDEX,
+                txHash: config.SCRIPTS.CLUSTER_AGENT.TX_HASH,
+                index: config.SCRIPTS.CLUSTER_AGENT.INDEX,
               },
-              depType: lumosConfig.SCRIPTS.CLUSTER_AGENT.DEP_TYPE,
+              depType: config.SCRIPTS.CLUSTER_AGENT.DEP_TYPE,
             },
           },
         ],
