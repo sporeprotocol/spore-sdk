@@ -38,6 +38,9 @@ export async function getClusterByOutPoint(outPoint: OutPoint, config?: SporeCon
     outPoint,
     rpc,
   });
+  if (!cellWithStatus.cell) {
+    throw new Error('Cannot find cluster by OutPoint because target cell is unknown');
+  }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find cluster by OutPoint because target cell is not lived');
   }

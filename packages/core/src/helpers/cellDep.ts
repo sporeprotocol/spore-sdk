@@ -20,7 +20,7 @@ export async function findCellDepIndexByTypeFromTransactionSkeleton(props: {
       rpc,
     });
 
-    if (target.cell.cellOutput.type && isScriptValueEquals(target.cell.cellOutput.type, props.type)) {
+    if (target.cell?.cellOutput.type && isScriptValueEquals(target.cell.cellOutput.type, props.type)) {
       return index;
     }
   }

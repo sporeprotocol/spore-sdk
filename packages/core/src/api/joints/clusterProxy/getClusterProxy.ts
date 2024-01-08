@@ -35,6 +35,9 @@ export async function getClusterProxyByOutPoint(outPoint: OutPoint, config?: Spo
     outPoint,
     rpc,
   });
+  if (!cellWithStatus.cell) {
+    throw new Error('Cannot find ClusterProxy by OutPoint because target cell is unknown');
+  }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find ClusterProxy by OutPoint because target cell is not lived');
   }

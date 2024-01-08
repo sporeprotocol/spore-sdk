@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, afterAll } from 'vitest';
 import { BI } from '@ckb-lumos/lumos';
 import { getSporeScript } from '../config';
 import { unpackToRawMutantArgs } from '../codec';
@@ -6,11 +6,17 @@ import { bufferToRawString, bytifyRawString } from '../helpers';
 import { createSpore, transferSpore, meltSpore, getSporeByOutPoint, getMutantById } from '../api';
 import { expectCellDep, expectTypeId, expectTypeCell, expectCellLock } from './helpers';
 import { getSporeOutput, popRecord, retryQuery, signAndSendTransaction, OutPointRecord } from './helpers';
-import { TEST_ACCOUNTS, TEST_ENV, SPORE_OUTPOINT_RECORDS } from './shared';
+import { TEST_ACCOUNTS, TEST_ENV, SPORE_OUTPOINT_RECORDS, cleanupRecords } from './shared';
 
 describe('Spore', () => {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
+
+  afterAll(async () => {
+    await cleanupRecords({
+      name: 'Spore',
+    });
+  }, 0);
 
   describe('Spore basics', () => {
     let existingSporeRecord: OutPointRecord | undefined;
