@@ -152,13 +152,7 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      whatwg-mimetype:
-        specifier: ^3.0.0
-        version: 3.0.0
     devDependencies:
-      '@types/whatwg-mimetype':
-        specifier: ^3.0.0
-        version: 3.0.0
       vitest:
         specifier: ^1.1.0
         version: 1.1.0(@types/node@20.4.1)
@@ -968,10 +962,6 @@ packages:
 
   /@types/semver@6.2.3:
     resolution: {integrity: sha512-KQf+QAMWKMrtBMsB8/24w53tEsxllMj6TuA80TT/5igJalLI/zm0L3oXRbIAl4Ohfc85gyHX/jhMwsVkmhLU4A==}
-    dev: true
-
-  /@types/whatwg-mimetype@3.0.0:
-    resolution: {integrity: sha512-xHFOhd41VpUR6Y0k8ZinlyFv5cyhC/r2zghJgWWN8oNxqNo45Nf0qCBInJsFeifLeoHcIF4voEfap4A2GYHWkw==}
     dev: true
 
   /@vitest/expect@1.1.0:
@@ -3447,11 +3437,6 @@ packages:
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
-    dev: false
-
-  /whatwg-mimetype@3.0.0:
-    resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
-    engines: {node: '>=12'}
     dev: false
 
   /whatwg-url@5.0.0:
