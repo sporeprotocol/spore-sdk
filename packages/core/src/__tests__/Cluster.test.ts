@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { BI } from '@ckb-lumos/lumos';
 import { getSporeScript } from '../config';
 import { bytifyRawString, waitForMilliseconds } from '../helpers';
@@ -6,13 +6,26 @@ import { expectTypeId, expectCellDep, expectTypeCell, expectLockCell } from './h
 import { signAndSendTransaction, popRecord, OutPointRecord, IdRecord } from './helpers';
 import { retryQuery, getSporeOutput, getClusterOutput, expectCellLock } from './helpers';
 import { createCluster, createSpore, getClusterById, getClusterByOutPoint, transferCluster } from '../api';
-import { TEST_ENV, TEST_ACCOUNTS, SPORE_OUTPOINT_RECORDS, CLUSTER_OUTPOINT_RECORDS, TEST_VARIABLES } from './shared';
+import {
+  TEST_ENV,
+  TEST_ACCOUNTS,
+  SPORE_OUTPOINT_RECORDS,
+  CLUSTER_OUTPOINT_RECORDS,
+  TEST_VARIABLES,
+  cleanupRecords,
+} from './shared';
 
-describe('Cluster', function () {
+describe('Cluster', () => {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
 
   let existingClusterRecord: OutPointRecord | undefined;
+
+  afterAll(async () => {
+    await cleanupRecords({
+      name: 'Cluster',
+    });
+  }, 0);
 
   describe('Cluster basics', () => {
     it('Create a Cluster', async () => {
