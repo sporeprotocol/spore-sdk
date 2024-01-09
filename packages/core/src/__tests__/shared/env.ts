@@ -4,7 +4,7 @@ import { getEnvVariable, generateTestConfig, createDefaultLockAccount } from '..
 
 export const TEST_VARIABLES = {
   network: getEnvVariable('VITE_NETWORK', 'string', 'testnet'),
-  configPath: getEnvVariable('VITE_CONFIG_PATH', 'string', '../tmp/devnet.json'),
+  configPath: getEnvVariable('VITE_CONFIG_PATH', 'string', '../tmp/config.json'),
   tests: {
     clusterV1: getEnvVariable('VITE_TEST_CLUSTER_V1', 'boolean', false),
   },
