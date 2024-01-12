@@ -21,7 +21,7 @@ jobs:
       - name: Checkout spore-devenv
         uses: actions/checkout@v4
         with:
-          repository: Dawn-githup/spore_devenv
+          repository: sporeprotocol/spore-devenv
           path: spore-devenv
 
       - name: Install Node.js
