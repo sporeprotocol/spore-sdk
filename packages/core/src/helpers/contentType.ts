@@ -34,6 +34,24 @@ export function isContentTypeValid(contentType: string): boolean {
   }
 }
 
+/**
+ * Convert ContentType object to string.
+ */
+export function encodeContentType(contentType: EncodableContentType): string {
+  try {
+    return serializeMime({
+      type: contentType.type,
+      subtype: contentType.subtype,
+      parameters: Object.entries(contentType.parameters),
+    });
+  } catch {
+    throw new Error('Cannot encode ContentType');
+  }
+}
+
+/**
+ * Convert ContentType string to object.
+ */
 export function decodeContentType(contentType: string): DecodedContentType {
   try {
     const decoded = parseMime(contentType);
@@ -48,19 +66,16 @@ export function decodeContentType(contentType: string): DecodedContentType {
   }
 }
 
-export function encodeContentType(contentType: EncodableContentType): string {
-  try {
-    return serializeMime({
-      type: contentType.type,
-      subtype: contentType.subtype,
-      parameters: Object.entries(contentType.parameters),
-    });
-  } catch {
-    throw new Error('Cannot encode ContentType');
-  }
-}
-
-export function mergeContentTypeParameters(contentType: string, parameters: Record<string, any>) {
+/**
+ * Update the parameters of a content type string.
+ * Note the function may change the order the provided content type.
+ *
+ * An example:
+ * ```typescript
+ * setContentTypeParameters('image/jpeg;a=1;b=2', { a: '3' }); // image/jpeg;a=3;b=2
+ * ```
+ */
+export function setContentTypeParameters(contentType: string, parameters: Record<string, any>) {
   const decoded = decodeContentType(contentType);
   for (const [key, value] of Object.entries(parameters)) {
     decoded.parameters[key] = value;

@@ -8,27 +8,22 @@
     "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "clean": "pnpm run clean:cache & pnpm run clean:build",
-    "clean:build": "rimraf lib & pnpm run clean:buildinfo",
+    "clean:build": "rimraf lib && pnpm run clean:buildinfo",
     "clean:buildinfo": "rimraf tsconfig.*tsbuildinfo",
     "clean:cache": "rimraf .turbo"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "lib",
   "files": [
     "lib"
   ],
   "dependencies": {
-    "@ckb-lumos/base": "^0.20.0-alpha.3",
-    "@ckb-lumos/lumos": "^0.20.0-alpha.3",
-    "@ckb-lumos/codec": "^0.20.0-alpha.3",
-    "@ckb-lumos/bi": "^0.20.0-alpha.3",
+    "@ckb-lumos/bi": "^0.21.0-next.0",
+    "@ckb-lumos/rpc": "^0.21.0-next.0",
+    "@ckb-lumos/base": "^0.21.0-next.0",
+    "@ckb-lumos/lumos": "^0.21.0-next.0",
+    "@ckb-lumos/codec": "^0.21.0-next.0",
+    "@ckb-lumos/common-scripts": "^0.21.0-next.0",
+    "@ckb-lumos/config-manager": "^0.21.0-next.0",
     "whatwg-mimetype": "^3.0.0",
     "lodash": "^4.17.21"
   },
@@ -38,5 +33,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShookLyngs/spore-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShookLyngs/spore-sdk/issues"
   }
 }
