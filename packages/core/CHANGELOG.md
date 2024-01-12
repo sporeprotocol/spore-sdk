@@ -1,5 +1,19 @@
 # @spore-sdk/core
 
+## 0.1.1-beta.0
+
+### Patch Changes
+
+- 8801116: Fix typo of the "assertTransactionSkeletonSize" API
+- 17fb34c: Support Mutant related features
+- 347c225: Fix spore/cluster query logic, should validate target id before querying
+- 7c9ee66: Support ClusterProxy and ClusterAgent type cells
+- 7e64429: Remove "fromInfos" prop from the "meltSpore" API
+- 3b06bcb: Add multipart content support
+- c025b67: Add new spore type script version to support more contract features
+- e807c5a: Fix and optimize the logic of capacity collection
+- 2db9424: Support lock proxy in spore creation
+
 ## 0.1.0
 
 ### Minor Changes

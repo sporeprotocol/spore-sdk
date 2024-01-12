@@ -1,0 +1,18 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@spore-sdk/core": "0.1.0"
+  },
+  "changesets": [
+    "early-snakes-tan",
+    "eleven-dots-own",
+    "itchy-plants-kick",
+    "kind-donkeys-lick",
+    "old-oranges-invite",
+    "polite-donuts-begin",
+    "small-lobsters-jam",
+    "stale-ghosts-lie",
+    "three-cows-unite"
+  ]
+}
