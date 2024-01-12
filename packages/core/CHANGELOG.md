@@ -1,5 +1,47 @@
 # @spore-sdk/core
 
+## 0.1.1-beta.0
+
+### Patch Changes
+
+- 8801116: Fix typo of the "assertTransactionSkeletonSize" API
+- 17fb34c: Support Mutant related features
+- 347c225: Fix spore/cluster query logic, should validate target id before querying
+- 7c9ee66: Support ClusterProxy and ClusterAgent type cells
+- 7e64429: Remove "fromInfos" prop from the "meltSpore" API
+- 3b06bcb: Add multipart content support
+- c025b67: Add new spore type script version to support more contract features
+- e807c5a: Fix and optimize the logic of capacity collection
+- 2db9424: Support lock proxy in spore creation
+
+## 0.1.0
+
+### Minor Changes
+
+- d7a42ca: Implementation and docs/examples of Spore Protocol V1
+
+### Patch Changes
+
+- 48a6506: Add Omnilock (ACP) and ACP related examples to show developers how to work with the public clusters
+- d9e71ee: Remove esm build in sdk
+- e88b8e3: Add recipe doc about how to use SporeConfig
+- f352469: Update the script info of cluster/spore
+- 24facd1: Fix sdk to build esm and cjs together
+- bc37376: Rename term from "destroy" to "melt", etc. "meltSpore"
+- 1a30c54: Adds a backup in codec tests
+- bd7bfe8: Rename SporeData.cluster to SporeData.clusterId
+- f9d2e61: Fix the utf-8 encoding issue, originally the lumos `bytes.bytifyRawString` method can only handle ascii strings
+- ca1d6ae: Support capacity margin features in Composed APIs
+- d382b0d: Support SporeScript with versions
+- db8f7d0: Fix a turbo cache bug, now should clear turbo cache before releasing packages
+- e509567: Add capacity margin and input witness relevant props to improve controllability of cells in the APIs
+- 9a10284: Update the testnet predefined scripts
+- 8a35bd3: Add transaction max size limit to createSpore/createCluster APIs
+- 64f8dcd: Simplify api prop names, for example from "sporeData" to "data"
+- e41e791: Fix wrong molecule used in transaction size calculation
+- 9fce0be: Provide global SporeConfig apis, allow SporeConfig in composed apis to be optional
+- 9f1d792: Rename Joint APIs, from "getXCellByY" to "getXByY", and from "injectXIds" to "injectNewXIds"
+
 ## 0.1.0-beta.14
 
 ### Patch Changes
