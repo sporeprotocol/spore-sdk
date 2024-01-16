@@ -38,6 +38,10 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
               },
               depType: config.SCRIPTS.SPORE.DEP_TYPE,
             },
+            behaviors: {
+              lockProxy: true,
+              cobuild: true,
+            },
           },
         ],
       },
@@ -55,6 +59,10 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
                 index: config.SCRIPTS.CLUSTER.INDEX,
               },
               depType: config.SCRIPTS.CLUSTER.DEP_TYPE,
+            },
+            behaviors: {
+              lockProxy: true,
+              cobuild: true,
             },
           },
         ],
@@ -74,6 +82,10 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
               },
               depType: config.SCRIPTS.CLUSTER_PROXY.DEP_TYPE,
             },
+            behaviors: {
+              lockProxy: true,
+              cobuild: true,
+            },
           },
         ],
       },
@@ -91,6 +103,10 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
                 index: config.SCRIPTS.CLUSTER_AGENT.INDEX,
               },
               depType: config.SCRIPTS.CLUSTER_AGENT.DEP_TYPE,
+            },
+            behaviors: {
+              lockProxy: true,
+              cobuild: true,
             },
           },
         ],

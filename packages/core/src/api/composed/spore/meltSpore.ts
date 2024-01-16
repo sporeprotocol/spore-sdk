@@ -1,8 +1,9 @@
 import { Address, OutPoint, PackedSince } from '@ckb-lumos/base';
 import { helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { returnExceededCapacityAndPayFee } from '../../../helpers';
-import { getSporeConfig, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { getSporeByOutPoint, injectLiveSporeCell } from '../..';
+import { generateMeltSporeAction, injectCommonCobuildProof } from '../../../cobuild';
 
 export async function meltSpore(props: {
   outPoint: OutPoint;
@@ -35,6 +36,20 @@ export async function meltSpore(props: {
     config,
   });
   txSkeleton = injectLiveSporeCellResult.txSkeleton;
+
+  // Inject CobuildProof
+  const sporeScript = getSporeScript(config, 'Spore', sporeCell.cellOutput.type!);
+  if (sporeScript.behaviors?.cobuild) {
+    const actionResult = generateMeltSporeAction({
+      txSkeleton: txSkeleton,
+      inputIndex: injectLiveSporeCellResult.inputIndex,
+    });
+    const injectCobuildProofResult = injectCommonCobuildProof({
+      txSkeleton: txSkeleton,
+      actions: actionResult.actions,
+    });
+    txSkeleton = injectCobuildProofResult.txSkeleton;
+  }
 
   // Redeem capacity from the melted spore
   const sporeAddress = helpers.encodeToAddress(sporeCell.cellOutput.lock, { config: config.lumos });

@@ -2,8 +2,9 @@ import { BIish } from '@ckb-lumos/bi';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
-import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { generateTransferClusterAgentAction, injectCommonCobuildProof } from '../../../cobuild';
 import { getClusterAgentByOutPoint, injectLiveClusterAgentCell } from '../..';
 
 export async function transferClusterAgent(props: {
@@ -43,6 +44,7 @@ export async function transferClusterAgent(props: {
 
   // Get target ClusterAgent cell
   const clusterAgentCell = await getClusterAgentByOutPoint(props.outPoint, config);
+  const clusterAgentScript = getSporeScript(config, 'ClusterAgent', clusterAgentCell.cellOutput.type!);
 
   // Inject live ClusterProxy cell to inputs/outputs of the Transaction
   const injectLiveClusterAgentCellResult = await injectLiveClusterAgentCell({
@@ -64,22 +66,49 @@ export async function transferClusterAgent(props: {
   });
   txSkeleton = injectLiveClusterAgentCellResult.txSkeleton;
 
-  if (useCapacityMarginAsFee) {
-    // Pay fee by the target cell's capacity margin
-    txSkeleton = await payFeeByOutput({
-      outputIndex: injectLiveClusterAgentCellResult.outputIndex,
-      txSkeleton,
-      config,
-    });
-  } else {
+  // Generate TransferClusterAgent actions
+  const actionResult = generateTransferClusterAgentAction({
+    txSkeleton,
+    inputIndex: injectLiveClusterAgentCellResult.inputIndex,
+    outputIndex: injectLiveClusterAgentCellResult.outputIndex,
+  });
+
+  if (!useCapacityMarginAsFee) {
     // Inject needed capacity from fromInfos and pay fee
     const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
       txSkeleton,
       fromInfos: props.fromInfos!,
       changeAddress: props.changeAddress,
+      updateTxSkeletonAfterCollection(_txSkeleton) {
+        // Inject CobuildProof
+        if (clusterAgentScript.behaviors?.cobuild) {
+          const injectCobuildProofResult = injectCommonCobuildProof({
+            txSkeleton: _txSkeleton,
+            actions: actionResult.actions,
+          });
+          _txSkeleton = injectCobuildProofResult.txSkeleton;
+        }
+
+        return _txSkeleton;
+      },
       config,
     });
     txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
+  } else {
+    // Inject CobuildProof
+    if (clusterAgentScript.behaviors?.cobuild) {
+      const injectCobuildProofResult = injectCommonCobuildProof({
+        txSkeleton,
+        actions: actionResult.actions,
+      });
+      txSkeleton = injectCobuildProofResult.txSkeleton;
+    }
+    // Pay fee by the target cell's capacity margin
+    txSkeleton = await payFeeByOutput({
+      txSkeleton,
+      outputIndex: injectLiveClusterAgentCellResult.outputIndex,
+      config,
+    });
   }
 
   return {

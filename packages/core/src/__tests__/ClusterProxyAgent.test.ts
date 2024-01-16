@@ -1,12 +1,18 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { BI } from '@ckb-lumos/lumos';
+import { BI, utils } from '@ckb-lumos/lumos';
 import { getSporeScript } from '../config';
 import { bytifyRawString, minimalCellCapacityByLock } from '../helpers';
 import { createSpore, createCluster, getClusterByOutPoint, getClusterById } from '../api';
 import { packRawClusterAgentDataToHash, unpackToRawClusterProxyArgs } from '../codec';
 import { createClusterProxy, transferClusterProxy, meltClusterProxy, getClusterProxyByOutPoint } from '../api';
 import { createClusterAgent, transferClusterAgent, meltClusterAgent, getClusterAgentByOutPoint } from '../api';
-import { getClusterAgentOutput, getSporeOutput, getClusterProxyOutput, IdRecord } from './helpers';
+import {
+  getClusterAgentOutput,
+  getSporeOutput,
+  getClusterProxyOutput,
+  IdRecord,
+  getActionsFromCobuildWitnessLayout,
+} from './helpers';
 import { signAndSendTransaction, retryQuery, popRecord, OutPointRecord } from './helpers';
 import { expectCellDep, expectLockCell, expectTypeCell, expectTypeId, expectCellLock } from './helpers';
 import {
@@ -19,6 +25,7 @@ import {
   CLUSTER_AGENT_OUTPOINT_RECORDS,
   cleanupRecords,
 } from './shared';
+import { createSporeScriptInfoFromTemplate, ScriptInfo } from '../cobuild';
 
 describe('ClusterProxy and ClusterAgent', () => {
   const { rpc, config } = TEST_ENV;
@@ -208,6 +215,37 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectTypeCell(txSkeleton, 'both', clusterProxy.cell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterProxy.script.cellDep);
+
+      const witness = txSkeleton.get('witnesses').last();
+      expect(witness).toBeDefined();
+      const actions = getActionsFromCobuildWitnessLayout(witness!);
+      expect(actions[0]).toBeDefined();
+      expect(actions[0]).toHaveProperty('sporeActionData');
+      expect(actions[0].sporeActionData).toHaveProperty('type', 'TransferClusterProxy');
+
+      const clusterProxyType = clusterProxy.cell.cellOutput.type!;
+      const clusterProxyTypeHash = utils.computeScriptHash(clusterProxyType);
+      const scriptInfo = createSporeScriptInfoFromTemplate({
+        scriptHash: clusterProxyTypeHash,
+      });
+      const scriptInfoHash = utils.ckbHash(ScriptInfo.pack(scriptInfo));
+      expect(actions[0].scriptHash).toEqual(clusterProxyTypeHash);
+      expect(actions[0].scriptInfoHash).toEqual(scriptInfoHash);
+
+      const sporeActionData = actions[0].sporeActionData;
+      expect(sporeActionData).toHaveProperty('type');
+      expect(sporeActionData).toHaveProperty('type', 'TransferClusterProxy');
+      expect(sporeActionData).toHaveProperty('value');
+      expect(sporeActionData.value).toHaveProperty('clusterId', clusterProxy.data);
+      expect(sporeActionData.value).toHaveProperty('clusterProxyId', clusterProxy.id);
+      expect(sporeActionData.value).toHaveProperty('from', {
+        type: 'Script',
+        value: clusterProxyRecord.account.lock,
+      });
+      expect(sporeActionData.value).toHaveProperty('to', {
+        type: 'Script',
+        value: clusterProxy.cell.cellOutput.lock,
+      });
 
       const hash = await signAndSendTransaction({
         account: clusterProxyRecord.account,

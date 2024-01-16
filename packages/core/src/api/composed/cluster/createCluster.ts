@@ -3,7 +3,8 @@ import { Address, Script } from '@ckb-lumos/base';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
 import { RawClusterData } from '../../../codec';
-import { getSporeConfig, SporeConfig } from '../../../config';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { generateCreateClusterAction, injectCommonCobuildProof } from '../../../cobuild';
 import { injectCapacityAndPayFee, assertTransactionSkeletonSize } from '../../../helpers';
 import { injectNewClusterIds, injectNewClusterOutput } from '../..';
 
@@ -47,16 +48,34 @@ export async function createCluster(props: {
     txSkeleton,
     fromInfos: props.fromInfos,
     changeAddress: props.changeAddress,
+    updateTxSkeletonAfterCollection(_txSkeleton) {
+      // Generate ID for the new Cluster (if possible)
+      _txSkeleton = injectNewClusterIds({
+        txSkeleton: _txSkeleton,
+        outputIndices: [injectNewClusterResult.outputIndex],
+        config,
+      });
+
+      // Inject CobuildProof
+      const clusterCell = txSkeleton.get('outputs').get(injectNewClusterResult.outputIndex)!;
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
+      if (clusterScript.behaviors?.cobuild) {
+        const actionResult = generateCreateClusterAction({
+          txSkeleton: _txSkeleton,
+          outputIndex: injectNewClusterResult.outputIndex,
+        });
+        const injectCobuildProofResult = injectCommonCobuildProof({
+          txSkeleton: _txSkeleton,
+          actions: actionResult.actions,
+        });
+        _txSkeleton = injectCobuildProofResult.txSkeleton;
+      }
+
+      return _txSkeleton;
+    },
     config,
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
-
-  // Generate ID for the new Cluster (if possible)
-  txSkeleton = injectNewClusterIds({
-    outputIndices: [injectNewClusterResult.outputIndex],
-    txSkeleton,
-    config,
-  });
 
   // Make sure the tx size is in range (if needed)
   if (typeof maxTransactionSize === 'number') {

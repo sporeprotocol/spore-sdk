@@ -1,11 +1,13 @@
 import { expect } from 'vitest';
-import { helpers } from '@ckb-lumos/lumos';
+import { helpers, HexString } from '@ckb-lumos/lumos';
 import { Cell, CellDep, Hash, Script } from '@ckb-lumos/base';
 import { getSporeScript, isSporeScriptSupported, SporeConfig, SporeScript } from '../../config';
 import { unpackToRawSporeData, RawSporeData } from '../../codec';
 import { unpackToRawClusterData, RawClusterData } from '../../codec';
 import { unpackToRawClusterProxyArgs, RawClusterProxyArgs } from '../../codec';
 import { generateTypeId, isScriptValueEquals } from '../../helpers';
+import { getWitnessType, SighashAll, SporeAction, WitnessLayout } from '../../cobuild';
+import { UnpackResult } from '@ckb-lumos/codec';
 
 export function getSporeOutput(
   txSkeleton: helpers.TransactionSkeletonType,
@@ -213,4 +215,19 @@ export function findCellByLock(lock: Script) {
 
 export function findCellByType(type: Script) {
   return (cell: Cell) => !!cell.cellOutput.type && isScriptValueEquals(type, cell.cellOutput.type);
+}
+
+export function getActionsFromCobuildWitnessLayout(witness: HexString) {
+  const witnessType = getWitnessType(witness);
+  expect(witnessType).toEqual('SighashAll');
+
+  const witnessLayout = WitnessLayout.unpack(witness);
+  return (witnessLayout.value as UnpackResult<typeof SighashAll>).message.actions.map((action) => {
+    return {
+      scriptInfoHash: action.scriptInfoHash,
+      scriptHash: action.scriptHash,
+      data: action.data,
+      sporeActionData: SporeAction.unpack(action.data),
+    };
+  });
 }

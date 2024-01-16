@@ -2,8 +2,9 @@ import { BIish } from '@ckb-lumos/bi';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
-import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { generateCreateClusterProxyAction, injectCommonCobuildProof } from '../../../cobuild';
 import { getClusterByOutPoint, injectNewClusterProxyOutput, injectNewClusterProxyIds } from '../..';
 
 export async function createClusterProxy(props: {
@@ -59,16 +60,35 @@ export async function createClusterProxy(props: {
     txSkeleton,
     fromInfos: props.fromInfos,
     changeAddress: props.changeAddress,
+    updateTxSkeletonAfterCollection(_txSkeleton) {
+      // Generate and inject ID for the new ClusterProxy
+      _txSkeleton = injectNewClusterProxyIds({
+        outputIndices: [injectNewClusterProxyResult.outputIndex],
+        txSkeleton: _txSkeleton,
+        config,
+      });
+
+      // Inject CobuildProof
+      const clusterProxyCell = txSkeleton.get('outputs').get(injectNewClusterProxyResult.outputIndex)!;
+      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type!);
+      if (clusterProxyScript.behaviors?.cobuild) {
+        const actionResult = generateCreateClusterProxyAction({
+          txSkeleton: _txSkeleton,
+          outputIndex: injectNewClusterProxyResult.outputIndex,
+          reference: injectNewClusterProxyResult.reference,
+        });
+        const injectCobuildProofResult = injectCommonCobuildProof({
+          txSkeleton: _txSkeleton,
+          actions: actionResult.actions,
+        });
+        _txSkeleton = injectCobuildProofResult.txSkeleton;
+      }
+
+      return _txSkeleton;
+    },
     config,
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
-
-  // Generate and inject ID for the new ClusterProxy
-  txSkeleton = injectNewClusterProxyIds({
-    outputIndices: [injectNewClusterProxyResult.outputIndex],
-    txSkeleton,
-    config,
-  });
 
   // TODO: Validate the referenced Cluster/LockProxy
 
