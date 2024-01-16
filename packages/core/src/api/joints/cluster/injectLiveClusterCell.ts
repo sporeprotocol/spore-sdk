@@ -27,11 +27,11 @@ export async function injectLiveClusterCell(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Check target cell type
+  // Check target cell's type
   const clusterCellType = clusterCell.cellOutput.type;
-  const clusterScript = getSporeScript(config, 'Cluster', clusterCellType);
+  const clusterScript = getSporeScript(config, 'Cluster', clusterCellType!);
   if (!clusterCellType || !clusterScript) {
-    throw new Error('Cannot inject cluster because target cell is not Cluster');
+    throw new Error('Cannot inject Cluster because target cell is not Cluster');
   }
 
   // Add cluster cell to Transaction.inputs

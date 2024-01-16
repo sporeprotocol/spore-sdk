@@ -137,7 +137,7 @@ export async function injectNewSporeOutput(props: {
 
     // Even if not referencing Cluster, still make sure Cluster related cellDeps are added
     const clusterType = clusterCell!.cellOutput.type;
-    const clusterScript = getSporeScript(config, 'Cluster', clusterType);
+    const clusterScript = getSporeScript(config, 'Cluster', clusterType!);
     if (!clusterType || !clusterScript) {
       throw new Error('Cannot reference Cluster because target cell is not Cluster');
     }

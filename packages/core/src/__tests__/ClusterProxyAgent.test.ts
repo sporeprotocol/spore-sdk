@@ -155,7 +155,7 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectTypeCell(txSkeleton, 'both', clusterCell.cellOutput.type!);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterRecord.outPoint,
@@ -240,7 +240,7 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectTypeCell(txSkeleton, 'input', clusterProxyCell.cellOutput.type!);
 
-      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyType);
+      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyType!);
       expectCellDep(txSkeleton, clusterProxyScript.cellDep);
 
       const hash = await signAndSendTransaction({
@@ -295,7 +295,7 @@ describe('ClusterProxy and ClusterAgent', () => {
       const expectedPayment = lockRequiredCapacity.gt(minimalPayment) ? lockRequiredCapacity : minimalPayment;
       expect(BI.from(paymentCell!.cellOutput.capacity).gte(expectedPayment)).toEqual(true);
 
-      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type);
+      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterProxyScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterProxyRecord.outPoint,
@@ -350,7 +350,7 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectTypeCell(txSkeleton, 'both', clusterProxyCell.cellOutput.type!);
 
-      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type);
+      const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterProxyScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterProxyRecord.outPoint,
@@ -474,7 +474,7 @@ describe('ClusterProxy and ClusterAgent', () => {
       expect(reference.referenceType).toEqual('lockProxy');
       expectLockCell(txSkeleton, 'both', clusterAgentCell.cellOutput.lock);
 
-      const clusterScript = getSporeScript(config, 'ClusterAgent', clusterAgentCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'ClusterAgent', clusterAgentCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterAgentRecord.outPoint,
@@ -608,7 +608,7 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectTypeCell(txSkeleton, 'both', clusterCell.cellOutput.type!);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterCell.outPoint!,

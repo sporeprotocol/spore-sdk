@@ -131,7 +131,7 @@ describe('Cluster', () => {
 
       expectLockCell(txSkeleton, 'both', clusterCell.cellOutput.lock);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterRecord.outPoint,
@@ -191,7 +191,7 @@ describe('Cluster', () => {
       expectTypeCell(txSkeleton, 'both', cluster.cell.cellOutput.type!);
       expect(cluster.id).toEqual(clusterId);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterRecord.outPoint,
@@ -270,7 +270,7 @@ describe('Cluster', () => {
       expectTypeCell(txSkeleton, 'both', cluster.cell.cellOutput.type!);
       expect(cluster.id).toEqual(clusterRecord.id);
 
-      const clusterScript = getSporeScript(config, 'Cluster', cluster.cell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', cluster.cell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterCell.outPoint!,
