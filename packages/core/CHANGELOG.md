@@ -1,5 +1,16 @@
 # @spore-sdk/core
 
+## 0.2.0-beta.0
+
+### Minor Changes
+
+- b89681c: Support basic Cobuild feature with legacy locks
+
+### Patch Changes
+
+- 68e7ed8: Support finding SporeScripts by predefined tags
+- aa1895f: Remove minPayment prop from the transferClusterProxy API
+
 ## 0.1.1-beta.0
 
 ### Patch Changes
