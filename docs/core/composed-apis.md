@@ -196,7 +196,6 @@ declare function createClusterProxy(props: {
 declare function transferClusterProxy(props: {
   outPoint: OutPoint;
   toLock: Script;
-  minPayment?: BIish;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
   useCapacityMarginAsFee?: boolean;

@@ -11,7 +11,6 @@ import { injectLiveClusterProxyCell } from '../../joints/clusterProxy/injectLive
 export async function transferClusterProxy(props: {
   outPoint: OutPoint;
   toLock: Script;
-  minPayment?: BIish;
   fromInfos?: FromInfo[];
   changeAddress?: Address;
   useCapacityMarginAsFee?: boolean;
@@ -60,7 +59,6 @@ export async function transferClusterProxy(props: {
       }
       return cell;
     },
-    minPayment: props.minPayment,
     capacityMargin: props.capacityMargin,
     updateWitness: props.updateWitness,
     defaultWitness: props.defaultWitness,
