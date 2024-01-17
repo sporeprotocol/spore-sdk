@@ -34,33 +34,6 @@ export async function injectLiveClusterReference(props: {
 
   // Injection status & hooks
   let injectLiveClusterResult: Awaited<ReturnType<typeof injectLiveClusterCell>> | undefined;
-  async function referenceCell(tx: helpers.TransactionSkeletonType): Promise<helpers.TransactionSkeletonType> {
-    injectLiveClusterResult = await injectLiveClusterCell({
-      txSkeleton: tx,
-      cell: clusterCell,
-      addOutput: true,
-      updateOutput: props.updateOutput,
-      updateWitness: props.updateWitness,
-      capacityMargin: props.capacityMargin,
-      defaultWitness: props.defaultWitness,
-      since: props.since,
-      config,
-    });
-
-    return injectLiveClusterResult.txSkeleton;
-  }
-  function referenceLockProxy(tx: helpers.TransactionSkeletonType): helpers.TransactionSkeletonType {
-    const clusterType = clusterCell.cellOutput.type;
-    const clusterScript = getSporeScript(config, 'Cluster', clusterType);
-    if (!clusterType || !clusterScript) {
-      throw new Error('Cannot inject Cluster because target cell is not Cluster');
-    }
-
-    // Add cluster required cellDeps
-    tx = addCellDep(tx, clusterScript.cellDep);
-
-    return tx;
-  }
 
   // Inject referenced cluster directly or inject LockProxy only
   const referenceResult = await referenceCellOrLockProxy({
@@ -68,8 +41,32 @@ export async function injectLiveClusterReference(props: {
     cell: clusterCell,
     inputLocks: props.inputLocks,
     outputLocks: props.outputLocks,
-    referenceCell,
-    referenceLockProxy,
+    async referenceCell(tx) {
+      injectLiveClusterResult = await injectLiveClusterCell({
+        txSkeleton: tx,
+        cell: clusterCell,
+        addOutput: true,
+        updateOutput: props.updateOutput,
+        updateWitness: props.updateWitness,
+        capacityMargin: props.capacityMargin,
+        defaultWitness: props.defaultWitness,
+        since: props.since,
+        config,
+      });
+
+      return injectLiveClusterResult.txSkeleton;
+    },
+    async referenceLockProxy(tx) {
+      const clusterType = clusterCell.cellOutput.type;
+      const clusterScript = getSporeScript(config, 'Cluster', clusterType!);
+      if (!clusterScript.behaviors?.lockProxy) {
+        throw new Error('Cannot reference Cluster because target Cluster does not supported lockProxy');
+      }
+
+      tx = addCellDep(tx, clusterScript.cellDep);
+
+      return tx;
+    },
   });
   txSkeleton = referenceResult.txSkeleton;
 

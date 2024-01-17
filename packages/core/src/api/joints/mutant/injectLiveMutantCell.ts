@@ -32,7 +32,7 @@ export async function injectLiveMutantCell(props: {
 
   // Check target cell's type
   const mutantCellType = mutantCell.cellOutput.type;
-  const mutantScript = getSporeScript(config, 'Mutant', mutantCellType);
+  const mutantScript = getSporeScript(config, 'Mutant', mutantCellType!);
   if (!mutantCellType || !mutantScript) {
     throw new Error('Cannot inject Mutant because target cell is not Mutant');
   }

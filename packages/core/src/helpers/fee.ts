@@ -57,6 +57,9 @@ export async function payFeeThroughCollection(props: {
   tipHeader?: Header;
   enableDeductCapacity?: boolean;
   useLocktimeCellsFirst?: boolean;
+  updateTxSkeletonAfterCollection?: (
+    txSkeleton: helpers.TransactionSkeletonType,
+  ) => Promise<helpers.TransactionSkeletonType> | helpers.TransactionSkeletonType;
   config?: SporeConfig;
 }): Promise<helpers.TransactionSkeletonType> {
   // Env
@@ -67,9 +70,8 @@ export async function payFeeThroughCollection(props: {
   let newTxSkeleton = props.txSkeleton;
 
   /**
-   * Only one case `currentTransactionSize < size`:
-   * change output capacity equals current fee (feeA), so one output reduced,
-   * and if reduce the fee, change output will add again, fee will increase to feeA.
+   * Loop the collection process until the transaction size is no longer increasing.
+   * This is to ensure that the transaction size is as small as possible.
    */
   let currentTransactionSize = getTransactionSkeletonSize(newTxSkeleton);
   while (currentTransactionSize > size) {
@@ -88,6 +90,14 @@ export async function payFeeThroughCollection(props: {
         useLocktimeCellsFirst: props.useLocktimeCellsFirst,
       },
     );
+
+    /**
+     * When injection is made and has passed the "updateTxSkeletonUpdateCollection" function,
+     * the function will be called to update the TransactionSkeleton as needed.
+     */
+    if (props.updateTxSkeletonAfterCollection) {
+      newTxSkeleton = await props.updateTxSkeletonAfterCollection(newTxSkeleton);
+    }
 
     currentTransactionSize = getTransactionSkeletonSize(newTxSkeleton);
   }
@@ -145,6 +155,9 @@ export async function injectCapacityAndPayFee(props: {
   extraCapacity?: BIish;
   changeAddress?: Address;
   enableDeductCapacity?: boolean;
+  updateTxSkeletonAfterCollection?: (
+    txSkeleton: helpers.TransactionSkeletonType,
+  ) => Promise<helpers.TransactionSkeletonType> | helpers.TransactionSkeletonType;
 }): Promise<{
   txSkeleton: helpers.TransactionSkeletonType;
   before: CapacitySnapshot;

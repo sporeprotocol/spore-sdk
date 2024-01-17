@@ -8,6 +8,7 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   ckbNodeUrl: 'https://testnet.ckb.dev/rpc',
   ckbIndexerUrl: 'https://testnet.ckb.dev/indexer',
   maxTransactionSize: 500 * 1024, // 500 KB
+  defaultTags: ['v2'],
   scripts: {
     Spore: {
       versions: [
@@ -24,9 +25,13 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
             },
             depType: 'code',
           },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
         },
         {
-          tags: ['v1'],
+          tags: ['v1', 'latest'],
           script: {
             codeHash: '0xbbad126377d45f90a8ee120da988a2d7332c78ba8fd679aab478a19d6c133494',
             hashType: 'data1',
@@ -56,9 +61,13 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
             },
             depType: 'code',
           },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
         },
         {
-          tags: ['v1'],
+          tags: ['v1', 'latest'],
           script: {
             codeHash: '0x598d793defef36e2eeba54a9b45130e4ca92822e1d193671f490950c3b856080',
             hashType: 'data1',
@@ -88,6 +97,10 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
             },
             depType: 'code',
           },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
         },
       ],
     },
@@ -106,6 +119,10 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
             },
             depType: 'code',
           },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
         },
       ],
     },
@@ -123,6 +140,10 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
               index: '0x0',
             },
             depType: 'code',
+          },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
           },
         },
       ],

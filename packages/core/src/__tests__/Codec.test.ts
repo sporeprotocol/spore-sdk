@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec';
 import { BI, HexString } from '@ckb-lumos/lumos';
 import { bytifyRawString } from '../helpers';
-import { packRawSporeData, unpackToRawSporeData, RawSporeData } from '../codec';
+import { packRawSporeData, unpackToRawSporeData, RawSporeData, RawString } from '../codec';
 import { packRawClusterData, unpackToRawClusterData, RawClusterData } from '../codec';
 import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs, RawClusterProxyArgs } from '../codec';
 import { packRawClusterAgentDataToHash, RawClusterAgentData } from '../codec';
@@ -13,6 +13,14 @@ interface PackableTest<T> {
 }
 
 describe('Codec', function () {
+  /**
+   * RawString
+   */
+  it('Encode via RawString codec', () => {
+    expect(RawString.pack('content')).toEqual(bytes.bytify('0x07000000636f6e74656e74'));
+    expect(RawString.unpack('0x07000000636f6e74656e74')).toEqual('content');
+  });
+
   /**
    * SporeData
    */

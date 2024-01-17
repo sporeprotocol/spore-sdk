@@ -1,7 +1,8 @@
 import { Address, OutPoint } from '@ckb-lumos/base';
 import { helpers, HexString, Indexer } from '@ckb-lumos/lumos';
-import { getSporeConfig, SporeConfig } from '../../../config';
 import { returnExceededCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { generateMeltClusterProxyAction, injectCommonCobuildProof } from '../../../cobuild';
 import { getClusterProxyByOutPoint, injectLiveClusterProxyCell } from '../..';
 
 export async function meltClusterProxy(props: {
@@ -24,6 +25,7 @@ export async function meltClusterProxy(props: {
 
   // Get ClusterProxy cell
   const clusterProxyCell = await getClusterProxyByOutPoint(props.outPoint, config);
+  const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyCell.cellOutput.type!);
 
   // Inject live spore to Transaction.inputs
   const injectLiveClusterProxyCellResult = await injectLiveClusterProxyCell({
@@ -33,6 +35,19 @@ export async function meltClusterProxy(props: {
     config,
   });
   txSkeleton = injectLiveClusterProxyCellResult.txSkeleton;
+
+  // Inject CobuildProof
+  if (clusterProxyScript.behaviors?.cobuild) {
+    const actionResult = generateMeltClusterProxyAction({
+      txSkeleton,
+      inputIndex: injectLiveClusterProxyCellResult.inputIndex,
+    });
+    const injectCobuildProofResult = injectCommonCobuildProof({
+      txSkeleton,
+      actions: actionResult.actions,
+    });
+    txSkeleton = injectCobuildProofResult.txSkeleton;
+  }
 
   // Redeem occupied capacity from the melted cell
   const targetCellAddress = helpers.encodeToAddress(clusterProxyCell.cellOutput.lock, { config: config.lumos });

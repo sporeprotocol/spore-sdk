@@ -2,9 +2,11 @@ import { BIish } from '@ckb-lumos/bi';
 import { FromInfo } from '@ckb-lumos/common-scripts';
 import { Address, OutPoint, Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
-import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee } from '../../../helpers';
+import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
+import { generateCreateClusterAgentAction, injectCommonCobuildProof } from '../../../cobuild';
 import { getClusterProxyByOutPoint, injectNewClusterAgentOutput } from '../..';
+import { unpackToRawClusterProxyArgs } from '../../../codec';
 
 export async function createClusterAgent(props: {
   clusterProxyOutPoint: OutPoint;
@@ -61,6 +63,26 @@ export async function createClusterAgent(props: {
     txSkeleton,
     fromInfos: props.fromInfos,
     changeAddress: props.changeAddress,
+    updateTxSkeletonAfterCollection(_txSkeleton) {
+      // Inject CobuildProof
+      const clusterAgentCell = txSkeleton.get('outputs').get(injectNewClusterAgentOutputResult.outputIndex)!;
+      const clusterAgentScript = getSporeScript(config, 'ClusterAgent', clusterAgentCell.cellOutput.type!);
+      if (clusterAgentScript.behaviors?.cobuild) {
+        const actionResult = generateCreateClusterAgentAction({
+          txSkeleton: _txSkeleton,
+          clusterProxyId: unpackToRawClusterProxyArgs(clusterProxyCell.cellOutput.type!.args).id,
+          outputIndex: injectNewClusterAgentOutputResult.outputIndex,
+          reference: injectNewClusterAgentOutputResult.reference,
+        });
+        const injectCobuildProofResult = injectCommonCobuildProof({
+          txSkeleton: _txSkeleton,
+          actions: actionResult.actions,
+        });
+        _txSkeleton = injectCobuildProofResult.txSkeleton;
+      }
+
+      return _txSkeleton;
+    },
     config,
   });
   txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;

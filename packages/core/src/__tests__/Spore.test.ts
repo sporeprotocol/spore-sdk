@@ -115,7 +115,7 @@ describe('Spore', () => {
       expect(changeCell).toBeDefined();
       expect(changeCell!.cellOutput.lock).toEqual(CHARLIE.lock);
 
-      const sporeScript = getSporeScript(config, 'Spore', sporeCell.cellOutput.type);
+      const sporeScript = getSporeScript(config, 'Spore', sporeCell.cellOutput.type!);
       expectCellDep(txSkeleton, sporeScript.cellDep);
 
       const hash = await signAndSendTransaction({

@@ -59,9 +59,9 @@ export async function injectLiveClusterAgentReference(props: {
     },
     referenceLockProxy(tx) {
       const cellType = clusterAgentCell.cellOutput.type;
-      const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType);
-      if (!cellType || !clusterAgentScript) {
-        throw new Error('Cannot inject ClusterAgent because target cell is not ClusterAgent');
+      const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType!);
+      if (!clusterAgentScript.behaviors?.lockProxy) {
+        throw new Error('Cannot reference ClusterAgent because target cell does not supported lockProxy');
       }
 
       // Add ClusterAgent required cellDeps

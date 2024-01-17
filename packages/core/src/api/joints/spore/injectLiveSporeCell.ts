@@ -31,7 +31,7 @@ export async function injectLiveSporeCell(props: {
 
   // Check target cell's type script id
   const sporeType = sporeCell.cellOutput.type;
-  const sporeScript = getSporeScript(config, 'Spore', sporeType);
+  const sporeScript = getSporeScript(config, 'Spore', sporeType!);
   if (!sporeType || !sporeScript) {
     throw new Error('Cannot inject live spore because target cell type is not Spore');
   }

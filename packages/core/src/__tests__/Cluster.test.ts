@@ -131,7 +131,7 @@ describe('Cluster', () => {
 
       expectLockCell(txSkeleton, 'both', clusterCell.cellOutput.lock);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterRecord.outPoint,
@@ -191,7 +191,7 @@ describe('Cluster', () => {
       expectTypeCell(txSkeleton, 'both', cluster.cell.cellOutput.type!);
       expect(cluster.id).toEqual(clusterId);
 
-      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', clusterCell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterRecord.outPoint,
@@ -230,6 +230,29 @@ describe('Cluster', () => {
       id: '0x8b9f893397310a3bbd925cd1c9ab606555675bb2d03f3c5cb934f2ba4ef97e93',
       account: CHARLIE,
     };
+    it('Create a Spore with Cluster (via lock proxy)', async () => {
+      expect(clusterV1IdRecord).toBeDefined();
+      const clusterRecord = clusterV1IdRecord;
+      const clusterCell = await retryQuery(async () => {
+        const cell = await getClusterById(clusterRecord.id, config);
+        return await getClusterByOutPoint(cell.outPoint!, config);
+      });
+
+      expectCellLock(clusterCell, [CHARLIE.lock, ALICE.lock]);
+
+      await expect(() =>
+        createSpore({
+          data: {
+            clusterId: clusterRecord.id,
+            contentType: 'text/plain',
+            content: bytifyRawString('content'),
+          },
+          toLock: clusterRecord.account.lock,
+          fromInfos: [clusterRecord.account.address],
+          config,
+        }),
+      ).rejects.toThrowError('Cannot reference Cluster because target Cluster does not supported lockProxy');
+    }, 0);
     it('Create a Spore with Cluster (via cell reference)', async () => {
       expect(clusterV1IdRecord).toBeDefined();
       const clusterRecord = clusterV1IdRecord;
@@ -270,7 +293,7 @@ describe('Cluster', () => {
       expectTypeCell(txSkeleton, 'both', cluster.cell.cellOutput.type!);
       expect(cluster.id).toEqual(clusterRecord.id);
 
-      const clusterScript = getSporeScript(config, 'Cluster', cluster.cell.cellOutput.type);
+      const clusterScript = getSporeScript(config, 'Cluster', cluster.cell.cellOutput.type!);
       expectCellDep(txSkeleton, clusterScript.cellDep);
       expectCellDep(txSkeleton, {
         outPoint: clusterCell.outPoint!,

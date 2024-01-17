@@ -7,6 +7,7 @@ export interface SporeConfig<T extends string = string> {
   ckbNodeUrl: string;
   ckbIndexerUrl: string;
   maxTransactionSize?: number;
+  defaultTags?: string[];
   scripts: SporeScriptCategories<T>;
 }
 
@@ -23,7 +24,13 @@ export interface SporeVersionedScript extends SporeScript {
 export type SporeScripts<T extends string> = Record<T, SporeScript>;
 
 export interface SporeScript {
+  tags: string[];
   script: ScriptId;
   cellDep: CellDep;
-  tags: string[];
+  behaviors?: SporeScriptOptions;
+}
+
+export interface SporeScriptOptions {
+  lockProxy?: boolean;
+  cobuild?: boolean;
 }

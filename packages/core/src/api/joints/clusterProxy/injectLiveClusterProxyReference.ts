@@ -41,7 +41,7 @@ export async function injectLiveClusterProxyReference(props: {
 
   // Get ClusterProxy's type script
   const clusterProxyType = clusterProxyCell.cellOutput.type;
-  const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyType);
+  const clusterProxyScript = getSporeScript(config, 'ClusterProxy', clusterProxyType!);
   if (!clusterProxyType || !clusterProxyScript) {
     throw new Error('Cannot inject ClusterProxy because target cell is not ClusterProxy');
   }

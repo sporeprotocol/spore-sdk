@@ -29,7 +29,7 @@ export async function injectLiveClusterAgentCell(props: {
 
   // Check the target cell's type
   const cellType = clusterAgentCell.cellOutput.type;
-  const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType);
+  const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType!);
   if (!cellType || !clusterAgentScript) {
     throw new Error('Cannot inject ClusterAgent because target cell is not ClusterAgent');
   }
