@@ -1,16 +1,13 @@
 import { BIish } from '@ckb-lumos/bi';
-import { bytes } from '@ckb-lumos/codec';
 import { PackedSince } from '@ckb-lumos/base';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { assetCellMinimalCapacity, setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
-import { packRawClusterProxyArgs, unpackToRawClusterProxyArgs } from '../../../codec';
 
 export async function injectLiveClusterProxyCell(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   cell: Cell;
-  minPayment?: BIish;
   addOutput?: boolean;
   updateOutput?: (cell: Cell) => Cell;
   capacityMargin?: BIish | ((cell: Cell, margin: BI) => BIish);
@@ -43,14 +40,6 @@ export async function injectLiveClusterProxyCell(props: {
     input: clusterProxyCell,
     addOutput: props.addOutput,
     updateOutput(cell) {
-      if (props.minPayment !== void 0) {
-        const unpackedArgs = unpackToRawClusterProxyArgs(cell.cellOutput.type!.args!);
-        const newArgs = packRawClusterProxyArgs({
-          ...unpackedArgs,
-          minPayment: BI.from(props.minPayment),
-        });
-        cell.cellOutput.type!.args = bytes.hexify(newArgs);
-      }
       if (props.capacityMargin !== void 0) {
         cell = setAbsoluteCapacityMargin(cell, props.capacityMargin);
       }
