@@ -28,7 +28,7 @@ export function generateMeltClusterAgentAction(props: {
   const actionData = SporeAction.pack({
     type: 'MeltClusterAgent',
     value: {
-      clusterId: clusterAgentInput!.data,
+      clusterId: clusterAgentInput!.cellOutput.type!.args,
       from: {
         type: 'Script',
         value: clusterAgentInput!.cellOutput.lock,
