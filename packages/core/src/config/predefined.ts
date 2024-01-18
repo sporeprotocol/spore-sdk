@@ -15,12 +15,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xfd2dc714c4d4cb81e8621e5c124465a048d06551b467f58eaa64041dd322cf81',
+            codeHash: '0xa32df38d2de1da82cbcb9e4467f8c18479596394eea977e471b75be5fe3e9c67',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x4d75c3201b06d9d4e4058468abb2b5d9aebacd4b065f6a855b4cbc2f23dfb87f',
+              txHash: '0xfad85d02822b7ee7c0fe9879c03fcaff695aa7ff2b7a7b740966bf49f47c29c1',
               index: '0x0',
             },
             depType: 'code',
@@ -51,12 +51,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0x372b7c11d7b688e02d9c2b7604fbdf0dc898a0f6741854ea6c65d41f8ef4a64e',
+            codeHash: '0x5203a3baf931c15a809c4a0bb7041aebb73118281e31e8d104d926b8523977b1',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x4072aa8ef8794cc8e70ae57c1dd29d2a343bc7f0cd6b13ce30ae6cd7d5b6a7d9',
+              txHash: '0xa23dbb38208fd50ce99404780a769784c77bd95a32e0af72c3a87de85d0bf1ba',
               index: '0x0',
             },
             depType: 'code',
@@ -87,12 +87,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xfc1fbe95e7fb5be520f1adb2bdbd1529422613b02254ff01fd0f30604861ae36',
+            codeHash: '0x08e5cecab2bbdea9139534a822d46b82929e06f12f00c68343a88a58827cd3db',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0xbb0960de5c1960b57babd4cf4f468ac27572d24ef51dba8a2719f31dcebbc88f',
+              txHash: '0x4ca4dcba0f907f054ceace6061f6a143aeea80107eb48fa296d27af63a1714ea',
               index: '0x0',
             },
             depType: 'code',
@@ -109,12 +109,12 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
         {
           tags: ['v2', 'preview'],
           script: {
-            codeHash: '0xa170fc93235213e90214e4273bb283e7979bf6477f70b4f2319d3777ec36235c',
+            codeHash: '0x88850ac632eed604f0ad784394004db384d0eea8038a24eee83439687d79343f',
             hashType: 'data1',
           },
           cellDep: {
             outPoint: {
-              txHash: '0x4951fba8ae56d10c409221e412b5b5457da8b23e92b1fab8c627f609a4f53929',
+              txHash: '0xde33357919460d527abf53ff61881e62e0b3afc5f4fb95b34783b5827e59d82d',
               index: '0x0',
             },
             depType: 'code',
