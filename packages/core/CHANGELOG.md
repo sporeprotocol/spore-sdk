@@ -1,5 +1,11 @@
 # @spore-sdk/core
 
+## 0.2.0-beta.1
+
+### Patch Changes
+
+- 22d062d: BREAKING CHANGE: Replaced v2 preview contracts
+
 ## 0.2.0-beta.0
 
 ### Minor Changes

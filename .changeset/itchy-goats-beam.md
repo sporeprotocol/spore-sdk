@@ -2,4 +2,4 @@
 '@spore-sdk/core': patch
 ---
 
-BREAKING CHANGE: Replaced v2 previe contracts
+BREAKING CHANGE: Replaced v2 preview contracts
