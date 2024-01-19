@@ -38,6 +38,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Install dependencies
+        run: pnpm i
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
