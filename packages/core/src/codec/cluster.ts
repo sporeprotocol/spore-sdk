@@ -2,6 +2,13 @@ import { blockchain, Hash } from '@ckb-lumos/base';
 import { bytes, BytesLike, molecule } from '@ckb-lumos/codec';
 import { bytifyRawString, bufferToRawString } from '../helpers';
 
+export const ClusterDataV1 = molecule.table(
+  {
+    name: blockchain.Bytes,
+    description: blockchain.Bytes,
+  },
+  ['name', 'description'],
+);
 export const ClusterDataV2 = molecule.table(
   {
     name: blockchain.Bytes,
@@ -9,14 +16,6 @@ export const ClusterDataV2 = molecule.table(
     mutantId: blockchain.BytesOpt,
   },
   ['name', 'description', 'mutantId'],
-);
-
-export const ClusterDataV1 = molecule.table(
-  {
-    name: blockchain.Bytes,
-    description: blockchain.Bytes,
-  },
-  ['name', 'description'],
 );
 
 export interface RawClusterDataV1 {
@@ -32,6 +31,10 @@ export type RawClusterData = RawClusterDataV2;
 
 export type ClusterDataVersion = 'v1' | 'v2';
 
+/**
+ * Pack RawClusterData to Uint8Array.
+ * Pass an optional "version" field to select a specific packing version.
+ */
 export function packRawClusterData(packable: RawClusterData): Uint8Array;
 export function packRawClusterData(packable: RawClusterDataV1, version: 'v1'): Uint8Array;
 export function packRawClusterData(packable: RawClusterDataV2, version: 'v2'): Uint8Array;
@@ -63,6 +66,10 @@ export function packRawClusterDataV2(packable: RawClusterDataV2): Uint8Array {
   });
 }
 
+/**
+ * Unpack Hex/Bytes to RawClusterData.
+ * Pass an optional "version" field to select a specific unpacking version.
+ */
 export function unpackToRawClusterData(unpackable: BytesLike): RawClusterData;
 export function unpackToRawClusterData(unpackable: BytesLike, version: 'v1'): RawClusterDataV1;
 export function unpackToRawClusterData(unpackable: BytesLike, version: 'v2'): RawClusterDataV2;

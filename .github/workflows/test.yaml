@@ -79,4 +79,5 @@ jobs:
         env:
           VITE_ACCOUNT_CHARLIE: ${{ secrets.ACCOUNT_CHARLIE }}
           VITE_ACCOUNT_ALICE: ${{ secrets.ACCOUNT_ALICE }}
+          VITE_TEST_CLUSTER_V1: true
           VITE_NETWORK: devnet

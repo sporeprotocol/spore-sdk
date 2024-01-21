@@ -252,6 +252,9 @@ describe('Cluster', () => {
     it.runIf(TEST_VARIABLES.network === 'devnet')(
       'Create a Cluster (v1) if necessary',
       async () => {
+        // Wait some time for the indexer to be updated
+        await waitForMilliseconds(1500);
+
         const { txSkeleton, outputIndex } = await createCluster({
           data: {
             name: 'Testnet Spores',
@@ -275,6 +278,7 @@ describe('Cluster', () => {
           send: true,
           config: v1Config,
         });
+
         if (hash) {
           clusterV1OutPointRecord = {
             outPoint: {

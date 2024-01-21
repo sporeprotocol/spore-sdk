@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { BI, utils } from '@ckb-lumos/lumos';
 import { getSporeScript } from '../config';
-import { bytifyRawString, minimalCellCapacityByLock } from '../helpers';
+import { bytifyRawString, minimalCellCapacityByLock, waitForMilliseconds } from '../helpers';
 import { packRawClusterAgentDataToHash, unpackToRawClusterProxyArgs } from '../codec';
 import { createSpore, createCluster, getClusterByOutPoint, getClusterById } from '../api';
 import { createClusterProxy, transferClusterProxy, meltClusterProxy, getClusterProxyByOutPoint } from '../api';
@@ -626,6 +626,9 @@ describe('ClusterProxy and ClusterAgent', () => {
     it.runIf(TEST_VARIABLES.network === 'devnet')(
       'Create a Cluster (v1) if necessary',
       async () => {
+        // Wait some time for the indexer to be updated
+        await waitForMilliseconds(1500);
+
         const { txSkeleton, outputIndex } = await createCluster({
           data: {
             name: 'Testnet Spores',
@@ -666,7 +669,7 @@ describe('ClusterProxy and ClusterAgent', () => {
 
       expectCellLock(clusterCell, [CHARLIE.lock, ALICE.lock]);
 
-      expect(() =>
+      await expect(() =>
         createClusterProxy({
           clusterOutPoint: clusterCell.outPoint!,
           minPayment: 10,
