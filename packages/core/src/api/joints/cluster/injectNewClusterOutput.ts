@@ -36,6 +36,7 @@ export function injectNewClusterOutput(props: {
 
   // Create Cluster cell (the latest version)
   const clusterScript = getSporeScript(config, 'Cluster');
+  const clusterData = packRawClusterData(props.data, clusterScript.behaviors?.clusterDataVersion as any);
   let clusterCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
@@ -45,7 +46,7 @@ export function injectNewClusterOutput(props: {
         args: '0x' + '0'.repeat(64), // Fill 32-byte TypeId placeholder
       },
     },
-    data: bytes.hexify(packRawClusterData(props.data)),
+    data: bytes.hexify(clusterData),
   });
 
   // Add to Transaction.outputs

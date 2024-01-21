@@ -139,18 +139,30 @@ describe('Codec', function () {
         '0x3a0000000c0000001c0000000c000000636c7573746572206e616d651a0000006465736372697074696f6e206f662074686520636c7573746572',
     },
   ];
-  it('Unpack ClusterData', function () {
+  it('Pack ClusterDataV1', function () {
+    for (let i = 0; i < clusterDataV1Tests.length; i++) {
+      const test = clusterDataV1Tests[i];
+      const packed = packRawClusterData(test.packable, 'v1');
+      const packedHex = bytes.hexify(packed);
+      expect(packedHex).eq(test.packed, `ClusterDataV1 in test #${i} should be packable`);
+    }
+  });
+  it('Unpack ClusterDataV1', function () {
     for (let i = 0; i < clusterDataV1Tests.length; i++) {
       const test = clusterDataV1Tests[i];
       const unpacked = unpackToRawClusterData(test.packed);
+      const unpackedV1 = unpackToRawClusterData(test.packed, 'v1');
+
+      // Cluster unpacked with/without version specified should be the same
+      expect(unpacked).toEqual(unpackedV1);
 
       // ClusterData.name
-      expect(unpacked.name).eq(test.packable.name, `ClusterData.name in test #${i} should be unpackable`);
+      expect(unpacked.name).eq(test.packable.name, `ClusterDataV1.name in test #${i} should be unpackable`);
 
       // ClusterData.description
       expect(unpacked.description).eq(
         test.packable.description,
-        `ClusterData.description in test #${i} should be unpackable`,
+        `ClusterDataV1.description in test #${i} should be unpackable`,
       );
     }
   });

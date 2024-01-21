@@ -1,6 +1,7 @@
 import { Config } from '@ckb-lumos/config-manager';
 import { CellDep } from '@ckb-lumos/base';
 import { ScriptId } from '../types';
+import { ClusterDataVersion } from '../codec';
 
 export interface SporeConfig<T extends string = string> {
   lumos: Config;
@@ -27,10 +28,11 @@ export interface SporeScript {
   tags: string[];
   script: ScriptId;
   cellDep: CellDep;
-  behaviors?: SporeScriptOptions;
+  behaviors?: SporeScriptBehaviors;
 }
 
-export interface SporeScriptOptions {
+export interface SporeScriptBehaviors {
   lockProxy?: boolean;
   cobuild?: boolean;
+  clusterDataVersion?: ClusterDataVersion;
 }

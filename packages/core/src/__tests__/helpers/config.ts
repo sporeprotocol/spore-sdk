@@ -43,6 +43,20 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
               cobuild: true,
             },
           },
+          {
+            tags: ['v1', 'latest'],
+            script: {
+              codeHash: config.SCRIPTS.SPORE_V1.CODE_HASH,
+              hashType: config.SCRIPTS.SPORE_V1.HASH_TYPE,
+            },
+            cellDep: {
+              outPoint: {
+                txHash: config.SCRIPTS.SPORE_V1.TX_HASH,
+                index: config.SCRIPTS.SPORE_V1.INDEX,
+              },
+              depType: config.SCRIPTS.SPORE_V1.DEP_TYPE,
+            },
+          },
         ],
       },
       Cluster: {
@@ -63,6 +77,23 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
             behaviors: {
               lockProxy: true,
               cobuild: true,
+            },
+          },
+          {
+            tags: ['v1', 'latest'],
+            script: {
+              codeHash: config.SCRIPTS.CLUSTER_V1.CODE_HASH,
+              hashType: config.SCRIPTS.CLUSTER_V1.HASH_TYPE,
+            },
+            cellDep: {
+              outPoint: {
+                txHash: config.SCRIPTS.CLUSTER_V1.TX_HASH,
+                index: config.SCRIPTS.CLUSTER_V1.INDEX,
+              },
+              depType: config.SCRIPTS.CLUSTER_V1.DEP_TYPE,
+            },
+            behaviors: {
+              clusterDataVersion: 'v1',
             },
           },
         ],
