@@ -121,7 +121,7 @@ const sporeScript = getSporeScript(config, 'Spore', {
 
 ### isSporeScriptSupported
 
-Returns a boolean indicating weather if the target ScriptId exists in the SporeConfig.
+Returns a boolean indicating whether the target ScriptId exists in the SporeConfig.
 If "scriptName" is passed, it also checks whether the name of the target script matches.
 
 ```typescript
@@ -130,7 +130,7 @@ declare function isSporeScriptSupported(config: SporeConfig, scriptId: ScriptId,
 
 #### Example
 
-Check if the target cell is any script supported by the SporeConfig:
+Check if the target cell is a script supported by the SporeConfig:
 
 ```typescript
 const cell: Cell = { ... };
@@ -240,7 +240,7 @@ console.log(result2); // false
 ### waitForTransaction
 
 Wait for a transaction to be committed on-chain.
-Will throw an error if the transaction is not committed within some times.
+Will throw an error if the transaction is not committed within approximately 2 minutes.
 
 ```typescript
 declare function waitForTransaction(hash: Hash, rpc: RPC): Promise<TransactionWithStatus>;
