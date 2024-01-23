@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { RPC, Indexer } from '@ckb-lumos/lumos';
 import { getEnvVariable, generateTestConfig, createDefaultLockAccount } from '../helpers';
+import { forkSporeConfig } from '../../config';
 
 export const TEST_VARIABLES = {
   network: getEnvVariable('VITE_NETWORK', 'string', 'testnet'),
@@ -26,6 +27,9 @@ const config = generateTestConfig(TEST_VARIABLES.network, resolve(__dirname, TES
 
 export const TEST_ENV = {
   config,
+  v1Config: forkSporeConfig(config, {
+    defaultTags: ['v1'],
+  }),
   rpc: new RPC(config.ckbNodeUrl),
   indexer: new Indexer(config.ckbIndexerUrl, config.ckbNodeUrl),
 };
