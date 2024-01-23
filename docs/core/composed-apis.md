@@ -1,5 +1,35 @@
 # Composed API
 
+<!-- TOC -->
+* [Composed API](#composed-api)
+  * [Spore](#spore)
+    * [createSpore](#createspore)
+      * [Examples](#examples)
+    * [transferSpore](#transferspore)
+      * [Example](#example)
+    * [meltSpore](#meltspore)
+      * [Example](#example-1)
+  * [Cluster](#cluster)
+    * [createCluster](#createcluster)
+      * [Examples](#examples-1)
+    * [transferCluster](#transfercluster)
+      * [Example](#example-2)
+  * [ClusterProxy](#clusterproxy)
+    * [createClusterProxy](#createclusterproxy)
+      * [Example](#example-3)
+    * [transferClusterProxy](#transferclusterproxy)
+      * [Example](#example-4)
+    * [meltClusterProxy](#meltclusterproxy)
+      * [Example](#example-5)
+  * [ClusterAgent](#clusteragent)
+    * [createClusterAgent](#createclusteragent)
+      * [Example](#example-6)
+    * [transferClusterAgent](#transferclusteragent)
+      * [Example](#example-7)
+    * [meltClusterAgent](#meltclusteragent)
+      * [Example](#example-8)
+<!-- TOC -->
+
 ## Spore
 
 ### createSpore
