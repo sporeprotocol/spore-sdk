@@ -139,7 +139,7 @@ export async function injectNewSporeOutput(props: {
     const clusterType = clusterCell!.cellOutput.type;
     const clusterScript = getSporeScript(config, 'Cluster', clusterType!);
     if (!clusterType || !clusterScript) {
-      throw new Error('Cannot reference Cluster because target cell is not Cluster');
+      throw new Error('Cannot reference Cluster because target cell is not a supported version of Cluster');
     }
     txSkeleton = addCellDep(txSkeleton, clusterScript.cellDep);
     txSkeleton = addCellDep(txSkeleton, {

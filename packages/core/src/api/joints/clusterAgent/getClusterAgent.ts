@@ -14,7 +14,7 @@ export async function getClusterAgentByOutPoint(outPoint: OutPoint, config?: Spo
     rpc,
   });
   if (!cellWithStatus.cell) {
-    throw new Error('Cannot find ClusterAgent by OutPoint because target cell is unknown');
+    throw new Error('Cannot find ClusterAgent by OutPoint because target cell was not found');
   }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find ClusterAgent by OutPoint because target cell is not lived');
@@ -23,7 +23,9 @@ export async function getClusterAgentByOutPoint(outPoint: OutPoint, config?: Spo
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterAgent')) {
-    throw new Error('Cannot find ClusterAgent by OutPoint because target cell is not ClusterAgent');
+    throw new Error(
+      'Cannot find ClusterAgent by OutPoint because target cell is not a supported version of ClusterAgent',
+    );
   }
 
   return cellWithStatus.cell;

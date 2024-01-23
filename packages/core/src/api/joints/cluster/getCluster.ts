@@ -22,7 +22,7 @@ export async function getClusterByType(type: Script, config?: SporeConfig): Prom
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Cluster')) {
-    throw new Error('Cannot find Cluster by Type because target cell is not Cluster');
+    throw new Error('Cannot find Cluster by Type because target cell is not a supported version of Cluster');
   }
 
   return cell;
@@ -39,7 +39,7 @@ export async function getClusterByOutPoint(outPoint: OutPoint, config?: SporeCon
     rpc,
   });
   if (!cellWithStatus.cell) {
-    throw new Error('Cannot find Cluster by OutPoint because target cell is unknown');
+    throw new Error('Cannot find Cluster by OutPoint because target cell was not found');
   }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find Cluster by OutPoint because target cell is not lived');
@@ -48,7 +48,7 @@ export async function getClusterByOutPoint(outPoint: OutPoint, config?: SporeCon
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Cluster')) {
-    throw new Error('Cannot find Cluster by OutPoint because target cell is not Cluster');
+    throw new Error('Cannot find Cluster by OutPoint because target cell is not a supported version of Cluster');
   }
 
   return cellWithStatus.cell;
@@ -83,5 +83,7 @@ export async function getClusterById(id: HexString, config?: SporeConfig): Promi
     }
   }
 
-  throw new Error(`Cannot find Cluster by Id because target cell does not exist or it's not Cluster`);
+  throw new Error(
+    `Cannot find Cluster by Id because target cell does not exist or it's not a supported version of Cluster`,
+  );
 }

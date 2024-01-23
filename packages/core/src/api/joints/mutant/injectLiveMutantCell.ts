@@ -34,7 +34,7 @@ export async function injectLiveMutantCell(props: {
   const mutantCellType = mutantCell.cellOutput.type;
   const mutantScript = getSporeScript(config, 'Mutant', mutantCellType!);
   if (!mutantCellType || !mutantScript) {
-    throw new Error('Cannot inject Mutant because target cell is not Mutant');
+    throw new Error('Cannot inject Mutant because target cell is not a supported version of Mutant');
   }
 
   // Add Mutant cell to Transaction.inputs
