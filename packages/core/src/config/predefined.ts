@@ -1,14 +1,14 @@
 import { predefined } from '@ckb-lumos/config-manager';
 import { SporeConfig } from './types';
 
-export type PredefinedSporeConfigScriptName = 'Spore' | 'Cluster' | 'ClusterProxy' | 'ClusterAgent' | 'Mutant' | 'Lua';
+export type PredefinedTestnetSporeScriptName = 'Spore' | 'Cluster' | 'ClusterProxy' | 'ClusterAgent' | 'Mutant' | 'Lua';
 
-const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
+const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedTestnetSporeScriptName> = {
   lumos: predefined.AGGRON4,
   ckbNodeUrl: 'https://testnet.ckb.dev/rpc',
   ckbIndexerUrl: 'https://testnet.ckb.dev/indexer',
   maxTransactionSize: 500 * 1024, // 500 KB
-  defaultTags: ['v2'],
+  defaultTags: ['preview'],
   scripts: {
     Spore: {
       versions: [
@@ -169,6 +169,67 @@ const TESTNET_SPORE_CONFIG: SporeConfig<PredefinedSporeConfigScriptName> = {
   },
 };
 
+export type PredefinedMainnetSporeScriptName = 'Spore' | 'Cluster';
+
+const MAINNET_SPORE_CONFIG: SporeConfig<PredefinedMainnetSporeScriptName> = {
+  lumos: predefined.LINA,
+  ckbNodeUrl: 'https://mainnet.ckb.dev/rpc',
+  ckbIndexerUrl: 'https://mainnet.ckb.dev/indexer',
+  maxTransactionSize: 500 * 1024, // 500 KB
+  defaultTags: ['latest'],
+  scripts: {
+    Spore: {
+      versions: [
+        {
+          tags: ['v2', 'latest'],
+          script: {
+            codeHash: '0x4a4dce1df3dffff7f8b2cd7dff7303df3b6150c9788cb75dcf6747247132b9f5',
+            hashType: 'data1',
+          },
+          cellDep: {
+            outPoint: {
+              txHash: '0x96b198fb5ddbd1eed57ed667068f1f1e55d07907b4c0dbd38675a69ea1b69824',
+              index: '0x0',
+            },
+            depType: 'code',
+          },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
+        },
+      ],
+    },
+    Cluster: {
+      versions: [
+        {
+          tags: ['v2', 'latest'],
+          script: {
+            codeHash: '0x7366a61534fa7c7e6225ecc0d828ea3b5366adec2b58206f2ee84995fe030075',
+            hashType: 'data1',
+          },
+          cellDep: {
+            outPoint: {
+              txHash: '0xe464b7fb9311c5e2820e61c99afc615d6b98bdefbe318c34868c010cbd0dc938',
+              index: '0x0',
+            },
+            depType: 'code',
+          },
+          behaviors: {
+            lockProxy: true,
+            cobuild: true,
+          },
+        },
+      ],
+    },
+  },
+};
+
 export const predefinedSporeConfigs = {
+  /**
+   * @deprecated Use `Testnet` instead.
+   */
   Aggron4: TESTNET_SPORE_CONFIG,
+  Testnet: TESTNET_SPORE_CONFIG,
+  Mainnet: MAINNET_SPORE_CONFIG,
 };
