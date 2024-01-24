@@ -88,9 +88,9 @@ Go through the recipe [Start using Spore SDK](./docs/core/setup.md) for installa
 
 ### API
 
-- [Composed APIs](./docs/core/composed-apis.md) - APIs for efficient spores/clusters interactions with minimal time overhead
-
-- [Joint APIs (WIP)](./docs/core/joint-apis.md) - APIs for building advanced transactions as a fun block-building process
+- [Composed APIs](./docs/core/composed-apis.md) - Efficient APIs to build Spore transactions with minimal time overhead
+  
+- [Utilities](./docs/core/utilities.md) - Handy helper functions to save developers' time and effort 
  
  
 ## Community
