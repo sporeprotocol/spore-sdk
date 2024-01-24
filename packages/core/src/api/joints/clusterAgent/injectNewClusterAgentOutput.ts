@@ -48,7 +48,7 @@ export async function injectNewClusterAgentOutput(props: {
   const clusterProxyCell = props.clusterProxyCell;
   const clusterProxyType = clusterProxyCell.cellOutput.type;
   if (!clusterProxyType || !isSporeScriptSupported(config, clusterProxyType, 'ClusterProxy')) {
-    throw new Error('Cannot reference ClusterProxy because target cell is not ClusterProxy');
+    throw new Error('Cannot reference ClusterProxy because target cell is not a supported version of ClusterProxy');
   }
 
   // Reference the ClusterProxy directly or through a payment cell

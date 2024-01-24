@@ -48,7 +48,7 @@ export async function injectNewClusterProxyOutput(props: {
   const referencedClusterCell = props.clusterCell;
   const referencedClusterType = referencedClusterCell.cellOutput.type;
   if (!referencedClusterType || !isSporeScriptSupported(config, referencedClusterType, 'Cluster')) {
-    throw new Error('Cannot reference Cluster because target cell is not Cluster');
+    throw new Error('Cannot reference Cluster because target cell is not a supported version of Cluster');
   }
 
   // Inject referenced cluster or its LockProxy

@@ -31,7 +31,7 @@ export async function injectLiveClusterAgentCell(props: {
   const cellType = clusterAgentCell.cellOutput.type;
   const clusterAgentScript = getSporeScript(config, 'ClusterAgent', cellType!);
   if (!cellType || !clusterAgentScript) {
-    throw new Error('Cannot inject ClusterAgent because target cell is not ClusterAgent');
+    throw new Error('Cannot inject ClusterAgent because target cell is not a supported version of ClusterAgent');
   }
 
   // Add the target cell to Transaction.inputs (and outputs if needed)

@@ -22,7 +22,7 @@ export async function getSporeByType(type: Script, config?: SporeConfig): Promis
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Spore')) {
-    throw new Error('Cannot find spore by Type because target cell type is not Spore');
+    throw new Error('Cannot find spore by Type because target cell type is not a supported version of Spore');
   }
 
   return cell;
@@ -36,7 +36,7 @@ export async function getSporeByOutPoint(outPoint: OutPoint, config?: SporeConfi
   // Get cell from rpc
   const cellWithStatus = await getCellWithStatusByOutPoint({ outPoint, rpc });
   if (!cellWithStatus.cell) {
-    throw new Error('Cannot find spore by OutPoint because target cell is unknown');
+    throw new Error('Cannot find spore by OutPoint because target cell was not found');
   }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find spore by OutPoint because target cell is not lived');
@@ -45,7 +45,7 @@ export async function getSporeByOutPoint(outPoint: OutPoint, config?: SporeConfi
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Spore')) {
-    throw new Error('Cannot find spore by OutPoint because target cell type is not Spore');
+    throw new Error('Cannot find spore by OutPoint because target cell type is not a supported version of Spore');
   }
 
   return cellWithStatus.cell;
@@ -79,5 +79,7 @@ export async function getSporeById(id: HexString, config?: SporeConfig): Promise
     }
   }
 
-  throw new Error(`Cannot find spore by SporeId because target cell does not exist or it's not Spore`);
+  throw new Error(
+    `Cannot find spore by SporeId because target cell does not exist or it's not a supported version of Spore`,
+  );
 }

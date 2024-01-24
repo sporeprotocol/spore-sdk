@@ -19,7 +19,7 @@ export async function getClusterProxyByType(type: Script, config?: SporeConfig):
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterProxy')) {
-    throw new Error('Cannot find ClusterProxy by Type because target cell is not ClusterProxy');
+    throw new Error('Cannot find ClusterProxy by Type because target cell is not a supported version of ClusterProxy');
   }
 
   return cell;
@@ -36,7 +36,7 @@ export async function getClusterProxyByOutPoint(outPoint: OutPoint, config?: Spo
     rpc,
   });
   if (!cellWithStatus.cell) {
-    throw new Error('Cannot find ClusterProxy by OutPoint because target cell is unknown');
+    throw new Error('Cannot find ClusterProxy by OutPoint because target cell was not found');
   }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find ClusterProxy by OutPoint because target cell is not lived');
@@ -45,7 +45,9 @@ export async function getClusterProxyByOutPoint(outPoint: OutPoint, config?: Spo
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'ClusterProxy')) {
-    throw new Error('Cannot find ClusterProxy by OutPoint because target cell is not ClusterProxy');
+    throw new Error(
+      'Cannot find ClusterProxy by OutPoint because target cell is not a supported version of ClusterProxy',
+    );
   }
 
   return cellWithStatus.cell;
@@ -80,5 +82,7 @@ export async function getClusterProxyById(id: Hash, config?: SporeConfig): Promi
     }
   }
 
-  throw new Error(`Cannot find ClusterProxy by ID because target cell does not exist or it's not ClusterProxy`);
+  throw new Error(
+    `Cannot find ClusterProxy by ID because target cell does not exist or it's not a supported version of ClusterProxy`,
+  );
 }

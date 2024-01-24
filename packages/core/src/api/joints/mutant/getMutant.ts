@@ -19,7 +19,7 @@ export async function getMutantByType(type: Script, config?: SporeConfig): Promi
   // Check target cell's type script
   const cellType = cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Mutant')) {
-    throw new Error('Cannot find Mutant by Type because target cell is not Mutant');
+    throw new Error('Cannot find Mutant by Type because target cell is not a supported version of Mutant');
   }
 
   return cell;
@@ -36,7 +36,7 @@ export async function getMutantByOutPoint(outPoint: OutPoint, config?: SporeConf
     rpc,
   });
   if (!cellWithStatus.cell) {
-    throw new Error('Cannot find Mutant by OutPoint because target cell is unknown');
+    throw new Error('Cannot find Mutant by OutPoint because target cell was not found');
   }
   if (cellWithStatus.status !== 'live') {
     throw new Error('Cannot find Mutant by OutPoint because target cell is not lived');
@@ -45,7 +45,7 @@ export async function getMutantByOutPoint(outPoint: OutPoint, config?: SporeConf
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
   if (!cellType || !isSporeScriptSupported(config, cellType, 'Mutant')) {
-    throw new Error('Cannot find Mutant by OutPoint because target cell is not Mutant');
+    throw new Error('Cannot find Mutant by OutPoint because target cell is not a supported version of Mutant');
   }
 
   return cellWithStatus.cell;
@@ -80,5 +80,7 @@ export async function getMutantById(id: Hash, config?: SporeConfig): Promise<Cel
     }
   }
 
-  throw new Error(`Cannot find Mutant by ID because target cell does not exist or it's not Mutant`);
+  throw new Error(
+    `Cannot find Mutant by ID because target cell does not exist or it's not a supported version of Mutant`,
+  );
 }
