@@ -1,5 +1,13 @@
 # @spore-sdk/core
 
+## 0.2.0-beta.2
+
+### Patch Changes
+
+- 8a42d58: Add predefined SporeConfig for Mainnet
+- 16dfe4f: BREAKING CHANGE: Replaced v2 contracts with a v1-compatible preview version
+- 216d357: Support selecting v1/v2 version when creating clusters
+
 ## 0.2.0-beta.1
 
 ### Patch Changes
