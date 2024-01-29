@@ -70,15 +70,7 @@ export async function createSpore(props: {
   });
   txSkeleton = injectNewSporeResult.txSkeleton;
 
-  // Inject needed capacity
-  const injectNeededCapacityResult = await injectNeededCapacity({
-    txSkeleton,
-    fromInfos: props.fromInfos,
-    changeAddress: props.changeAddress,
-    config: config.lumos,
-  });
-  txSkeleton = injectNeededCapacityResult.txSkeleton;
-
+  // Inject needed capacity and pay fee
   const injectCapacityAndPayFeeResult = await injectCapacityAndPayFee({
     txSkeleton,
     fromInfos: props.fromInfos,
