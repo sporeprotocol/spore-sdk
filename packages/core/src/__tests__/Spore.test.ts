@@ -7,6 +7,8 @@ import { createSpore, transferSpore, meltSpore, getSporeByOutPoint, getMutantByI
 import { expectCellDep, expectTypeId, expectTypeCell, expectCellLock } from './helpers';
 import { getSporeOutput, popRecord, retryQuery, signAndSendTransaction, OutPointRecord } from './helpers';
 import { TEST_ACCOUNTS, TEST_ENV, SPORE_OUTPOINT_RECORDS, cleanupRecords } from './shared';
+import { SporeAction, WitnessLayout } from '../cobuild';
+import { createMultipleSpores } from './helpers/spore';
 
 describe('Spore', () => {
   const { rpc, config } = TEST_ENV;
@@ -222,6 +224,47 @@ describe('Spore', () => {
         }),
       ).rejects.toThrow();
     }, 0);
+  });
+
+  describe('Multiple Spores', () => {
+    it('Create multiple Spores', async () => {
+      const { txSkeleton, outputIndices } = await createMultipleSpores({
+        sporeInfos: [
+          {
+            data: {
+              contentType: 'text/plain',
+              content: bytifyRawString('content-1'),
+            },
+            toLock: CHARLIE.lock,
+          },
+          {
+            data: {
+              contentType: 'text/plain',
+              content: bytifyRawString('content-2'),
+            },
+            toLock: ALICE.lock,
+          },
+        ],
+        fromInfos: [CHARLIE.address],
+        config,
+      });
+
+      const lastWitness = txSkeleton.get('witnesses').last();
+      const witnessLayout = WitnessLayout.unpack(lastWitness!);
+      if (witnessLayout.type === 'SighashAll') {
+        const actions = witnessLayout.value.message!.actions;
+        const actionsData = actions.map((action) => SporeAction.unpack(action.data));
+        console.log(JSON.stringify(actionsData, null, 2));
+      }
+
+      await signAndSendTransaction({
+        account: CHARLIE,
+        txSkeleton,
+        config,
+        rpc,
+        send: true,
+      });
+    });
   });
 
   // TODO: Skip Mutant tests due to feature implementation incomplete
