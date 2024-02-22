@@ -1,5 +1,12 @@
 # @spore-sdk/core
 
+## 0.2.0-beta.3
+
+### Patch Changes
+
+- a605f5f: Fix duplicated capacity collection in the "createSpore" API
+- 858c8fb: slipt co-build generation interfaces to export pure assembly functions
+
 ## 0.2.0-beta.2
 
 ### Patch Changes
