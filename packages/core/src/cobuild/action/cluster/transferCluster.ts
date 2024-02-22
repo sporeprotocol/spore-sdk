@@ -1,24 +1,19 @@
-import { helpers, utils } from '@ckb-lumos/lumos';
+import { Cell, helpers, utils } from '@ckb-lumos/lumos';
 import { bytes, UnpackResult } from '@ckb-lumos/codec';
 import { SporeAction } from '../../codec/sporeAction';
 import { Action, ScriptInfo } from '../../codec/buildingPacket';
 import { createRawBuildingPacket } from '../../base/buildingPacket';
 import { createSporeScriptInfoFromTemplate } from '../../base/sporeScriptInfo';
 
-export function generateTransferClusterAction(props: {
-  txSkeleton: helpers.TransactionSkeletonType;
-  inputIndex: number;
-  outputIndex: number;
-}): {
+export function assembleTransferClusterAction(
+  clusterInput: Cell | undefined,
+  clusterOutput: Cell | undefined,
+): {
   actions: UnpackResult<typeof Action>[];
   scriptInfos: UnpackResult<typeof ScriptInfo>[];
 } {
   const actions: UnpackResult<typeof Action>[] = [];
   const scriptInfos: UnpackResult<typeof ScriptInfo>[] = [];
-
-  let txSkeleton = props.txSkeleton;
-  const clusterInput = txSkeleton.get('inputs').get(props.inputIndex);
-  const clusterOutput = txSkeleton.get('outputs').get(props.outputIndex);
 
   const clusterType = clusterOutput!.cellOutput.type!;
   const clusterTypeHash = utils.computeScriptHash(clusterType);
@@ -51,6 +46,20 @@ export function generateTransferClusterAction(props: {
     actions,
     scriptInfos,
   };
+}
+
+export function generateTransferClusterAction(props: {
+  txSkeleton: helpers.TransactionSkeletonType;
+  inputIndex: number;
+  outputIndex: number;
+}): {
+  actions: UnpackResult<typeof Action>[];
+  scriptInfos: UnpackResult<typeof ScriptInfo>[];
+} {
+  let txSkeleton = props.txSkeleton;
+  const clusterInput = txSkeleton.get('inputs').get(props.inputIndex);
+  const clusterOutput = txSkeleton.get('outputs').get(props.outputIndex);
+  return assembleTransferClusterAction(clusterInput, clusterOutput);
 }
 
 export function generateTransferClusterBuildingPacket(props: {

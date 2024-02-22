@@ -43,6 +43,21 @@ export function unpackWitness(witness?: BytesLike) {
   throw new Error('Unknown witness format');
 }
 
+export function assembleCobuildWitnessLayout(actions: UnpackResult<typeof ActionVec>): string {
+  const witness = bytes.hexify(
+    WitnessLayout.pack({
+      type: 'SighashAll',
+      value: {
+        seal: '0x',
+        message: {
+          actions,
+        },
+      },
+    }),
+  );
+  return witness;
+}
+
 export function injectCommonCobuildProof(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   actions: UnpackResult<typeof ActionVec>;
@@ -55,22 +70,12 @@ export function injectCommonCobuildProof(props: {
   // TODO: add Cobuild witness-check: If it's in legacy mode, manually add WitnessLayout
   if (txSkeleton.get('inputs').size > 0) {
     // Generate WitnessLayout
-    const witness = bytes.hexify(
-      WitnessLayout.pack({
-        type: 'SighashAll',
-        value: {
-          seal: '0x',
-          message: {
-            actions: props.actions,
-          },
-        },
-      }),
-    );
 
     // Append the witness to the end of the witnesses
     let witnessIndex: number | undefined;
     txSkeleton = txSkeleton.update('witnesses', (witnesses) => {
       witnessIndex = witnesses.size;
+      const witness = assembleCobuildWitnessLayout(props.actions);
       return witnesses.push(witness);
     });
 

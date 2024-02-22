@@ -1,22 +1,16 @@
-import { helpers, utils } from '@ckb-lumos/lumos';
+import { Cell, helpers, utils } from '@ckb-lumos/lumos';
 import { bytes, UnpackResult } from '@ckb-lumos/codec';
 import { SporeAction } from '../../codec/sporeAction';
 import { Action, ScriptInfo } from '../../codec/buildingPacket';
 import { createRawBuildingPacket } from '../../base/buildingPacket';
 import { createSporeScriptInfoFromTemplate } from '../../base/sporeScriptInfo';
 
-export function generateCreateClusterAction(props: {
-  txSkeleton: helpers.TransactionSkeletonType;
-  outputIndex: number;
-}): {
+export function assembleCreateClusterAction(clusterOutput: Cell | undefined): {
   actions: UnpackResult<typeof Action>[];
   scriptInfos: UnpackResult<typeof ScriptInfo>[];
 } {
   const actions: UnpackResult<typeof Action>[] = [];
   const scriptInfos: UnpackResult<typeof ScriptInfo>[] = [];
-
-  let txSkeleton = props.txSkeleton;
-  const clusterOutput = txSkeleton.get('outputs').get(props.outputIndex);
 
   const clusterType = clusterOutput!.cellOutput.type!;
   const clusterTypeHash = utils.computeScriptHash(clusterType);
@@ -46,6 +40,18 @@ export function generateCreateClusterAction(props: {
     actions,
     scriptInfos,
   };
+}
+
+export function generateCreateClusterAction(props: {
+  txSkeleton: helpers.TransactionSkeletonType;
+  outputIndex: number;
+}): {
+  actions: UnpackResult<typeof Action>[];
+  scriptInfos: UnpackResult<typeof ScriptInfo>[];
+} {
+  let txSkeleton = props.txSkeleton;
+  const clusterOutput = txSkeleton.get('outputs').get(props.outputIndex);
+  return assembleCreateClusterAction(clusterOutput);
 }
 
 export function generateCreateClusterBuildingPacket(props: {
