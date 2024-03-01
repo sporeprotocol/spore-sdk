@@ -10,8 +10,8 @@ export const ScriptId = molecule.struct(
   ['codeHash', 'hashType'],
 );
 
-export const Uint8Opt = molecule.option(number.Uint8);
 export const Uint32Opt = molecule.option(number.Uint32LE);
+export const Uint64Opt = molecule.option(number.Uint64LE);
 
 export const Hash = blockchain.Byte32;
 
