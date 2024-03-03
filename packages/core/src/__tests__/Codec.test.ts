@@ -232,7 +232,7 @@ describe('Codec', function () {
   ];
   it('Pack unpackable ClusterProxyArgs', function () {
     for (const test of clusterProxyArgsFailTests) {
-      expect(() => packRawClusterProxyArgs(test)).toThrow();
+      expect(() => packRawClusterProxyArgs(test, 'power')).toThrow();
     }
   });
 
