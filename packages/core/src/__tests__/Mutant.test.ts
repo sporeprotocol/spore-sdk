@@ -4,7 +4,7 @@ import { createMutant, getMutantById, transferMutant } from '../api';
 import { fetchLocalFile, signAndSendTransaction } from './helpers';
 import { TEST_ACCOUNTS, TEST_ENV } from './shared';
 
-describe.skip('Mutant', function () {
+describe('Mutant', function () {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
 
