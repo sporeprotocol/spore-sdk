@@ -183,14 +183,14 @@ describe('Codec', function () {
         id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
         minPayment: BI.from(1),
       },
-      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b901',
+      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b90100000000000000',
     },
     {
       packable: {
         id: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9',
         minPayment: BI.from(255),
       },
-      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9ff',
+      packed: '0x8e005ff187895a0ae9288462299b6e43ee349fafdf3bca4a3886285b5439d7b9ff00000000000000',
     },
   ];
   it('Pack ClusterProxyArgs', function () {
@@ -232,7 +232,7 @@ describe('Codec', function () {
   ];
   it('Pack unpackable ClusterProxyArgs', function () {
     for (const test of clusterProxyArgsFailTests) {
-      expect(() => packRawClusterProxyArgs(test)).toThrow();
+      expect(() => packRawClusterProxyArgs(test, 'power')).toThrow();
     }
   });
 
