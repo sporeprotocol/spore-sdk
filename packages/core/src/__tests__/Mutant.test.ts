@@ -172,7 +172,7 @@ describe('Mutant', function () {
           account: ALICE,
         });
       }
-    }, 0);
+    }, 30000);
 
     it.skipIf(CLUSTER_OUTPOINT_RECORDS.length > 0)(
       'Create a Cluster (if necessary)',
@@ -208,11 +208,10 @@ describe('Mutant', function () {
           });
         }
       },
-      0,
+      30000,
     );
 
-    // TODO: may fail on an unknown insufficient payment reason, skip for now
-    it.skip('Create a Spore with Mutant required Cluster', async () => {
+    it('Create a Spore with Mutant required Cluster', async () => {
       const clusterRecord = popRecord(CLUSTER_OUTPOINT_RECORDS, true);
       const clusterCell = await retryQuery(() => getClusterByOutPoint(clusterRecord.outPoint, config));
       const clusterId = clusterCell.cellOutput.type!.args;
@@ -223,12 +222,7 @@ describe('Mutant', function () {
       const mutantArgs = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
       const mutantId = mutantArgs.id;
 
-      const {
-        txSkeleton,
-        outputIndex: _,
-        reference,
-        mutantReference,
-      } = await createSpore({
+      const { txSkeleton, reference, mutantReference } = await createSpore({
         data: {
           contentType: 'text/plain',
           content: bytifyRawString('content'),
@@ -252,6 +246,6 @@ describe('Mutant', function () {
         rpc,
         send: true,
       });
-    }, 0);
+    }, 30000);
   });
 });
