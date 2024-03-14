@@ -1,12 +1,31 @@
-import { describe, it } from 'vitest';
-import { bufferToRawString } from '../helpers';
-import { createMutant, getMutantById, transferMutant } from '../api';
-import { fetchLocalFile, signAndSendTransaction } from './helpers';
-import { TEST_ACCOUNTS, TEST_ENV } from './shared';
+import { describe, expect, it } from 'vitest';
+import { bufferToRawString, bytifyRawString } from '../helpers';
+import {
+  createMutant,
+  createSpore,
+  getMutantById,
+  getMutantByOutPoint,
+  getSporeByOutPoint,
+  meltSpore,
+  transferMutant,
+  transferSpore,
+} from '../api';
+import {
+  OutPointRecord,
+  expectCellLock,
+  fetchLocalFile,
+  getSporeOutput,
+  retryQuery,
+  signAndSendTransaction,
+} from './helpers';
+import { SPORE_OUTPOINT_RECORDS, TEST_ACCOUNTS, TEST_ENV } from './shared';
+import { BI } from '@ckb-lumos/bi';
+import { unpackToRawMutantArgs } from '../codec';
 
 describe('Mutant', function () {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
+  let existingMutantRecord: OutPointRecord | undefined;
 
   it('Create a Mutant', async function () {
     /**
@@ -35,7 +54,7 @@ describe('Mutant', function () {
      */
     // const code = await fetchLocalFile('./resources/firstOutputMutant.lua', __dirname);
 
-    const { txSkeleton } = await createMutant({
+    const { txSkeleton, outputIndex } = await createMutant({
       data: code.bytes,
       minPayment: 10,
       toLock: ALICE.lock,
@@ -44,20 +63,28 @@ describe('Mutant', function () {
     });
 
     // Sign and send transaction
-    await signAndSendTransaction({
+    const hash = await signAndSendTransaction({
       account: ALICE,
       txSkeleton,
       config,
       rpc,
       send: true,
     });
+    if (hash) {
+      existingMutantRecord = {
+        outPoint: {
+          txHash: hash,
+          index: BI.from(outputIndex).toHexString(),
+        },
+        account: ALICE,
+      };
+    }
   }, 30000);
 
   it('Transfer a Mutant', async function () {
-    const mutantCell = await getMutantById(
-      '0x3bcc400d150b8af81637c688b90fc662e01646826f44d3099ceb0ab729284001',
-      config,
-    );
+    expect(existingMutantRecord).toBeDefined();
+    const mutantRecord = existingMutantRecord!;
+    const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
 
     const { txSkeleton, outputIndex } = await transferMutant({
       outPoint: mutantCell.outPoint!,
@@ -67,23 +94,119 @@ describe('Mutant', function () {
     });
 
     // Sign and send transaction
-    await signAndSendTransaction({
+    const hash = await signAndSendTransaction({
       account: ALICE,
       txSkeleton,
       config,
       rpc,
       send: true,
     });
+    if (hash) {
+      existingMutantRecord = {
+        outPoint: {
+          txHash: hash,
+          index: BI.from(outputIndex).toHexString(),
+        },
+        account: ALICE,
+      };
+    }
   }, 30000);
 
   it('Get a Mutant', async () => {
-    const mutantCell = await getMutantById(
-      '0x87a5bad1849ba09237bdd62209b538c3f39b27ba6dceefd040d5f9f71f6adfb5',
-      config,
-    );
-    console.log(mutantCell.outPoint);
+    expect(existingMutantRecord).toBeDefined();
+    const mutantRecord = existingMutantRecord!;
+    const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
 
     const data = bufferToRawString(mutantCell.data);
     console.log('raw code:', data);
+  });
+
+  describe('Spore with Mutant', () => {
+    it('Create a Spore with Mutant', async () => {
+      expect(existingMutantRecord).toBeDefined();
+      const mutantRecord = existingMutantRecord!;
+      const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
+      const mutantArgs = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
+      const mutantId = mutantArgs.id;
+
+      const { txSkeleton, outputIndex, reference, mutantReference } = await createSpore({
+        data: {
+          contentType: 'text/plain',
+          content: bytifyRawString('content'),
+          contentTypeParameters: {
+            mutant: [mutantId],
+          },
+        },
+        fromInfos: [CHARLIE.address],
+        toLock: CHARLIE.lock,
+        config,
+      });
+
+      const spore = getSporeOutput(txSkeleton, outputIndex, config);
+      expect(spore.data.contentType).toEqual(`text/plain;mutant[]=${mutantId.slice(2)}`);
+
+      expect(reference).toBeDefined();
+      expect(reference.referenceTarget).toEqual('none');
+
+      expect(mutantReference).toBeDefined();
+      if (mutantArgs.minPayment !== void 0) {
+        expect(mutantReference!.referenceType).toEqual('payment');
+        expect(mutantReference!.payment).toBeDefined();
+        expect(mutantReference!.payment!.outputIndices.length).toEqual(1);
+        const paymentCell = txSkeleton.get('outputs').get(mutantReference!.payment!.outputIndices[0]);
+        expect(BI.from(paymentCell!.cellOutput.capacity).gte(BI.from(mutantArgs.minPayment))).toEqual(true);
+        expect(paymentCell!.cellOutput.lock).toEqual(mutantCell.cellOutput.lock);
+      } else {
+        expect(mutantReference!.referenceType).toEqual('none');
+      }
+
+      const hash = await signAndSendTransaction({
+        account: CHARLIE,
+        txSkeleton,
+        config,
+        rpc,
+        send: true,
+      });
+      if (hash) {
+        SPORE_OUTPOINT_RECORDS.push({
+          outPoint: {
+            txHash: hash,
+            index: BI.from(outputIndex).toHexString(),
+          },
+          account: CHARLIE,
+        });
+      }
+    }, 0);
+    it('Create a Spore with Mutant required Cluster', async () => {
+      const {
+        txSkeleton,
+        outputIndex: _,
+        reference,
+        mutantReference,
+      } = await createSpore({
+        data: {
+          contentType: 'text/plain',
+          content: bytifyRawString('content'),
+          clusterId: '0x',
+          contentTypeParameters: {
+            mutant: ['0x'],
+          },
+        },
+        fromInfos: [CHARLIE.address],
+        toLock: CHARLIE.lock,
+        config,
+      });
+
+      console.log('Spore Reference:', reference);
+      console.log('Spore MutantReference:', mutantReference);
+
+      await signAndSendTransaction({
+        account: CHARLIE,
+        txSkeleton,
+        config,
+        rpc,
+        send: false,
+      });
+    }, 0);
   });
 });
