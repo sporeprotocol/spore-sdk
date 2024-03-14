@@ -164,6 +164,24 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
           },
         ],
       },
+      Lua: {
+        versions: [
+          {
+            tags: ['v2', 'preview'],
+            script: {
+              codeHash: config.SCRIPTS.LUA_LIB.CODE_HASH,
+              hashType: config.SCRIPTS.LUA_LIB.HASH_TYPE,
+            },
+            cellDep: {
+              outPoint: {
+                txHash: config.SCRIPTS.LUA_LIB.TX_HASH,
+                index: config.SCRIPTS.LUA_LIB.INDEX,
+              },
+              depType: config.SCRIPTS.LUA_LIB.DEP_TYPE,
+            },
+          },
+        ],
+      },
     },
   };
 }
