@@ -187,12 +187,12 @@ describe('Mutant', function () {
             name: 'Testnet Spores',
             description: 'Testing only',
           },
-          fromInfos: [CHARLIE.address],
-          toLock: CHARLIE.lock,
+          fromInfos: [ALICE.address],
+          toLock: ALICE.lock,
           config,
         });
         const hash = await signAndSendTransaction({
-          account: CHARLIE,
+          account: ALICE,
           txSkeleton,
           config,
           rpc,
@@ -204,7 +204,7 @@ describe('Mutant', function () {
               txHash: hash,
               index: BI.from(outputIndex).toHexString(),
             },
-            account: CHARLIE,
+            account: ALICE,
           });
         }
       },

@@ -39,8 +39,6 @@ export async function injectLiveMutantReferences(props: {
    * - Mutant 2, lock = A, minPayment = 1000 CKB
    * Normally you would expect to pay A 1100 CKB in this transaction:
    * - Minimal payment to A = 100 + 1000 = 1100 CKB
-   * But currently the logic is that you only need to pay A 1000 CKB:
-   * - Minimal payment to A = max(100, 1000) = 1000 CKB
    */
   const minimalPaymentsMap = mutantCells.reduce(
     (sum, mutantCell) => {
@@ -59,12 +57,12 @@ export async function injectLiveMutantReferences(props: {
       const minPayment = args.minPayment !== void 0 ? args.minPayment : BI.from(0);
 
       // Current logic: max(minPayment1, minPayment2, ...)
-      sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.gt(minPayment)
-        ? sum[mutantLockHash].minPayment
-        : minPayment;
+      // sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.gt(minPayment)
+      //   ? sum[mutantLockHash].minPayment
+      //   : minPayment;
 
       // Alternative logic: sum(minPayment1, minPayment2, ...)
-      // sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.add(minPayment);
+      sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.add(minPayment);
 
       return sum;
     },
