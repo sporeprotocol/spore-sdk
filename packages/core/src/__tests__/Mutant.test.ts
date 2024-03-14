@@ -236,8 +236,8 @@ describe('Mutant', function () {
             mutant: [mutantId],
           },
         },
-        fromInfos: [ALICE.address],
-        toLock: ALICE.lock,
+        fromInfos: [CHARLIE.address],
+        toLock: CHARLIE.lock,
         config,
       });
 
@@ -245,7 +245,7 @@ describe('Mutant', function () {
       console.log('Spore MutantReference:', mutantReference);
 
       await signAndSendTransaction({
-        account: ALICE,
+        account: CHARLIE,
         txSkeleton,
         config,
         rpc,

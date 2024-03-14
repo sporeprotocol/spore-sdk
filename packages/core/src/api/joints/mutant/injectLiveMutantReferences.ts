@@ -121,6 +121,8 @@ export async function injectLiveMutantReferences(props: {
   // Add Mutant's type as cellDep
   const mutantScript = getSporeScript(config, 'Mutant');
   txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
+  const luaScript = getSporeScript(config, 'Lua');
+  txSkeleton = addCellDep(txSkeleton, luaScript.cellDep);
 
   // Add Mutant cells as cellDeps
   for (const mutantCell of mutantCells) {
