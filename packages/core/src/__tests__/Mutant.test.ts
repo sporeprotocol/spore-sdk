@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { bufferToRawString, bytifyRawString } from '../helpers';
 import {
+  createCluster,
   createMutant,
   createSpore,
+  getClusterByOutPoint,
   getMutantById,
   getMutantByOutPoint,
   getSporeByOutPoint,
@@ -15,10 +17,11 @@ import {
   expectCellLock,
   fetchLocalFile,
   getSporeOutput,
+  popRecord,
   retryQuery,
   signAndSendTransaction,
 } from './helpers';
-import { SPORE_OUTPOINT_RECORDS, TEST_ACCOUNTS, TEST_ENV } from './shared';
+import { CLUSTER_OUTPOINT_RECORDS, SPORE_OUTPOINT_RECORDS, TEST_ACCOUNTS, TEST_ENV } from './shared';
 import { BI } from '@ckb-lumos/bi';
 import { unpackToRawMutantArgs } from '../codec';
 
@@ -56,7 +59,7 @@ describe('Mutant', function () {
 
     const { txSkeleton, outputIndex } = await createMutant({
       data: code.bytes,
-      minPayment: 10,
+      minPayment: 1000,
       toLock: ALICE.lock,
       fromInfos: [ALICE.address],
       config,
@@ -88,7 +91,7 @@ describe('Mutant', function () {
 
     const { txSkeleton, outputIndex } = await transferMutant({
       outPoint: mutantCell.outPoint!,
-      minPayment: 10,
+      minPayment: 1000,
       toLock: CHARLIE.lock,
       config,
     });
@@ -107,19 +110,10 @@ describe('Mutant', function () {
           txHash: hash,
           index: BI.from(outputIndex).toHexString(),
         },
-        account: ALICE,
+        account: CHARLIE,
       };
     }
   }, 30000);
-
-  it('Get a Mutant', async () => {
-    expect(existingMutantRecord).toBeDefined();
-    const mutantRecord = existingMutantRecord!;
-    const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
-
-    const data = bufferToRawString(mutantCell.data);
-    console.log('raw code:', data);
-  });
 
   describe('Spore with Mutant', () => {
     it('Create a Spore with Mutant', async () => {
@@ -128,6 +122,8 @@ describe('Mutant', function () {
       const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
       const mutantArgs = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
       const mutantId = mutantArgs.id;
+      console.log('mutant id:', mutantId);
+      console.log('mutant payment:', mutantArgs.minPayment ?? 0);
 
       const { txSkeleton, outputIndex, reference, mutantReference } = await createSpore({
         data: {
@@ -177,7 +173,55 @@ describe('Mutant', function () {
         });
       }
     }, 0);
+
+    it.skipIf(CLUSTER_OUTPOINT_RECORDS.length > 0)(
+      'Create a Cluster (if necessary)',
+      async ({ skip }) => {
+        if (CLUSTER_OUTPOINT_RECORDS.length > 0) {
+          console.log('skipping test');
+          return skip();
+        }
+
+        const { txSkeleton, outputIndex } = await createCluster({
+          data: {
+            name: 'Testnet Spores',
+            description: 'Testing only',
+          },
+          fromInfos: [CHARLIE.address],
+          toLock: CHARLIE.lock,
+          config,
+        });
+        const hash = await signAndSendTransaction({
+          account: CHARLIE,
+          txSkeleton,
+          config,
+          rpc,
+          send: true,
+        });
+        if (hash) {
+          CLUSTER_OUTPOINT_RECORDS.push({
+            outPoint: {
+              txHash: hash,
+              index: BI.from(outputIndex).toHexString(),
+            },
+            account: CHARLIE,
+          });
+        }
+      },
+      0,
+    );
+
     it('Create a Spore with Mutant required Cluster', async () => {
+      const clusterRecord = popRecord(CLUSTER_OUTPOINT_RECORDS, true);
+      const clusterCell = await retryQuery(() => getClusterByOutPoint(clusterRecord.outPoint, config));
+      const clusterId = clusterCell.cellOutput.type!.args;
+
+      expect(existingMutantRecord).toBeDefined();
+      const mutantRecord = existingMutantRecord!;
+      const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
+      const mutantArgs = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
+      const mutantId = mutantArgs.id;
+
       const {
         txSkeleton,
         outputIndex: _,
@@ -187,9 +231,9 @@ describe('Mutant', function () {
         data: {
           contentType: 'text/plain',
           content: bytifyRawString('content'),
-          clusterId: '0x',
+          clusterId,
           contentTypeParameters: {
-            mutant: ['0x'],
+            mutant: [mutantId],
           },
         },
         fromInfos: [CHARLIE.address],
