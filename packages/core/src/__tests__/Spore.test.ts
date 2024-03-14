@@ -224,8 +224,7 @@ describe('Spore', () => {
     }, 0);
   });
 
-  // TODO: Skip Mutant tests due to feature implementation incomplete
-  describe.skip('Spore with Mutant', () => {
+  describe('Spore with Mutant', () => {
     it('Create a Spore with Mutant', async () => {
       const immortalMutantId = '0x79713beaf43310d4d9c838811553399f3e7c114353d4788de3ed2a165e288c11';
 
@@ -256,7 +255,7 @@ describe('Spore', () => {
         expect(mutantReference!.payment).toBeDefined();
         expect(mutantReference!.payment!.outputIndices.length).toEqual(1);
         const paymentCell = txSkeleton.get('outputs').get(mutantReference!.payment!.outputIndices[0]);
-        expect(BI.from(paymentCell!.cellOutput.capacity).gte(BI.from(10).pow(mutantArgs.minPayment))).toEqual(true);
+        expect(BI.from(paymentCell!.cellOutput.capacity).gte(BI.from(mutantArgs.minPayment))).toEqual(true);
         expect(paymentCell!.cellOutput.lock).toEqual(mutantCell.cellOutput.lock);
       } else {
         expect(mutantReference!.referenceType).toEqual('none');

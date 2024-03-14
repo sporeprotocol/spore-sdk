@@ -323,7 +323,7 @@ describe('ClusterProxy and ClusterAgent', () => {
       expect(paymentCell).toBeDefined();
       expect(paymentCell!.cellOutput.lock).toEqual(clusterProxyCell.cellOutput.lock);
 
-      const minimalPayment = BI.from(10).pow(minPayment!);
+      const minimalPayment = BI.from(minPayment!);
       const lockRequiredCapacity = minimalCellCapacityByLock(clusterProxyCell.cellOutput.lock);
       const expectedPayment = lockRequiredCapacity.gt(minimalPayment) ? lockRequiredCapacity : minimalPayment;
       expect(BI.from(paymentCell!.cellOutput.capacity).gte(expectedPayment)).toEqual(true);
