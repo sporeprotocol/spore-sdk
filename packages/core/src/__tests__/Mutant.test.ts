@@ -133,8 +133,8 @@ describe('Mutant', function () {
             mutant: [mutantId],
           },
         },
-        fromInfos: [CHARLIE.address],
-        toLock: CHARLIE.lock,
+        fromInfos: [ALICE.address],
+        toLock: ALICE.lock,
         config,
       });
 
@@ -157,7 +157,7 @@ describe('Mutant', function () {
       }
 
       const hash = await signAndSendTransaction({
-        account: CHARLIE,
+        account: ALICE,
         txSkeleton,
         config,
         rpc,
@@ -169,7 +169,7 @@ describe('Mutant', function () {
             txHash: hash,
             index: BI.from(outputIndex).toHexString(),
           },
-          account: CHARLIE,
+          account: ALICE,
         });
       }
     }, 0);
@@ -236,8 +236,8 @@ describe('Mutant', function () {
             mutant: [mutantId],
           },
         },
-        fromInfos: [CHARLIE.address],
-        toLock: CHARLIE.lock,
+        fromInfos: [ALICE.address],
+        toLock: ALICE.lock,
         config,
       });
 
@@ -245,11 +245,11 @@ describe('Mutant', function () {
       console.log('Spore MutantReference:', mutantReference);
 
       await signAndSendTransaction({
-        account: CHARLIE,
+        account: ALICE,
         txSkeleton,
         config,
         rpc,
-        send: false,
+        send: true,
       });
     }, 0);
   });
