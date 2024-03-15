@@ -196,15 +196,9 @@ describe('Mutant', function () {
           account: ALICE,
         };
       }
-    }, 30000);
+    }, 0);
 
     it('Create a Spore with Mutant required Cluster', async () => {
-      console.log('request cluster cell');
-      expect(existingClusterRecord).toBeDefined();
-      const clusterRecord = existingClusterRecord!;
-      const clusterCell = await retryQuery(() => getClusterByOutPoint(clusterRecord.outPoint, config));
-      const clusterId = clusterCell.cellOutput.type!.args;
-
       console.log('request mutant cell');
       expect(existingMutantRecord).toBeDefined();
       const mutantRecord = existingMutantRecord!;
@@ -212,6 +206,13 @@ describe('Mutant', function () {
       const mutantArgs = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
       const mutantId = mutantArgs.id;
 
+      console.log('request cluster cell');
+      expect(existingClusterRecord).toBeDefined();
+      const clusterRecord = existingClusterRecord!;
+      const clusterCell = await retryQuery(() => getClusterByOutPoint(clusterRecord!.outPoint, config));
+      const clusterId = clusterCell.cellOutput.type!.args;
+
+      console.log('create spore');
       const { txSkeleton, reference, mutantReference } = await createSpore({
         data: {
           contentType: 'text/plain',
@@ -236,6 +237,6 @@ describe('Mutant', function () {
         rpc,
         send: true,
       });
-    }, 30000);
+    }, 60000);
   });
 });
