@@ -1,20 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { bufferToRawString, bytifyRawString } from '../helpers';
+import { bytifyRawString } from '../helpers';
 import {
   createCluster,
   createMutant,
   createSpore,
   getClusterByOutPoint,
-  getMutantById,
   getMutantByOutPoint,
-  getSporeByOutPoint,
-  meltSpore,
   transferMutant,
-  transferSpore,
 } from '../api';
 import {
   OutPointRecord,
-  expectCellLock,
   fetchLocalFile,
   getSporeOutput,
   popRecord,
@@ -29,6 +24,7 @@ describe('Mutant', function () {
   const { rpc, config } = TEST_ENV;
   const { CHARLIE, ALICE } = TEST_ACCOUNTS;
   let existingMutantRecord: OutPointRecord | undefined;
+  let existingClusterRecord: OutPointRecord | undefined;
 
   it('Create a Mutant', async function () {
     /**
@@ -174,48 +170,42 @@ describe('Mutant', function () {
       }
     }, 30000);
 
-    it.skipIf(CLUSTER_OUTPOINT_RECORDS.length > 0)(
-      'Create a Cluster (if necessary)',
-      async ({ skip }) => {
-        if (CLUSTER_OUTPOINT_RECORDS.length > 0) {
-          console.log('skipping test');
-          return skip();
-        }
-
-        const { txSkeleton, outputIndex } = await createCluster({
-          data: {
-            name: 'Testnet Spores',
-            description: 'Testing only',
+    it('Create a Cluster (if necessary)', async () => {
+      const { txSkeleton, outputIndex } = await createCluster({
+        data: {
+          name: 'Testnet Spores',
+          description: 'Testing only',
+        },
+        fromInfos: [ALICE.address],
+        toLock: ALICE.lock,
+        config,
+      });
+      const hash = await signAndSendTransaction({
+        account: ALICE,
+        txSkeleton,
+        config,
+        rpc,
+        send: true,
+      });
+      if (hash) {
+        existingClusterRecord = {
+          outPoint: {
+            txHash: hash,
+            index: BI.from(outputIndex).toHexString(),
           },
-          fromInfos: [ALICE.address],
-          toLock: ALICE.lock,
-          config,
-        });
-        const hash = await signAndSendTransaction({
           account: ALICE,
-          txSkeleton,
-          config,
-          rpc,
-          send: true,
-        });
-        if (hash) {
-          CLUSTER_OUTPOINT_RECORDS.push({
-            outPoint: {
-              txHash: hash,
-              index: BI.from(outputIndex).toHexString(),
-            },
-            account: ALICE,
-          });
-        }
-      },
-      30000,
-    );
+        };
+      }
+    }, 30000);
 
     it('Create a Spore with Mutant required Cluster', async () => {
-      const clusterRecord = popRecord(CLUSTER_OUTPOINT_RECORDS, true);
+      console.log('request cluster cell');
+      expect(existingClusterRecord).toBeDefined();
+      const clusterRecord = existingClusterRecord!;
       const clusterCell = await retryQuery(() => getClusterByOutPoint(clusterRecord.outPoint, config));
       const clusterId = clusterCell.cellOutput.type!.args;
 
+      console.log('request mutant cell');
       expect(existingMutantRecord).toBeDefined();
       const mutantRecord = existingMutantRecord!;
       const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
