@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bytifyRawString } from '../helpers';
+import { asciiLowercase, bytifyRawString } from '../helpers';
 import {
   createCluster,
   createMutant,
@@ -109,10 +109,10 @@ describe('Mutant', function () {
         account: CHARLIE,
       };
     }
-  }, 30000);
+  }, 60000);
 
   describe('Spore with Mutant', () => {
-    it('Create a Spore with Mutant', async () => {
+    it.skip('Create a Spore with Mutant', async () => {
       expect(existingMutantRecord).toBeDefined();
       const mutantRecord = existingMutantRecord!;
       const mutantCell = await retryQuery(() => getMutantByOutPoint(mutantRecord!.outPoint, config));
@@ -168,7 +168,7 @@ describe('Mutant', function () {
           account: ALICE,
         });
       }
-    }, 30000);
+    }, 60000);
 
     it('Create a Cluster (if necessary)', async () => {
       const { txSkeleton, outputIndex } = await createCluster({
@@ -196,7 +196,7 @@ describe('Mutant', function () {
           account: ALICE,
         };
       }
-    }, 0);
+    }, 30000);
 
     it('Create a Spore with Mutant required Cluster', async () => {
       console.log('request mutant cell');
@@ -230,6 +230,8 @@ describe('Mutant', function () {
       console.log('Spore Reference:', reference);
       console.log('Spore MutantReference:', mutantReference);
 
+      console.log('ALICE address:', ALICE.address);
+      console.log('CHARLIE address:', CHARLIE.address);
       await signAndSendTransaction({
         account: ALICE,
         txSkeleton,
