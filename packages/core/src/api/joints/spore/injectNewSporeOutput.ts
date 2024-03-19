@@ -1,8 +1,8 @@
-import { BIish } from '@ckb-lumos/bi';
-import { Script } from '@ckb-lumos/base';
-import { bytes, BytesLike } from '@ckb-lumos/codec';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { Script } from '@ckb-lumos/base/lib';
+import { bytes, BytesLike } from '@ckb-lumos/codec/lib';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
-import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
+import { addCellDep } from '@ckb-lumos/lumos/helpers';
 import { packRawSporeData } from '../../../codec';
 import { EncodableContentType, setContentTypeParameters } from '../../../helpers';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
@@ -108,6 +108,7 @@ export async function injectNewSporeOutput(props: {
 
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
+  //@ts-ignore
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     if (props.capacityMargin !== void 0) {
       sporeCell = setAbsoluteCapacityMargin(sporeCell, props.capacityMargin);
@@ -119,6 +120,7 @@ export async function injectNewSporeOutput(props: {
   });
 
   // Fix output indices to prevent them from future reduction
+  //@ts-ignore
   txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
     // Fix the spore's output index to prevent it from future reduction
     fixedEntries = fixedEntries.push({

@@ -1,4 +1,4 @@
-import { bytes, BytesLike } from '@ckb-lumos/codec';
+import { bytes, BytesLike } from '@ckb-lumos/codec/lib';
 
 export function bytifyRawString(text: string): Uint8Array {
   if (typeof window !== 'undefined' && 'TextEncoder' in window) {

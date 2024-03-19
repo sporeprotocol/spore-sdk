@@ -1,7 +1,7 @@
-import { bytes } from '@ckb-lumos/codec';
-import { Config } from '@ckb-lumos/config-manager';
-import { common, FromInfo } from '@ckb-lumos/common-scripts';
-import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base';
+import { bytes } from '@ckb-lumos/codec/lib';
+import { Config } from '@ckb-lumos/config-manager/lib';
+import { common, FromInfo } from '@ckb-lumos/common-scripts/lib';
+import { Hash, OutPoint, PackedSince, Script } from '@ckb-lumos/base/lib';
 import { Cell, helpers, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { ScriptId } from '../codec';
 
@@ -72,6 +72,7 @@ export async function setupCell(props: {
 
   // Remove it from outputs if not needed
   if (!addOutput) {
+    //@ts-ignore
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.remove(outputs.size - 1);
     });
@@ -83,6 +84,7 @@ export async function setupCell(props: {
 
   // If added output, and need to update the added output
   if (addOutput && props.updateOutput instanceof Function) {
+    //@ts-ignore
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       const output = outputs.last();
       if (!output) {
@@ -95,6 +97,7 @@ export async function setupCell(props: {
 
   // If required to update the resulting witness placeholder
   if (props.updateWitness) {
+    //@ts-ignore
     txSkeleton = txSkeleton.update('witnesses', (witnesses) => {
       if (props.updateWitness instanceof Function) {
         const witness = witnesses.get(inputIndex);

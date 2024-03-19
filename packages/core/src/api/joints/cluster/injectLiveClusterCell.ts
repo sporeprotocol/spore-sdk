@@ -1,7 +1,7 @@
-import { BIish } from '@ckb-lumos/bi';
-import { PackedSince } from '@ckb-lumos/base';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { PackedSince } from '@ckb-lumos/base/lib';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
-import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
+import { addCellDep } from '@ckb-lumos/lumos/helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { assetCellMinimalCapacity, setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
 

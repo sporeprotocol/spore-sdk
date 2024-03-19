@@ -1,7 +1,7 @@
-import { common, FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, Transaction } from '@ckb-lumos/base';
+import { common, FromInfo } from '@ckb-lumos/common-scripts/lib';
+import { Address, Transaction } from '@ckb-lumos/base/lib';
 import { BI, helpers, RPC } from '@ckb-lumos/lumos';
-import { BIish } from '@ckb-lumos/bi';
+import { BIish } from '@ckb-lumos/bi/lib';
 import { getSporeConfig, SporeConfig } from '../config';
 import { createCapacitySnapshot, injectNeededCapacity } from './capacity';
 import { getTransactionSize } from './transaction';

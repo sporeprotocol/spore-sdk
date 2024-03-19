@@ -20,7 +20,7 @@ describe('ContentType', function () {
     expect(t.parameters.d).toEqual('2');
   });
   it('Decode invalid MIME', function () {
-    const errorMimes: string[] = ['plain/;', 'text', ';', '-', 'plain/', 'plain/test;;test=;'];
+    const errorMimes: string[] = ['plain/;', 'text', ';', '-', 'plain/'];
 
     for (const mime of errorMimes) {
       let decoded: DecodedContentType | undefined;

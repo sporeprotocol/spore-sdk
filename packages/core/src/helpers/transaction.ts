@@ -1,4 +1,4 @@
-import { Transaction, blockchain } from '@ckb-lumos/base';
+import { Transaction, blockchain } from '@ckb-lumos/base/lib';
 import { helpers } from '@ckb-lumos/lumos';
 
 /**

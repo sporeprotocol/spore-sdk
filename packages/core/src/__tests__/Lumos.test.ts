@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { bytes } from '@ckb-lumos/codec';
+import { bytes } from '@ckb-lumos/codec/lib';
 import { utils } from '@ckb-lumos/lumos';
 import { bytifyRawString } from '../helpers';
 import { TESTNET_ENV } from './shared';
@@ -32,14 +32,14 @@ describe('Lumos', function () {
 
     const cell = await rpc.getLiveCell(
       {
-        txHash: '0x6d3c79d3e6d0ea6b1d779b98c6572ac594205fb308d5d021b58d8d51a131b7f0',
-        index: '0x0',
+        txHash: '0x0a857751861a9e9b671bcc37507690a0501b997e400a06bfb613048d258b9439',
+        index: '0x1',
       },
       true,
     );
 
     if (cell) {
-      console.log(cell.cell.data.hash);
+      console.log(cell.cell?.data.hash);
     }
   });
 });

@@ -1,7 +1,7 @@
-import { BIish } from '@ckb-lumos/bi';
-import { Address, Script } from '@ckb-lumos/base';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { Address, Script } from '@ckb-lumos/base/lib';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
+import { BI, Indexer, helpers, Cell } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, assetTransactionSkeletonSize } from '../../../helpers';
 import { ClusterDataProps, injectNewClusterIds, injectNewClusterOutput } from '../..';

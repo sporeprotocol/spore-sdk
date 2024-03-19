@@ -1,9 +1,9 @@
 import cloneDeep from 'lodash/cloneDeep';
-import { BIish } from '@ckb-lumos/bi';
+import { BIish } from '@ckb-lumos/bi/lib';
 import { BI, helpers } from '@ckb-lumos/lumos';
-import { Config } from '@ckb-lumos/config-manager';
-import { Address, Script, Cell } from '@ckb-lumos/base';
-import { common, FromInfo, parseFromInfo } from '@ckb-lumos/common-scripts';
+import { Config } from '@ckb-lumos/config-manager/lib';
+import { Address, Script, Cell } from '@ckb-lumos/base/lib';
+import { common, FromInfo, parseFromInfo } from '@ckb-lumos/common-scripts/lib';
 
 /**
  * Calculate target cell's minimal occupied capacity by lock script.
@@ -113,6 +113,7 @@ export function correctChangeCellCapacity(props: {
 
   if (snapshot.inputsRemainCapacity.gt(0)) {
     const outputIndex = props.changeOutputIndex ?? txSkeleton.get('outputs').size - 1;
+    //@ts-ignore
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       const output = outputs.get(outputIndex);
       if (!output) {
@@ -228,7 +229,7 @@ export async function injectNeededCapacity(props: {
       },
       data: '0x',
     };
-
+    //@ts-ignore
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       return outputs.push(changeCell);
     });

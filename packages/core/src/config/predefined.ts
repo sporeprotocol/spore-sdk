@@ -1,4 +1,4 @@
-import { predefined } from '@ckb-lumos/config-manager';
+import { predefined } from '@ckb-lumos/config-manager/lib';
 import { SporeConfig } from './types';
 
 export type PredefinedSporeConfigScriptName = 'Spore' | 'Cluster';

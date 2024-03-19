@@ -1,5 +1,5 @@
-import { bytes, BytesLike } from '@ckb-lumos/codec';
-import { blockchain } from '@ckb-lumos/base';
+import { bytes, BytesLike } from '@ckb-lumos/codec/lib';
+import { blockchain } from '@ckb-lumos/base/lib';
 
 type WitnessArgsObject = Parameters<(typeof blockchain.WitnessArgs)['pack']>[0];
 type WitnessArgsKey = keyof WitnessArgsObject;

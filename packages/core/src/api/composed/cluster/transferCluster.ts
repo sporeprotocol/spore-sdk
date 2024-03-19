@@ -1,6 +1,6 @@
-import { BIish } from '@ckb-lumos/bi';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, OutPoint, Script } from '@ckb-lumos/base';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
+import { Address, Script, OutPoint } from '@ckb-lumos/base/lib';
 import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { injectCapacityAndPayFee, payFeeByOutput } from '../../../helpers';

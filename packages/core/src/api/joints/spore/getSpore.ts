@@ -1,4 +1,4 @@
-import { OutPoint, Script } from '@ckb-lumos/base';
+import { OutPoint, Script } from '@ckb-lumos/base/lib';
 import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { getCellByType, getCellWithStatusByOutPoint } from '../../../helpers';
 import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';

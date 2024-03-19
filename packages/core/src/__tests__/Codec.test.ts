@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { bytes } from '@ckb-lumos/codec';
+import { bytes } from '@ckb-lumos/codec/lib';
 import { ClusterData, SporeData } from '../codec';
 import { bufferToRawString, bytifyRawString } from '../helpers';
 

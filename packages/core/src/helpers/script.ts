@@ -1,5 +1,5 @@
-import { Address, Script, values } from '@ckb-lumos/base';
-import { Config } from '@ckb-lumos/config-manager';
+import { Address, Script, values } from '@ckb-lumos/base/lib';
+import { Config } from '@ckb-lumos/config-manager/lib';
 import { helpers } from '@ckb-lumos/lumos';
 import { ScriptId } from '../types';
 

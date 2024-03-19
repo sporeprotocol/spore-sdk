@@ -1,5 +1,5 @@
-import { blockchain } from '@ckb-lumos/base';
-import { BytesLike, molecule } from '@ckb-lumos/codec';
+import { blockchain } from '@ckb-lumos/base/lib';
+import { BytesLike, molecule } from '@ckb-lumos/codec/lib';
 import { bytifyRawString, bufferToRawString } from '../helpers';
 
 export const ClusterData = molecule.table(

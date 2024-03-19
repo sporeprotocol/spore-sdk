@@ -1,7 +1,7 @@
-import { BIish } from '@ckb-lumos/bi';
-import { PackedSince } from '@ckb-lumos/base';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { PackedSince } from '@ckb-lumos/base/lib';
 import { BI, Cell, helpers, HexString } from '@ckb-lumos/lumos';
-import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
+import { addCellDep } from '@ckb-lumos/lumos/helpers';
 import { setAbsoluteCapacityMargin, setupCell } from '../../../helpers';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 
@@ -57,6 +57,7 @@ export async function injectLiveSporeCell(props: {
 
   // If added to outputs, fix the cell's output index
   if (props.addOutput) {
+    //@ts-ignore
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
         field: 'outputs',

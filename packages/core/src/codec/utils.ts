@@ -1,5 +1,5 @@
-import { molecule } from '@ckb-lumos/codec';
-import { blockchain } from '@ckb-lumos/base';
+import { molecule } from '@ckb-lumos/codec/lib';
+import { blockchain } from '@ckb-lumos/base/lib';
 
 export const ScriptId = molecule.struct(
   {

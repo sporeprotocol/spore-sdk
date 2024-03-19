@@ -1,6 +1,6 @@
-import { Address, OutPoint } from '@ckb-lumos/base';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { BI, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
+import { Address, OutPoint } from '@ckb-lumos/base/lib';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
+import { BI, Indexer, helpers, Cell, HexString } from '@ckb-lumos/lumos';
 import { injectCapacityAndPayFee } from '../../../helpers';
 import { getSporeConfig, SporeConfig } from '../../../config';
 import { getSporeByOutPoint, injectLiveSporeCell } from '../..';

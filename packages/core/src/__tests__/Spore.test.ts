@@ -1,8 +1,8 @@
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import { describe, it } from 'vitest';
-import { bytes } from '@ckb-lumos/codec';
-import { OutPoint } from '@ckb-lumos/base';
+import { bytes } from '@ckb-lumos/codec/lib';
+import { OutPoint } from '@ckb-lumos/base/lib';
 import { bytifyRawString } from '../helpers';
 import { createSpore, meltSpore, transferSpore } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';

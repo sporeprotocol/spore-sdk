@@ -1,4 +1,4 @@
-import { bytes } from '@ckb-lumos/codec';
+import { bytes } from '@ckb-lumos/codec/lib';
 import { describe, expect, it } from 'vitest';
 import { bufferToRawString, bytifyRawString } from '../helpers';
 

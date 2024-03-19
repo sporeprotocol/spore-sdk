@@ -1,8 +1,8 @@
-import { BIish } from '@ckb-lumos/bi';
-import { bytes } from '@ckb-lumos/codec';
-import { Script } from '@ckb-lumos/base';
+import { BIish } from '@ckb-lumos/bi/lib';
+import { bytes } from '@ckb-lumos/codec/lib';
+import { Script } from '@ckb-lumos/base/lib';
 import { BI, Cell, helpers } from '@ckb-lumos/lumos';
-import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
+import { addCellDep } from '@ckb-lumos/lumos/helpers';
 import { packRawClusterData } from '../../../codec';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
@@ -47,6 +47,7 @@ export function injectNewClusterOutput(props: {
 
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
+  //@ts-ignore
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     if (props.capacityMargin !== void 0) {
       clusterCell = setAbsoluteCapacityMargin(clusterCell, props.capacityMargin);
@@ -58,6 +59,7 @@ export function injectNewClusterOutput(props: {
   });
 
   // Fix the output's index to prevent it from future reduction
+  //@ts-ignore
   txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
     return fixedEntries.push({
       field: 'outputs',

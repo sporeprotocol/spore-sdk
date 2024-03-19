@@ -1,5 +1,5 @@
-import { Config } from '@ckb-lumos/config-manager';
-import { CellDep } from '@ckb-lumos/base';
+import { Config } from '@ckb-lumos/config-manager/lib';
+import { CellDep } from '@ckb-lumos/base/lib';
 import { ScriptId } from '../types';
 import { SporeExtension } from '../extension';
 

@@ -1,4 +1,4 @@
-import { OutPoint, Script } from '@ckb-lumos/base';
+import { OutPoint, Script } from '@ckb-lumos/base/lib';
 import { Cell, HexString, Indexer, RPC } from '@ckb-lumos/lumos';
 import { getCellByType, getCellWithStatusByOutPoint } from '../../../helpers';
 import { getSporeConfig, getSporeScript, isSporeScriptSupportedByName, SporeConfig } from '../../../config';
@@ -39,6 +39,10 @@ export async function getClusterByOutPoint(outPoint: OutPoint, config?: SporeCon
 
   // Check target cell's type script
   const cellType = cellWithStatus.cell.cellOutput.type;
+  console.log('------->');
+  console.log(cellType);
+  console.log('<-------');
+
   if (!cellType || !isSporeScriptSupportedByName(config, 'Cluster', cellType)) {
     throw new Error('Cannot find cluster by OutPoint because target cell is not Cluster');
   }

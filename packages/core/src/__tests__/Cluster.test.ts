@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { OutPoint } from '@ckb-lumos/base';
+import { OutPoint } from '@ckb-lumos/base/lib';
 import { createCluster, transferCluster } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
@@ -43,7 +43,6 @@ describe('Cluster', function () {
       outPoint: outPoint,
       fromInfos: [CHARLIE.address],
       toLock: ALICE.lock,
-      config,
     });
 
     // Sign and send transaction
