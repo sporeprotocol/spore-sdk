@@ -1,21 +1,16 @@
-import { BIish } from '@ckb-lumos/bi/lib';
-import { bytes } from '@ckb-lumos/codec/lib';
-import { Script } from '@ckb-lumos/base/lib';
+import { BIish } from '@ckb-lumos/bi';
+import { bytes } from '@ckb-lumos/codec';
+import { Script } from '@ckb-lumos/base';
 import { BI, Cell, helpers } from '@ckb-lumos/lumos';
 import { addCellDep } from '@ckb-lumos/lumos/helpers';
-import { packRawClusterData } from '../../../codec';
+import { RawClusterData, packRawClusterData } from '../../../codec';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { correctCellMinimalCapacity, setAbsoluteCapacityMargin } from '../../../helpers';
 import { injectNewClusterIds } from './injectNewClusterIds';
 
-export interface ClusterDataProps {
-  name: string;
-  description: string;
-}
-
 export function injectNewClusterOutput(props: {
   txSkeleton: helpers.TransactionSkeletonType;
-  data: ClusterDataProps;
+  data: RawClusterData;
   toLock: Script;
   config?: SporeConfig;
   updateOutput?(cell: Cell): Cell;
@@ -31,8 +26,17 @@ export function injectNewClusterOutput(props: {
   // Get TransactionSkeleton
   let txSkeleton = props.txSkeleton;
 
-  // Create cluster cell (with the latest version of ClusterType script)
+  // Check the referenced Mutant's ID format
+  if (props.data.mutantId !== void 0) {
+    const packedMutantId = bytes.bytify(props.data.mutantId!);
+    if (packedMutantId.byteLength !== 32) {
+      throw new Error(`Invalid Mutant Id length, expected 32, actually: ${packedMutantId.byteLength}`);
+    }
+  }
+
+  // Create Cluster cell (the latest version)
   const clusterScript = getSporeScript(config, 'Cluster');
+  const clusterData = packRawClusterData(props.data, clusterScript.behaviors?.clusterDataVersion as any);
   let clusterCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
@@ -42,7 +46,7 @@ export function injectNewClusterOutput(props: {
         args: '0x' + '0'.repeat(64), // Fill 32-byte TypeId placeholder
       },
     },
-    data: bytes.hexify(packRawClusterData(props.data)),
+    data: bytes.hexify(clusterData),
   });
 
   // Add to Transaction.outputs
@@ -67,7 +71,7 @@ export function injectNewClusterOutput(props: {
     });
   });
 
-  // Generate ID for the new cluster if possible
+  // Generate ID for the new Cluster if possible
   const firstInput = txSkeleton.get('inputs').first();
   if (firstInput) {
     txSkeleton = injectNewClusterIds({
@@ -77,8 +81,13 @@ export function injectNewClusterOutput(props: {
     });
   }
 
-  // Add cluster required dependencies
+  // Add Cluster required cellDeps
   txSkeleton = addCellDep(txSkeleton, clusterScript.cellDep);
+  // Add Mutant cellDeps if ClusterData.mutantId is specified
+  if (props.data.mutantId !== void 0) {
+    const mutantScript = getSporeScript(config, 'Mutant');
+    txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
+  }
 
   return {
     txSkeleton,

@@ -1,6 +1,8 @@
 import { BI, Cell, utils } from '@ckb-lumos/lumos';
-import { BIish } from '@ckb-lumos/bi/lib';
-import { Hash } from '@ckb-lumos/base/lib';
+import { BIish } from '@ckb-lumos/bi';
+import { Hash } from '@ckb-lumos/base';
+import { BytesLike } from '@ckb-lumos/codec';
+import { bytes } from '@ckb-lumos/codec';
 
 /**
  * Generate a TypeId based on the first input in Transaction.inputs,
@@ -67,4 +69,28 @@ export function generateTypeIdsByOutputs(
   }
 
   return result;
+}
+
+/**
+ * Check if the target string is a Type ID
+ */
+export function isTypeId(target: BytesLike): boolean {
+  try {
+    const buf = bytes.bytify(target);
+    return buf.byteLength === 32;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if the target string at least contains is a Type ID
+ */
+export function isTypeIdLengthMatch(target: BytesLike): boolean {
+  try {
+    const buf = bytes.bytify(target);
+    return buf.byteLength >= 32;
+  } catch {
+    return false;
+  }
 }

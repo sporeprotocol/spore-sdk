@@ -1,5 +1,5 @@
 import { TransactionSkeletonType } from '@ckb-lumos/lumos/helpers';
-import { Hash } from '@ckb-lumos/base/lib';
+import { Hash } from '@ckb-lumos/base';
 
 export interface SporeExtension {
   name: string;

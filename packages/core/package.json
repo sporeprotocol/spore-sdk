@@ -1,6 +1,6 @@
 {
   "name": "@spore-sdk/core",
-  "version": "0.1.0",
+  "version": "0.2.0-beta.3",
   "license": "MIT",
   "scripts": {
     "test": "vitest",
@@ -21,20 +21,16 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/whatwg-mimetype": "^3.0.0",
-    "vitest": "^0.31.4"
+    "vitest": "^1.2.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ShookLyngs/spore-sdk.git"
+    "url": "git+https://github.com/sporeprotocol/spore-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/ShookLyngs/spore-sdk/issues"
-  },
-  "dependencies": {
-    "whatwg-mimetype": "^4.0.0"
+    "url": "https://github.com/sporeprotocol/spore-sdk/issues"
   }
 }

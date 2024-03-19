@@ -1,8 +1,8 @@
 import { describe, it } from 'vitest';
-import { bytes } from '@ckb-lumos/codec/lib';
+import { bytes } from '@ckb-lumos/codec';
 import { utils } from '@ckb-lumos/lumos';
 import { bytifyRawString } from '../helpers';
-import { TESTNET_ENV } from './shared';
+import { TEST_ENV } from './shared';
 
 describe('Lumos', function () {
   it('Encode buffer', function () {
@@ -28,7 +28,7 @@ describe('Lumos', function () {
     console.log(typeId.args);
   });
   it('Get code hash by OutPoint', async function () {
-    const rpc = TESTNET_ENV.rpc;
+    const rpc = TEST_ENV.rpc;
 
     const cell = await rpc.getLiveCell(
       {
