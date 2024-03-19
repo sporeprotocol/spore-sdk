@@ -60,7 +60,6 @@ describe(
         cellProvider: indexer,
       });
 
-      const expectCapacity = BI.from(100_0000_0000).toHexString();
       const collector = indexer.collector({
         lock: CHARLIE.lock,
         outputDataLenRange: ['0x0', '0x1'],
@@ -69,9 +68,14 @@ describe(
       let collectedCell: Cell | undefined;
       let collectedCapacity: BI | undefined;
       for await (const cell of collector.collect()) {
-        collectedCapacity = BI.from(cell.cellOutput.capacity);
-        collectedCell = cell;
-        break;
+        let capacity = BI.from(cell.cellOutput.capacity);
+        if (collectedCell === void 0) {
+          collectedCapacity = capacity;
+          collectedCell = cell;
+        } else if (capacity > collectedCapacity!) {
+          collectedCapacity = capacity;
+          collectedCell = cell;
+        }
       }
       expect(collectedCell).toBeDefined();
       expect(collectedCapacity).toBeDefined();

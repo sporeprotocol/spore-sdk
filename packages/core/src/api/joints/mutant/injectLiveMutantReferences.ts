@@ -35,12 +35,10 @@ export async function injectLiveMutantReferences(props: {
    *
    * Note that this version of "minimalPaymentsMap" logic could need some notes, take an example:
    * - Creating a Spore that references Mutant 1 and Mutant 2
-   * - Mutant 1, lock = A, minPayment = 10 (10^10 shannons, 100 CKB)
-   * - Mutant 2, lock = A, minPayment = 11 (10^11 shannons, 1000 CKB)
+   * - Mutant 1, lock = A, minPayment = 100 CKB
+   * - Mutant 2, lock = A, minPayment = 1000 CKB
    * Normally you would expect to pay A 1100 CKB in this transaction:
    * - Minimal payment to A = 100 + 1000 = 1100 CKB
-   * But currently the logic is that you only need to pay A 1000 CKB:
-   * - Minimal payment to A = max(100, 1000) = 1000 CKB
    */
   const minimalPaymentsMap = mutantCells.reduce(
     (sum, mutantCell) => {
@@ -56,15 +54,15 @@ export async function injectLiveMutantReferences(props: {
       }
 
       const args = unpackToRawMutantArgs(mutantCell.cellOutput.type!.args);
-      const minPayment = args.minPayment !== void 0 ? BI.from(10).pow(args.minPayment) : BI.from(0);
+      const minPayment = args.minPayment !== void 0 ? args.minPayment : BI.from(0);
 
       // Current logic: max(minPayment1, minPayment2, ...)
-      sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.gt(minPayment)
-        ? sum[mutantLockHash].minPayment
-        : minPayment;
+      // sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.gt(minPayment)
+      //   ? sum[mutantLockHash].minPayment
+      //   : minPayment;
 
       // Alternative logic: sum(minPayment1, minPayment2, ...)
-      // sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.add(minPayment);
+      sum[mutantLockHash].minPayment = sum[mutantLockHash].minPayment.add(minPayment);
 
       return sum;
     },
@@ -121,6 +119,8 @@ export async function injectLiveMutantReferences(props: {
   // Add Mutant's type as cellDep
   const mutantScript = getSporeScript(config, 'Mutant');
   txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
+  const luaScript = getSporeScript(config, 'Lua');
+  txSkeleton = addCellDep(txSkeleton, luaScript.cellDep);
 
   // Add Mutant cells as cellDeps
   for (const mutantCell of mutantCells) {

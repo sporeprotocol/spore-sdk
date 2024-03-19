@@ -142,6 +142,46 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
           },
         ],
       },
+      Mutant: {
+        versions: [
+          {
+            tags: ['v2', 'preview'],
+            script: {
+              codeHash: config.SCRIPTS.SPORE_EXTENSION_LUA.CODE_HASH,
+              hashType: config.SCRIPTS.SPORE_EXTENSION_LUA.HASH_TYPE,
+            },
+            cellDep: {
+              outPoint: {
+                txHash: config.SCRIPTS.SPORE_EXTENSION_LUA.TX_HASH,
+                index: config.SCRIPTS.SPORE_EXTENSION_LUA.INDEX,
+              },
+              depType: config.SCRIPTS.SPORE_EXTENSION_LUA.DEP_TYPE,
+            },
+            behaviors: {
+              lockProxy: true,
+              cobuild: true,
+            },
+          },
+        ],
+      },
+      Lua: {
+        versions: [
+          {
+            tags: ['v2', 'preview'],
+            script: {
+              codeHash: config.SCRIPTS.LUA_LIB.CODE_HASH,
+              hashType: config.SCRIPTS.LUA_LIB.HASH_TYPE,
+            },
+            cellDep: {
+              outPoint: {
+                txHash: config.SCRIPTS.LUA_LIB.TX_HASH,
+                index: config.SCRIPTS.LUA_LIB.INDEX,
+              },
+              depType: config.SCRIPTS.LUA_LIB.DEP_TYPE,
+            },
+          },
+        ],
+      },
     },
   };
 }

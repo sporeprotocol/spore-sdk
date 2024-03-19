@@ -50,8 +50,7 @@ export async function injectLiveClusterProxyReference(props: {
   let paymentCellOutputIndex: number | undefined;
   if (isPaying) {
     const clusterProxyArgs = unpackToRawClusterProxyArgs(clusterProxyType.args);
-    const minPayment =
-      clusterProxyArgs.minPayment !== void 0 ? BI.from(10).pow(clusterProxyArgs.minPayment) : BI.from(0);
+    const minPayment = clusterProxyArgs.minPayment !== void 0 ? clusterProxyArgs.minPayment : BI.from(0);
     if (minPayment.lte(0)) {
       throw new Error('Cannot pay to reference ClusterProxy because minPayment is undefined');
     }
