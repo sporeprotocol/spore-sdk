@@ -21,6 +21,7 @@
     "release:packages": "pnpm run clean:packages && pnpm run build:packages && changeset publish"
   },
   "dependencies": {
+    "@exact-realty/multipart-parser": "^1.0.13",
     "rimraf": "^5.0.0"
   },
   "devDependencies": {
