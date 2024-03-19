@@ -4,7 +4,7 @@ import { describe, it } from 'vitest';
 import { bytes } from '@ckb-lumos/codec/lib';
 import { OutPoint } from '@ckb-lumos/base/lib';
 import { bytifyRawString } from '../helpers';
-import { createSpore, meltSpore, transferSpore } from '../api';
+import { createSpore, getSporeById, meltSpore, transferSpore } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 const localImage = './resources/test.jpg';
@@ -43,6 +43,8 @@ describe('Spore', function () {
       config,
     });
 
+    console.log(CHARLIE.address);
+
     // Sign and send transaction
     await signAndSendTransaction({
       account: CHARLIE,
@@ -62,9 +64,11 @@ describe('Spore', function () {
       index: '0x0',
     };
 
+    let data = await getSporeById('0x0f70139aa40c8b9ad5f9f40f083fba574f94f9c6fc6f065e34d8e3c93fac77a2');
     // Create cluster cell, collect inputs and pay fee
+
     let { txSkeleton } = await transferSpore({
-      outPoint: outPoint,
+      outPoint: data.outPoint!!,
       fromInfos: [CHARLIE.address],
       toLock: ALICE.lock,
       config,
@@ -89,9 +93,11 @@ describe('Spore', function () {
       index: '0x0',
     };
 
+    let data = await getSporeById('0x19b3324d19b8b5e4644398db0200535f514844690629fa6b2e88fdfd3588e27b');
+
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await meltSpore({
-      outPoint: outPoint,
+      outPoint: data.outPoint!!,
       fromInfos: [ALICE.address],
       config,
     });

@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 import { OutPoint } from '@ckb-lumos/base/lib';
-import { createCluster, transferCluster } from '../api';
+import { createCluster, getClusterById, transferCluster } from '../api';
 import { signAndSendTransaction, TESTNET_ACCOUNTS, TESTNET_ENV } from './shared';
 
 describe('Cluster', function () {
@@ -27,20 +27,20 @@ describe('Cluster', function () {
       rpc,
       send: false,
     });
-  }, 30000);
+  }, 50000);
 
   it('Transfer a cluster', async function () {
     const { rpc, config } = TESTNET_ENV;
     const { CHARLIE, ALICE } = TESTNET_ACCOUNTS;
 
     const outPoint: OutPoint = {
-      txHash: '0xb1f94d7d8e8441bfdf1fc76639d12f4c3c391b8c8a18ed558e299674095290c3',
+      txHash: '0x0a9da05931f4e3381545431ed4ea8459ca4edcc33ca8f5797bf30ad3e83dce5b',
       index: '0x0',
     };
 
     // Create cluster cell, collect inputs and pay fee
     let { txSkeleton } = await transferCluster({
-      outPoint: outPoint,
+      outPoint: outPoint!!,
       fromInfos: [CHARLIE.address],
       toLock: ALICE.lock,
     });
