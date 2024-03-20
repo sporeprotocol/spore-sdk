@@ -59,7 +59,6 @@ export async function injectLiveSporeCell(props: {
 
   // If added to outputs, fix the cell's output index
   if (props.addOutput) {
-    //@ts-ignore
     txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
       return fixedEntries.push({
         field: 'outputs',

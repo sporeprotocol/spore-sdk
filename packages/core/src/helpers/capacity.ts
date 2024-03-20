@@ -138,7 +138,6 @@ export function correctChangeCellCapacity(props: {
 
   if (snapshot.inputsRemainCapacity.gt(0)) {
     const outputIndex = props.changeOutputIndex ?? txSkeleton.get('outputs').size - 1;
-    //@ts-ignore
     txSkeleton = txSkeleton.update('outputs', (outputs) => {
       const output = outputs.get(outputIndex);
       if (!output) {

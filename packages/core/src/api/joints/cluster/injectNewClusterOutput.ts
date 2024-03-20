@@ -51,7 +51,6 @@ export function injectNewClusterOutput(props: {
 
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
-  //@ts-ignore
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     if (props.capacityMargin !== void 0) {
       clusterCell = setAbsoluteCapacityMargin(clusterCell, props.capacityMargin);
@@ -63,7 +62,6 @@ export function injectNewClusterOutput(props: {
   });
 
   // Fix the output's index to prevent it from future reduction
-  //@ts-ignore
   txSkeleton = txSkeleton.update('fixedEntries', (fixedEntries) => {
     return fixedEntries.push({
       field: 'outputs',

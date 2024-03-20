@@ -176,7 +176,6 @@ export async function injectNewSporeOutput(props: {
 
   // Add to Transaction.outputs
   const outputIndex = txSkeleton.get('outputs').size;
-  //@ts-ignore
   txSkeleton = txSkeleton.update('outputs', (outputs) => {
     if (props.capacityMargin !== void 0) {
       sporeCell = setAbsoluteCapacityMargin(sporeCell, props.capacityMargin);
@@ -230,8 +229,8 @@ export async function injectNewSporeOutput(props: {
       referenceType: referencingCluster
         ? injectLiveClusterReferenceResult!.referenceType
         : referencingClusterAgent
-        ? injectLiveClusterAgentReferenceResult!.referenceType
-        : void 0,
+          ? injectLiveClusterAgentReferenceResult!.referenceType
+          : void 0,
       cluster: injectLiveClusterReferenceResult?.cluster,
       clusterAgent: injectLiveClusterAgentReferenceResult?.clusterAgent,
     },
