@@ -1,7 +1,7 @@
 import { ParamsFormatter } from '@ckb-lumos/rpc';
 import { common } from '@ckb-lumos/common-scripts';
 import { Address, Hash, Script } from '@ckb-lumos/base';
-import { BI, hd, helpers, HexString, RPC } from '@ckb-lumos/lumos';
+import { hd, helpers, HexString, RPC } from '@ckb-lumos/lumos';
 import { getSporeConfig, SporeConfig } from '../../config';
 import { isScriptValueEquals, updateWitnessArgs, defaultEmptyWitnessArgs } from '../../helpers';
 
@@ -12,23 +12,15 @@ export interface Account {
   signTransaction(txSkeleton: helpers.TransactionSkeletonType): helpers.TransactionSkeletonType;
 }
 
-export function createDefaultLockAccount(privateKey: HexString | string, config?: SporeConfig): Account {
+export function createDefaultLockAccount(privateKey: HexString, config?: SporeConfig): Account {
   if (!config) {
     config = getSporeConfig();
-  }
-  let pk: HexString;
-  const hexStringRegex = /^(0x)?[0-9a-fA-F]+$/;
-  if (hexStringRegex.test(privateKey)) {
-    pk = privateKey;
-  } else {
-    // 如果不是，执行转换
-    pk = BI.from(privateKey).toHexString();
   }
   const defaultLockScript = config.lumos.SCRIPTS.SECP256K1_BLAKE160!;
   const lock: Script = {
     codeHash: defaultLockScript.CODE_HASH,
     hashType: defaultLockScript.HASH_TYPE,
-    args: hd.key.privateKeyToBlake160(pk),
+    args: hd.key.privateKeyToBlake160(privateKey),
   };
 
   const address = helpers.encodeToAddress(lock, {
@@ -36,7 +28,7 @@ export function createDefaultLockAccount(privateKey: HexString | string, config?
   });
 
   function signMessage(message: HexString): Hash {
-    return hd.key.signRecoverable(message, pk);
+    return hd.key.signRecoverable(message, privateKey);
   }
 
   function signTransaction(txSkeleton: helpers.TransactionSkeletonType): helpers.TransactionSkeletonType {
