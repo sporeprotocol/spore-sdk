@@ -146,10 +146,6 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
   };
 }
 
-export function getPrivateKey(name: string, type: 'privateKey', defaultValue: HexString): HexString {
-  return defaultValue;
-}
-
 export function getEnvVariable(name: string, type: 'number'): number | undefined;
 export function getEnvVariable(name: string, type: 'string'): string | undefined;
 export function getEnvVariable(name: string, type: 'boolean'): boolean | undefined;
