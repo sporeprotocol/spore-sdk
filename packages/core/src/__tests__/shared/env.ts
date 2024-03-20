@@ -25,6 +25,8 @@ export const TEST_VARIABLES = {
 
 const config = generateTestConfig(TEST_VARIABLES.network, resolve(__dirname, TEST_VARIABLES.configPath));
 
+console.log(config);
+
 export const TEST_ENV = {
   config,
   v1Config: forkSporeConfig(config, {

@@ -16,7 +16,6 @@ export function createDefaultLockAccount(privateKey: HexString, config?: SporeCo
   if (!config) {
     config = getSporeConfig();
   }
-  console.log(privateKey);
   const defaultLockScript = config.lumos.SCRIPTS.SECP256K1_BLAKE160!;
   const lock: Script = {
     codeHash: defaultLockScript.CODE_HASH,
