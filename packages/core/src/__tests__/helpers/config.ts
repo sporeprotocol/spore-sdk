@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { BI } from '@ckb-lumos/lumos';
+import { BI, HexString } from '@ckb-lumos/lumos';
 import { Config } from '@ckb-lumos/config-manager';
 import { predefinedSporeConfigs, SporeConfig } from '../../config';
 
@@ -144,6 +144,10 @@ export function generateDevnetSporeConfig(config: Record<any, any>): SporeConfig
       },
     },
   };
+}
+
+export function getPrivateKey(name: string, type: 'privateKey', defaultValue: HexString): HexString {
+  return defaultValue;
 }
 
 export function getEnvVariable(name: string, type: 'number'): number | undefined;
