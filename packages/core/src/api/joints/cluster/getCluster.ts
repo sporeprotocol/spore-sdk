@@ -14,6 +14,7 @@ export async function getClusterByType(type: Script, config?: SporeConfig): Prom
   }
 
   // Get cell by type
+  console.log('test');
   const cell = await getCellByType({ type, indexer });
   if (cell === void 0) {
     throw new Error('Cannot find Cluster by Type because target cell does not exist');
