@@ -13,7 +13,7 @@ export const TEST_VARIABLES = {
     charlie: getEnvVariable(
       'VITE_ACCOUNT_CHARLIE',
       'string',
-      '0xc153ee57dc8ae3dac3495c828d6f8c3fef6b1d0c74fc31101c064137b3269d6d',
+      '0xd6013cd867d286ef84cc300ac6546013837df2b06c9f53c83b4c33c2417f6a07',
     ),
     alice: getEnvVariable(
       'VITE_ACCOUNT_ALICE',
