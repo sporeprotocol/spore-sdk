@@ -21,7 +21,8 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "vitest": "^1.4.0"
+    "vitest": "^1.4.0",
+    "@exact-realty/multipart-parser": "^1.0.13"
   },
   "publishConfig": {
     "access": "public"
