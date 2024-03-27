@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { BI } from '@ckb-lumos/lumos';
+import { BI, HexString } from '@ckb-lumos/lumos';
 import { Config } from '@ckb-lumos/config-manager';
 import { predefinedSporeConfigs, SporeConfig } from '../../config';
 

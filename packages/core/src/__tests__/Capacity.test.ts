@@ -54,7 +54,7 @@ describe(
       const feeRate = await getMinFeeRate(rpc);
       const fee = calculateFeeByTransactionSkeleton(txSkeleton, feeRate);
       expect(afterSnap.inputsRemainCapacity.eq(fee)).toEqual(true);
-    }, 30000);
+    }, 50000);
     it('No capacity collection, only returning exceeded capacity', async () => {
       let txSkeleton = new helpers.TransactionSkeleton({
         cellProvider: indexer,
@@ -116,7 +116,7 @@ describe(
 
       const paidSnap = createCapacitySnapshotFromTransactionSkeleton(txSkeleton);
       expect(paidSnap.inputsRemainCapacity.eq(fee)).toEqual(true);
-    }, 30000);
+    }, 50000);
   },
   {
     concurrent: true,

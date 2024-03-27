@@ -1,7 +1,8 @@
+import { BI, Cell, utils } from '@ckb-lumos/lumos';
 import { BIish } from '@ckb-lumos/bi';
 import { Hash } from '@ckb-lumos/base';
-import { BI, Cell, utils } from '@ckb-lumos/lumos';
-import { bytes, BytesLike } from '@ckb-lumos/codec';
+import { BytesLike } from '@ckb-lumos/codec';
+import { bytes } from '@ckb-lumos/codec';
 
 /**
  * Generate a TypeId based on the first input in Transaction.inputs,

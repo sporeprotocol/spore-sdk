@@ -18,13 +18,12 @@ export const TEST_VARIABLES = {
     alice: getEnvVariable(
       'VITE_ACCOUNT_ALICE',
       'string',
-      '0xfd686a48908e8caf97723578bf85f746e1e1d8956cb132f6a2e92e7234a2a245',
+      '0x49aa6d595ac46cc8e1a31b511754dd58f241a7d8a6ad29e83d6b0c1a82399f3d',
     ),
   },
 };
 
 const config = generateTestConfig(TEST_VARIABLES.network, resolve(__dirname, TEST_VARIABLES.configPath));
-
 export const TEST_ENV = {
   config,
   v1Config: forkSporeConfig(config, {

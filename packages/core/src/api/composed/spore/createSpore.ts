@@ -1,11 +1,12 @@
 import { BIish } from '@ckb-lumos/bi';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { Address, OutPoint, Script } from '@ckb-lumos/base';
-import { BI, Cell, helpers, HexString, Indexer } from '@ckb-lumos/lumos';
+import { Address, Script } from '@ckb-lumos/base';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
+import { BI, Indexer, helpers, Cell, HexString, OutPoint } from '@ckb-lumos/lumos';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
-import { injectCapacityAndPayFee, assertTransactionSkeletonSize, injectNeededCapacity } from '../../../helpers';
-import { SporeDataProps, injectNewSporeOutput, injectNewSporeIds, getClusterAgentByOutPoint } from '../..';
-import { generateCreateSporeAction, injectCommonCobuildProof } from '../../../cobuild';
+import { assertTransactionSkeletonSize, injectCapacityAndPayFee } from '../../../helpers';
+import { injectNewSporeOutput, injectNewSporeIds, SporeDataProps, getClusterAgentByOutPoint } from '../..';
+import { generateCreateSporeAction } from '../../../cobuild/action/spore/createSpore';
+import { injectCommonCobuildProof } from '../../../cobuild/base/witnessLayout';
 
 export async function createSpore(props: {
   data: SporeDataProps;

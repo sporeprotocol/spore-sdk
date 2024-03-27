@@ -1,12 +1,13 @@
 import { BIish } from '@ckb-lumos/bi';
 import { Address, Script } from '@ckb-lumos/base';
-import { FromInfo } from '@ckb-lumos/common-scripts';
-import { BI, Cell, helpers, Indexer } from '@ckb-lumos/lumos';
-import { RawClusterData } from '../../../codec';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
+import { BI, Indexer, helpers, Cell } from '@ckb-lumos/lumos';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
-import { generateCreateClusterAction, injectCommonCobuildProof } from '../../../cobuild';
-import { injectCapacityAndPayFee, assertTransactionSkeletonSize } from '../../../helpers';
+import { assertTransactionSkeletonSize, injectCapacityAndPayFee } from '../../../helpers';
 import { injectNewClusterIds, injectNewClusterOutput } from '../..';
+import { RawClusterData } from '../../../codec';
+import { generateCreateClusterAction } from '../../../cobuild/action/cluster/createCluster';
+import { injectCommonCobuildProof } from '../../../cobuild/base/witnessLayout';
 
 export async function createCluster(props: {
   data: RawClusterData;

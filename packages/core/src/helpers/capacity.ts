@@ -1,11 +1,11 @@
 import cloneDeep from 'lodash/cloneDeep';
-import { BIish } from '@ckb-lumos/bi';
+import { BIish } from '@ckb-lumos/bi/lib';
 import { BI, helpers } from '@ckb-lumos/lumos';
-import { Config } from '@ckb-lumos/config-manager';
-import { Address, Script, Cell } from '@ckb-lumos/base';
-import { common, FromInfo } from '@ckb-lumos/common-scripts';
-import { isScriptValueEquals } from './script';
+import { Config } from '@ckb-lumos/config-manager/lib';
+import { Address, Script, Cell } from '@ckb-lumos/base/lib';
+import { common, FromInfo } from '@ckb-lumos/common-scripts/lib';
 import { fromInfoToAddress } from './address';
+import { isScriptValueEquals } from './script';
 
 /**
  * Calculate target cell's minimal occupied capacity by lock script.

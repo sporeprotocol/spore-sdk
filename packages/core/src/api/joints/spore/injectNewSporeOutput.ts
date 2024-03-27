@@ -1,9 +1,8 @@
 import { BIish } from '@ckb-lumos/bi';
-import { FromInfo } from '@ckb-lumos/common-scripts';
+import { Script } from '@ckb-lumos/base';
 import { bytes, BytesLike } from '@ckb-lumos/codec';
-import { Address, PackedSince, Script } from '@ckb-lumos/base';
-import { BI, Cell, helpers, Hash, HexString } from '@ckb-lumos/lumos';
-import { addCellDep } from '@ckb-lumos/common-scripts/lib/helper';
+import { Address, BI, Cell, Hash, helpers, HexString, PackedSince } from '@ckb-lumos/lumos';
+import { addCellDep } from '@ckb-lumos/lumos/helpers';
 import { packRawSporeData } from '../../../codec';
 import { getSporeConfig, getSporeScript, SporeConfig } from '../../../config';
 import { EncodableContentType, setContentTypeParameters } from '../../../helpers';
@@ -14,6 +13,7 @@ import { injectLiveClusterReference } from '../cluster/injectLiveClusterReferenc
 import { injectLiveClusterAgentReference } from '../clusterAgent/injectLiveClusterAgentReference';
 import { injectLiveMutantReferences } from '../mutant/injectLiveMutantReferences';
 import { injectNewSporeIds } from './injectNewSporeIds';
+import { FromInfo } from '@ckb-lumos/lumos/common-scripts';
 
 export interface SporeDataProps {
   contentType: string;
