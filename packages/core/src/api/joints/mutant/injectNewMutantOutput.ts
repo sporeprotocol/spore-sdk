@@ -29,6 +29,22 @@ export function injectNewMutantOutput(props: {
 
   // Create Mutant cell (the latest version)
   const mutantScript = getSporeScript(config, 'Mutant');
+  if (mutantScript.behaviors?.mutantRuntime === 'native-v1') {
+    if (mutantScript.script.hashType !== 'data2') throw new Error('Native Mutant requires data2');
+    const elf = bytes.bytify(props.data);
+    const header = [0x7f, 0x45, 0x4c, 0x46, 2, 1, 1];
+    if (
+      elf.length < 64 ||
+      elf.length > 256 * 1024 ||
+      !header.every((b, i) => elf[i] === b) ||
+      elf[16] !== 2 ||
+      elf[17] !== 0 ||
+      elf[18] !== 243 ||
+      elf[19] !== 0
+    ) {
+      throw new Error('Native Mutant requires a RISC-V ELF; Lua is not supported');
+    }
+  }
   let mutantCell: Cell = correctCellMinimalCapacity({
     cellOutput: {
       capacity: '0x0',
@@ -77,8 +93,10 @@ export function injectNewMutantOutput(props: {
   }
 
   // Add Lua lib script as cellDep
-  const luaScript = getSporeScript(config, 'Lua');
-  txSkeleton = addCellDep(txSkeleton, luaScript.cellDep);
+  if (mutantScript.behaviors?.mutantRuntime !== 'native-v1') {
+    const luaScript = getSporeScript(config, 'Lua');
+    txSkeleton = addCellDep(txSkeleton, luaScript.cellDep);
+  }
   // Add Mutant script as cellDep
   txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
 

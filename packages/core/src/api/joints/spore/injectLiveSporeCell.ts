@@ -98,14 +98,18 @@ export async function injectLiveSporeCell(props: {
     // Add Mutant cells as cellDeps
     const decodedContentType = decodeContentType(sporeData.contentType);
     if (decodedContentType.parameters.mutant !== void 0) {
-      const mutantScript = getSporeScript(config, 'Mutant');
-      txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
-
       const mutantParameter = decodedContentType.parameters.mutant;
       const mutantIds = Array.isArray(mutantParameter) ? mutantParameter : [mutantParameter];
-      const mutantCells = await Promise.all(mutantIds.map((id) => getMutantById(id, config)));
+      const mutantCells = await Promise.all(
+        mutantIds.map((id) => getMutantById(id, config, sporeScript.behaviors?.mutantRuntime ?? 'lua')),
+      );
 
       for (const mutantCell of mutantCells) {
+        const rule = getSporeScript(config, 'Mutant', mutantCell.cellOutput.type!);
+        txSkeleton = addCellDep(txSkeleton, rule.cellDep);
+        if (rule.behaviors?.mutantRuntime !== 'native-v1') {
+          txSkeleton = addCellDep(txSkeleton, getSporeScript(config, 'Lua').cellDep);
+        }
         txSkeleton = addCellDep(txSkeleton, {
           outPoint: mutantCell.outPoint!,
           depType: 'code',

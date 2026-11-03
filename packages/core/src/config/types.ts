@@ -33,6 +33,8 @@ export interface SporeScript {
 }
 
 export interface SporeScriptBehaviors {
+  /** Native rules execute cell data with spore-mutant-v1 on CKB-VM V2. */
+  mutantRuntime?: 'native-v1' | 'lua';
   lockProxy?: boolean;
   cobuild?: boolean;
   clusterDataVersion?: ClusterDataVersion;

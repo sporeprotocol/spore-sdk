@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {"composite": false, "noEmit": true, "types": ["node"]},
+  "include": ["./*.ts", "../packages/core/src/**/*.ts"],
+  "exclude": ["../packages/core/src/__tests__"]
+}

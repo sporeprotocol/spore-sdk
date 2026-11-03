@@ -159,7 +159,7 @@ export function getSporeCacheScriptByCodeHash<T extends string>(
   scriptName?: T,
 ) {
   const script = cache.scriptsByCodeHash[codeHash];
-  if (scriptName && script.name !== scriptName) {
+  if (!script || (scriptName && script.name !== scriptName)) {
     return void 0;
   }
 

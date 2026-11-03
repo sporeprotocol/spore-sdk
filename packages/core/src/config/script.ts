@@ -1,6 +1,6 @@
 import { ScriptId } from '../types';
 import { SporeConfig, SporeScript, SporeScriptCategory } from './types';
-import { getSporeConfigCache, getSporeCacheScriptByCodeHash, getSporeCacheScriptsByTags } from './cache';
+import { getSporeConfigCache, getSporeCacheScriptsByTags } from './cache';
 
 /**
  * Get a specific SporeScriptCategory from SporeConfig by "scriptName".
@@ -59,8 +59,9 @@ export function getSporeScriptByScriptId(config: SporeConfig, scriptName: string
     throw new Error(`"${scriptName}" script is not defined in the SporeConfig`);
   }
 
-  const cache = getSporeConfigCache(config);
-  const script = getSporeCacheScriptByCodeHash(cache, scriptId.codeHash, scriptName);
+  const script = config.scripts[scriptName]?.versions.find(
+    (item) => item.script.codeHash === scriptId.codeHash && item.script.hashType === scriptId.hashType,
+  );
   if (!script) {
     throw new Error(
       `Specific "${scriptName}" script is not defined in the SporeConfig, codeHash: ${scriptId.codeHash}`,
@@ -104,7 +105,11 @@ export function isSporeScriptCategorySupported(config: SporeConfig, scriptName: 
  * If "scriptName" is passed, it also checks whether the name of the target script matches.
  */
 export function isSporeScriptSupported(config: SporeConfig, scriptId: ScriptId, scriptName?: string): boolean {
-  const cache = getSporeConfigCache(config);
-  const script = getSporeCacheScriptByCodeHash(cache, scriptId.codeHash, scriptName);
-  return script !== void 0;
+  return Object.entries(config.scripts).some(
+    ([name, category]) =>
+      (!scriptName || name === scriptName) &&
+      category.versions.some(
+        (item) => item.script.codeHash === scriptId.codeHash && item.script.hashType === scriptId.hashType,
+      ),
+  );
 }

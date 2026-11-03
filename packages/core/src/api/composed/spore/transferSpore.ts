@@ -188,6 +188,8 @@ export async function transferMultipleSpore(props: {
     Pick<{ scriptInfoHash: string; scriptHash: string; data: string }, 'data' | 'scriptInfoHash' | 'scriptHash'>)[] =
     [];
   for (const injectLiveSporeCellResult of injectLiveSporeCellResults) {
+    const input = txSkeleton.get('inputs').get(injectLiveSporeCellResult.inputIndex)!;
+    if (!getSporeScript(config, 'Spore', input.cellOutput.type!).behaviors?.cobuild) continue;
     const actionResult = generateTransferSporeAction({
       txSkeleton,
       inputIndex: injectLiveSporeCellResult.inputIndex,
@@ -205,6 +207,7 @@ export async function transferMultipleSpore(props: {
       feeRate: props.feeRate,
       updateTxSkeletonAfterCollection(_txSkeleton) {
         // Inject CobuildProof
+        if (actions.length === 0) return _txSkeleton;
         const injectCobuildProofResult = injectCommonCobuildProof({
           txSkeleton: _txSkeleton,
           actions: actions,
@@ -218,11 +221,10 @@ export async function transferMultipleSpore(props: {
     txSkeleton = injectCapacityAndPayFeeResult.txSkeleton;
   } else {
     // Inject CobuildProof
-    const injectCobuildProofResult = injectCommonCobuildProof({
-      txSkeleton: txSkeleton,
-      actions: actions,
-    });
-    txSkeleton = injectCobuildProofResult.txSkeleton;
+    if (actions.length > 0) {
+      const result = injectCommonCobuildProof({ txSkeleton, actions });
+      txSkeleton = result.txSkeleton;
+    }
 
     // choose an output to pay the fee
     for (const item of injectLiveSporeCellResults) {
