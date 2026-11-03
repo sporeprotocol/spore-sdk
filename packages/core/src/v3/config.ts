@@ -1,13 +1,19 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { SporeConfig, SporeScript } from '../config/types';
 
-/** Deployment identities are supplied by the reviewed build/deployment process. */
+/** Deployment identities supplied by a reviewed build/deployment process.
+ * contractCommit is provenance metadata, not an attestation that codeHash was
+ * built from that revision. Verify source/binary hashes and live code bytes
+ * separately before using a deployment. */
 export interface V3Deployment {
   contractCommit: string;
   Spore: Pick<SporeScript, 'script' | 'cellDep'>;
   Mutant: Pick<SporeScript, 'script' | 'cellDep'>;
 }
 
+/** Validate configuration shape and identity separation without making RPC
+ * calls or certifying deployment provenance. Spore and Mutant are the only v3
+ * categories installed; other categories need explicit version selection. */
 export function createV3Config(base: SporeConfig, deployment: V3Deployment): SporeConfig {
   if (!/^[0-9a-f]{40}$/.test(deployment.contractCommit)) throw new Error('Pin the contract commit');
   const config = cloneDeep(base);
@@ -18,7 +24,7 @@ export function createV3Config(base: SporeConfig, deployment: V3Deployment): Spo
       entry.cellDep.depType !== 'code' ||
       !/^0x[0-9a-f]{64}$/.test(entry.script.codeHash) ||
       !/^0x[0-9a-f]{64}$/.test(entry.cellDep.outPoint.txHash) ||
-      !/^0x(?:0|[1-9a-f][0-9a-f]*)$/.test(entry.cellDep.outPoint.index)
+      !/^0x(?:0|[1-9a-f][0-9a-f]{0,7})$/.test(entry.cellDep.outPoint.index)
     ) {
       throw new Error(`${name}: expected data2 and a concrete code CellDep`);
     }

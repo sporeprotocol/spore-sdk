@@ -9,10 +9,16 @@ import { WitnessLayout } from '../cobuild/codec/witnessLayout';
 
 /** Minimal wallet policy for plain Spore operations. Fail closed for other typed
  * cells/intent layouts: custom Locks, clusters and rules need their own review.
- * Call on resolved inputs, before preparing signing entries. Absence of Action
- * means render the actual cell delta; it never means absence of authorisation.
+ * Call on resolved final cells with one witness slot per input, before signing.
+ * Missing slots must be padded with 0x before appending CoBuild intent.
+ * Absence of Action means render the actual cell delta; it never means absence
+ * of authorisation. This function validates and never normalizes witnesses.
  */
 export function checkPlainSporeIntent(tx: helpers.TransactionSkeletonType, config: SporeConfig) {
+  const inputCount = tx.get('inputs').size;
+  if (tx.get('witnesses').size < inputCount) {
+    throw new Error('Incomplete witness layout: provide one witness slot per input before appending optional intent');
+  }
   const standard = config.lumos.SCRIPTS.SECP256K1_BLAKE160;
   for (const cell of tx.get('inputs').toArray()) {
     const lock = cell.cellOutput.lock;
@@ -24,10 +30,17 @@ export function checkPlainSporeIntent(tx: helpers.TransactionSkeletonType, confi
     )
       throw new Error('Unsupported input Lock in wallet policy');
   }
-  for (const witness of tx.get('witnesses').slice(0, tx.get('inputs').size).toArray()) {
+  for (const [index, witness] of tx.get('witnesses').slice(0, inputCount).entries()) {
     if (witness === '0x') continue;
-    const args = blockchain.WitnessArgs.unpack(witness);
-    if (args.inputType || args.outputType) throw new Error('Unsupported input witness fields');
+    let args: ReturnType<typeof blockchain.WitnessArgs.unpack>;
+    try {
+      args = blockchain.WitnessArgs.unpack(witness);
+    } catch {
+      throw new Error(
+        `Invalid witness layout at input ${index}: expected WitnessArgs or 0x; append optional intent after all ${inputCount} input slots`,
+      );
+    }
+    if (args.inputType || args.outputType) throw new Error(`Unsupported input witness fields at input ${index}`);
   }
   const groups = new Map<string, { input?: Cell; output?: Cell }>();
   for (const side of ['inputs', 'outputs'] as const) {
@@ -51,10 +64,17 @@ export function checkPlainSporeIntent(tx: helpers.TransactionSkeletonType, confi
     return input ? assembleMeltSporeAction(input).actions : assembleCreateSporeAction(output).actions;
   });
   let supplied: typeof expected = [];
-  for (const witness of tx.get('witnesses').slice(tx.get('inputs').size).toArray()) {
+  for (const [offset, witness] of tx.get('witnesses').slice(inputCount).entries()) {
     if (witness === '0x') continue;
-    const parsed = WitnessLayout.unpack(witness);
-    if (parsed.type !== 'SighashAll') throw new Error('Unsupported extra witness in wallet policy');
+    const index = inputCount + offset;
+    let parsed: ReturnType<typeof WitnessLayout.unpack>;
+    try {
+      parsed = WitnessLayout.unpack(witness);
+    } catch {
+      throw new Error(`Invalid optional intent witness at index ${index}: expected a CoBuild SighashAll layout`);
+    }
+    if (parsed.type !== 'SighashAll')
+      throw new Error(`Unsupported extra witness at index ${index}: expected CoBuild SighashAll`);
     supplied.push(...parsed.value.message.actions);
   }
   const key = (a: (typeof expected)[number]) =>

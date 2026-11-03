@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { ScriptId } from '../types';
 import { SporeConfig, SporeScript, SporeScriptCategory } from './types';
 import { getSporeConfigCache, getSporeCacheScriptsByTags } from './cache';
@@ -68,7 +69,8 @@ export function getSporeScriptByScriptId(config: SporeConfig, scriptName: string
     );
   }
 
-  return script;
+  // Preserve the public lookup's historical categorized, detached result.
+  return { ...cloneDeep(script), name: scriptName };
 }
 
 /**

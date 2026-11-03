@@ -63,7 +63,7 @@ export function createSporeConfigCache<T extends string>(config: SporeConfig<T>)
         ...cloneDeep(script),
       };
       scriptsByCodeHash[script.script.codeHash] = categorizedScript;
-      const tags = script.tags.sort();
+      const tags = [...script.tags].sort();
       for (const tag of tags) {
         if (scriptTagMap[tag] === void 0) {
           scriptTagMap[tag] = [];
@@ -121,7 +121,7 @@ export function getSporeCacheScriptsByTags<T extends string>(
   }
 
   const recordsMap: Record<string, SporeCategorizedScript[]> = cache.queryRecordsByTags[scriptName];
-  const sortedTags = tags.sort();
+  const sortedTags = [...tags].sort();
   const key = sortedTags.join(',');
   if (recordsMap && key in recordsMap) {
     return recordsMap[key];

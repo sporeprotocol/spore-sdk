@@ -189,7 +189,8 @@ export async function transferMultipleSpore(props: {
     [];
   for (const injectLiveSporeCellResult of injectLiveSporeCellResults) {
     const input = txSkeleton.get('inputs').get(injectLiveSporeCellResult.inputIndex)!;
-    if (!getSporeScript(config, 'Spore', input.cellOutput.type!).behaviors?.cobuild) continue;
+    // Preserve historical batch behavior unless a deployment explicitly opts out.
+    if (getSporeScript(config, 'Spore', input.cellOutput.type!).behaviors?.cobuild === false) continue;
     const actionResult = generateTransferSporeAction({
       txSkeleton,
       inputIndex: injectLiveSporeCellResult.inputIndex,

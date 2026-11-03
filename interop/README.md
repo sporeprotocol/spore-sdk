@@ -18,15 +18,20 @@ From the SDK repository root:
 ./interop/run.sh offline
 ```
 
-On a clean checkout the runner installs the separate, npm-locked tooling set
-without lifecycle scripts. It leaves the upstream pnpm lockfile unchanged.
-If `node_modules` already exists, it uses that installation; remove/reconcile an
-incompatible installation yourself rather than overwriting it. Independently reproduced with Node
-22.23.1, Lumos `0.24.0-next.1`, Vitest `1.4.0`, TypeScript `5.3.2`.
+The runner copies the required SDK/test sources into an owned temporary
+workspace, installs the exact npm lockfile there without lifecycle scripts,
+checks types and the compiled CommonJS entrypoint, and runs the tests. It never
+creates, replaces or reuses the checkout's root `node_modules`, and does not
+write build outputs into the checkout. Existing package-manager state is left
+alone. Each invocation is independent; the temporary workspace is removed on
+success, failure or interruption. npm's normal download cache may be reused.
 
-Result: **12 tests passed**; the core build and isolated interoperability-suite
-typecheck passed. These tests run actual SDK code and actual Lumos signing/hash
-code. Cell-provider/RPC data are substituted. They do not execute CKB scripts.
+The offline mode needs no RPC, wallet or devnet. A first dependency installation
+needs registry access. It runs **31 interoperability regressions plus 25 existing
+pure core tests (56 total)**. Both Node 18.20.8 (the supported minimum line) and
+Node 22.23.1 passed, including the CommonJS exports. CI runs this same command on
+Node 18 and 22 without network services or wallet secrets. The legacy SDK/devnet
+workflow is retained separately; its result is not claimed as a pinned v3 test.
 
 ## Concrete compatibility gaps and changes
 
@@ -36,7 +41,7 @@ code. Cell-provider/RPC data are substituted. They do not execute CKB scripts.
 | `getSporeScriptByScriptId` and `isSporeScriptSupported` use only code hash; the cache can overwrite identities with a different hash type. Unknown hashes can dereference `undefined`. | Select by category + code hash + hash type directly from versions; guard the legacy cache lookup. The low-level public code-hash-only helper remains code-hash-only; application code should use the full-identity APIs.                                                      |
 | `injectNewMutantOutput` always loads Lua and accepts Lua source as code data.                                                                                                          | Explicit `mutantRuntime: native-v1`; no Lua CellDep; ELF preflight matching the contract header/size limits. VM execution remains authoritative. Historical entries without this field still use Lua.                                                                         |
 | Mint references add the default Mutant/Lua deps rather than the found Cell's deployment; transfer/burn similarly use default Mutant identity.                                          | Choose dependencies from the actual rule Cell. Pass the owning Spore's runtime to ID lookup; native lookup cannot fall back to a legacy Lua category. Preserve the rule Cell itself as a `code` CellDep.                                                                      |
-| Batch transfer unconditionally emits Actions for all Spore versions.                                                                                                                   | Emit only the Actions requested by each input deployment; emit none for a pure v3 batch, retain v2 Actions and both dependencies in mixed batches.                                                                                                                            |
+| Batch transfer unconditionally emits Actions for all Spore versions.                                                                                                                   | Skip Actions only for explicit `cobuild:false` (including v3). Preserve the previous batch default for absent flags, including v1 and dotbit entries, and retain each input deployment's dependencies.                                                                        |
 | Ordinary create/transfer/melt already inspect `behaviors.cobuild`.                                                                                                                     | Reuse those builders with `cobuild:false`; retain normal `WitnessArgs`, signature placeholders, Lock deps, capacity accounting and fee calculation.                                                                                                                           |
 | No wallet semantic check ties optional Actions to actual cells. Signatures authenticate the final transaction, including potentially misleading pre-signing intent.                    | `checkPlainSporeIntent` derives mint/transfer/melt from resolved cells and compares supplied Actions, including recipient and script-info hash. Reject duplicate/unknown/misleading Actions; require Actions for historical entries. Missing optional v3 Actions are allowed. |
 
@@ -55,13 +60,40 @@ operations. The existing `transferMutant.minPayment` option cannot migrate a
 native type identity merely by changing args; such a change requires a distinct
 publication and explicit referencing assets.
 
+## Configuration and legacy compatibility boundary
+
+`createV3Config` validates field shape, canonical uint32 output indices, data2
+and code dependencies, plus separation from existing identities. It does **not**
+verify that `contractCommit` produced a binary, make RPC calls, or authenticate
+an arbitrary deployment record. Source review, binary hashes and live code-byte
+checks are separate requirements; the devnet test performs the latter against
+its pinned manifest. A plausible hash is not proof of reviewed code.
+
+Only Spore and Mutant v3 categories are installed. Other categories require
+explicit legacy selection, such as `getSporeScript(config, 'Cluster', ['v2',
+'preview'])`; the v3 default deliberately does not silently choose legacy rules.
+Lookups leave both configuration tags and caller query arrays unchanged.
+Full-identity lookups preserve their categorized, detached return value so
+mutating a returned entry cannot rewrite the caller's configuration.
+
+For batch transfers, an absent `cobuild` flag retains the pre-PR Action behavior.
+Only an explicit `false` opts out. This preserves dotbit's existing batch witness
+and dynamic dependency selection without assuming anything about its current
+upgradable contract's Action parser. Both dotbit presets and v1 have SDK-level
+regressions; this is not an on-chain audit of a dotbit deployment. Single-item
+builders retain their previous behavior.
+
 ## Wallet integration boundary
 
 Run `checkPlainSporeIntent` on fully resolved final cells, display its derived
 cell delta, obtain the user's transaction authorisation, then prepare signing
 entries, sign, and submit that exact serialisation. All fee/change and witness
-assembly must precede signing. Adding/removing an Action afterwards requires
-rebuilding signing entries and signing again.
+assembly must precede signing. Supply one witness slot per input (`0x` is an
+allowed placeholder) **before** appending an optional Message. The policy helper
+rejects incomplete, misplaced or malformed layouts with the failing index and
+expected format. It does not silently pad, reorder or rewrite witnesses.
+Adding/removing an Action afterwards requires rebuilding signing entries and
+signing again.
 
 The helper supports ordinary Spore operations with standard secp256k1 input
 Locks, including mixed-version Actions. It rejects other typed input/output
@@ -169,13 +201,13 @@ claimed SDK evidence.
 
 Local verification on 2026-11-03:
 
-| Check                             | Result                                         |
-| --------------------------------- | ---------------------------------------------- |
-| Interoperability offline suite    | 12 passed                                      |
-| Existing SDK SporeConfig tests    | 5 passed                                       |
-| Core build and isolated typecheck | Passed                                         |
-| Local devnet lifecycle suite      | 1 sequential test passed; 23 transaction cases |
-| Exact-byte Rust replay            | 1 test passed; 23 transaction cases            |
+| Check                                                   | Result                                         |
+| ------------------------------------------------------- | ---------------------------------------------- |
+| Interoperability regressions                            | 31 passed on Node 18 and 22                    |
+| Existing core tests (SporeConfig / Codec / ContentType) | 25 passed on Node 18 and 22                    |
+| Core build and isolated typecheck                       | Passed                                         |
+| Local devnet lifecycle suite                            | 1 sequential test passed; 23 transaction cases |
+| Exact-byte Rust replay                                  | 1 test passed; 23 transaction cases            |
 
 The contract integration branch stores the compressed exact capture and its
 checksums under `tests/fixtures/sdk-interop`. See its
@@ -188,5 +220,21 @@ This is evidence for the standard secp Lock, ordinary Spore operations, native
 Mutants, optional intent and mixed historical/v3 batches. It does not establish
 all wallet, Cluster, arbitrary-rule or public-network compatibility. No
 JoyID/CCC/hardware-wallet flow was run. SDK semver/public defaults and release
-readiness remain subject to the separate SDK review. #75 and #76 keep their
+readiness remain subject to review of [SDK PR #142](https://github.com/sporeprotocol/spore-sdk/pull/142). #75 and #76 keep their
 original contract review scope.
+
+## Provisioning the optional local fixture
+
+For an already started, disposable CKB dev node on loopback port 28114 with
+indexing, Dummy mining and the documented public fixture funding:
+
+```sh
+SPORE_V3_LOCAL_RECORDS=/absolute/local-records \
+SPORE_V3_LOCAL_BINARIES=/absolute/v3-build/release \
+SPORE_V3_LEGACY_BINARIES=/absolute/historical-build/release \
+  ./interop/run.sh provision
+```
+
+This explicit mode publishes the local fixture binaries and historical rule;
+it is not part of the offline CI job. The binary directories must come from the
+reviewed source revisions above. Public network presets remain unchanged.

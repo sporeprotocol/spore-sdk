@@ -36,6 +36,8 @@ export interface SporeScriptBehaviors {
   /** Native rules execute cell data with spore-mutant-v1 on CKB-VM V2. */
   mutantRuntime?: 'native-v1' | 'lua';
   lockProxy?: boolean;
+  /** True requires intent; false explicitly opts out. Legacy batch builders
+   * retain their historical Action behavior when this flag is absent. */
   cobuild?: boolean;
   clusterDataVersion?: ClusterDataVersion;
   dynamicCelldep?: Script;
