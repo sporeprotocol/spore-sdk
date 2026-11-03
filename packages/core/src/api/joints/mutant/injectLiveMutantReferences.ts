@@ -10,6 +10,7 @@ import { getMutantById } from './getMutant';
 export async function injectLiveMutantReferences(props: {
   txSkeleton: helpers.TransactionSkeletonType;
   mutantIds: Hash[] | Hash;
+  runtime?: 'native-v1' | 'lua';
   paymentAmount?: (minPayment: BI, lock: Script, cell: Cell) => BIish;
   config?: SporeConfig;
 }): Promise<{
@@ -25,7 +26,7 @@ export async function injectLiveMutantReferences(props: {
 
   // Mutant Ids/Cells
   const mutantIds = Array.isArray(props.mutantIds) ? props.mutantIds : [props.mutantIds];
-  const mutantCells = await Promise.all(mutantIds.map((id) => getMutantById(id, config)));
+  const mutantCells = await Promise.all(mutantIds.map((id) => getMutantById(id, config, props.runtime)));
 
   // Payment cell output indices
   const outputIndices: number[] = [];
@@ -117,10 +118,13 @@ export async function injectLiveMutantReferences(props: {
   }
 
   // Add Mutant's type as cellDep
-  const mutantScript = getSporeScript(config, 'Mutant');
-  txSkeleton = addCellDep(txSkeleton, mutantScript.cellDep);
-  const luaScript = getSporeScript(config, 'Lua');
-  txSkeleton = addCellDep(txSkeleton, luaScript.cellDep);
+  for (const cell of mutantCells) {
+    const script = getSporeScript(config, 'Mutant', cell.cellOutput.type!);
+    txSkeleton = addCellDep(txSkeleton, script.cellDep);
+    if (script.behaviors?.mutantRuntime !== 'native-v1') {
+      txSkeleton = addCellDep(txSkeleton, getSporeScript(config, 'Lua').cellDep);
+    }
+  }
 
   // Add Mutant cells as cellDeps
   for (const mutantCell of mutantCells) {

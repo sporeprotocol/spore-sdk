@@ -3,3 +3,5 @@ export * from './config';
 export * from './helpers';
 export * from './api';
 export * from './cobuild';
+
+export * from './v3';

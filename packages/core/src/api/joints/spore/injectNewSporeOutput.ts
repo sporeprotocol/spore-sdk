@@ -215,6 +215,7 @@ export async function injectNewSporeOutput(props: {
       injectLiveMutantReferencesResult = await injectLiveMutantReferences({
         txSkeleton,
         mutantIds: decodedContentType.parameters.mutant,
+        runtime: sporeScript.behaviors?.mutantRuntime ?? 'lua',
         paymentAmount: props.mutant?.paymentAmount,
         config,
       });

@@ -51,13 +51,15 @@ export async function getMutantByOutPoint(outPoint: OutPoint, config?: SporeConf
   return cellWithStatus.cell;
 }
 
-export async function getMutantById(id: Hash, config?: SporeConfig): Promise<Cell> {
+export async function getMutantById(id: Hash, config?: SporeConfig, runtime?: 'native-v1' | 'lua'): Promise<Cell> {
   // Env
   config = config ?? getSporeConfig();
 
   // Get Mutant script
   const mutantScript = getSporeScriptCategory(config, 'Mutant');
-  const scripts = (mutantScript.versions ?? []).map((r) => r.script);
+  const scripts = (mutantScript.versions ?? [])
+    .filter((r) => !runtime || (r.behaviors?.mutantRuntime ?? 'lua') === runtime)
+    .map((r) => r.script);
 
   // Search target cluster proxy from the latest version to the oldest
   const args = bytes.hexify(

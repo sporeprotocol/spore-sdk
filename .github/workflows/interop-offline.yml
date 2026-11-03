@@ -1,0 +1,28 @@
+name: SDK interoperability (offline)
+on:
+  pull_request:
+  push:
+    branches: [beta]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: interop/tooling/package-lock.json
+      - name: Typecheck, build and run offline interoperability and core unit tests
+        run: ./interop/run.sh offline
+      - name: Ensure the test runner left the checkout untouched
+        run: |
+          test ! -e node_modules && test ! -L node_modules
+          test ! -e packages/core/lib
+          git diff --exit-code
